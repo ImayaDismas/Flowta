@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Claude Engineering Kit — local AI configuration, not app source
+.claude/
+android/
+prompts/
+workflows/
+templates/
+scripts/
+concept/
+examples/
+CLAUDE.md
