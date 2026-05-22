@@ -12,6 +12,7 @@ import com.flowgroup.flowta.ui.screen.onboarding.GetStartedScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetPinScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetupCompleteScreen
 import com.flowgroup.flowta.ui.screen.unlock.PinUnlockScreen
+import com.flowgroup.flowta.ui.screen.wallet.AddWalletScreen
 
 @Composable
 fun FlowtaNavHost(
@@ -74,7 +75,16 @@ fun FlowtaNavHost(
         }
 
         composable<Destination.Home> {
-            HomeScreen()
+            HomeScreen(
+                onAddWallet = { navController.navigate(Destination.AddWallet) },
+            )
+        }
+
+        composable<Destination.AddWallet> {
+            AddWalletScreen(
+                onClose = { navController.popBackStack() },
+                onCreated = { navController.popBackStack() },
+            )
         }
     }
 }

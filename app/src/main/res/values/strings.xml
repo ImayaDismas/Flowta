@@ -49,9 +49,35 @@
     <string name="home_tab_history">History</string>
     <string name="home_tab_insights">Insights</string>
 
-    <!-- Wallets empty -->
+    <!-- Wallets list -->
+    <string name="wallets_section_title">Your wallets</string>
     <string name="wallets_empty_title">No wallets yet</string>
     <string name="wallets_empty_message">Add cash, M-Pesa, or a bank account to start tracking where your money lives.</string>
+
+    <!-- Wallet types -->
+    <string name="wallet_type_cash">Cash</string>
+    <string name="wallet_type_mpesa">M-Pesa</string>
+    <string name="wallet_type_airtel">Airtel Money</string>
+    <string name="wallet_type_tkash">T-Kash</string>
+    <string name="wallet_type_bank">Bank</string>
+    <string name="wallet_type_other">Other</string>
+
+    <!-- Add Wallet -->
+    <string name="add_wallet_title">Add a wallet</string>
+    <string name="add_wallet_type_label">Type</string>
+    <string name="add_wallet_name_label">Wallet name</string>
+    <string name="add_wallet_opening_balance_label">Opening balance (%1$s)</string>
+    <string name="add_wallet_cta">Add wallet</string>
+    <string name="add_wallet_missing_business">No business selected. Restart the app to continue.</string>
+    <string name="add_wallet_error_name_blank">Please give this wallet a name</string>
+    <string name="add_wallet_error_name_too_long">Name is too long (max 80 characters)</string>
+    <string name="add_wallet_error_balance_invalid">Enter a valid amount</string>
+    <string name="add_wallet_hint_cash">e.g. Cash drawer</string>
+    <string name="add_wallet_hint_mpesa">e.g. M-Pesa till 12345</string>
+    <string name="add_wallet_hint_airtel">e.g. Airtel Money 0733…</string>
+    <string name="add_wallet_hint_tkash">e.g. T-Kash 0770…</string>
+    <string name="add_wallet_hint_bank">e.g. Equity – Mama Lucy</string>
+    <string name="add_wallet_hint_other">e.g. Savings tin</string>
 
     <!-- History empty -->
     <string name="history_empty_title">No transactions yet</string>

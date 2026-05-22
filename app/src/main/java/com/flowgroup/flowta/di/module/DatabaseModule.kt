@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.flowgroup.flowta.data.datasource.local.FlowtaDatabase
 import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
+import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
 import com.flowgroup.flowta.data.datasource.local.security.DatabaseKeyProvider
 import dagger.Module
 import dagger.Provides
@@ -27,9 +28,13 @@ object DatabaseModule {
         val factory = SupportOpenHelperFactory(passphrase)
         return Room.databaseBuilder(context, FlowtaDatabase::class.java, FlowtaDatabase.DATABASE_NAME)
             .openHelperFactory(factory)
+            .addMigrations(FlowtaDatabase.MIGRATION_1_2)
             .build()
     }
 
     @Provides
     fun provideBusinessDao(database: FlowtaDatabase): BusinessDao = database.businessDao()
+
+    @Provides
+    fun provideWalletDao(database: FlowtaDatabase): WalletDao = database.walletDao()
 }

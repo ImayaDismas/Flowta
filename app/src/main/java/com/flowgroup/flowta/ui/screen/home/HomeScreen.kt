@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -39,15 +41,19 @@ import com.flowgroup.flowta.ui.viewmodel.home.HomeViewModel
 
 @Composable
 fun HomeScreen(
+    onAddWallet: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    HomeContent(uiState = uiState)
+    HomeContent(uiState = uiState, onAddWallet = onAddWallet)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeContent(uiState: HomeUiState) {
+private fun HomeContent(
+    uiState: HomeUiState,
+    onAddWallet: () -> Unit,
+) {
     var selectedTab by rememberSaveable { mutableStateOf(HomeTab.Wallets) }
 
     Scaffold(
@@ -77,6 +83,16 @@ private fun HomeContent(uiState: HomeUiState) {
                 selected = selectedTab,
                 onSelect = { selectedTab = it },
             )
+        },
+        floatingActionButton = {
+            if (selectedTab == HomeTab.Wallets) {
+                FloatingActionButton(onClick = onAddWallet) {
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = stringResource(R.string.add_wallet_cta),
+                    )
+                }
+            }
         },
     ) { padding ->
         Box(
@@ -131,6 +147,7 @@ private fun HomePreview() {
                 businessName = "Mama Lucy Kiosk",
                 currency = CurrencyCode.KES,
             ),
+            onAddWallet = {},
         )
     }
 }

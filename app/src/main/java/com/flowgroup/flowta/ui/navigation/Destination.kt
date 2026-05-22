@@ -10,4 +10,5 @@ sealed interface Destination {
     @Serializable data object SetupComplete : Destination
     @Serializable data object PinUnlock : Destination
     @Serializable data object Home : Destination
+    @Serializable data object AddWallet : Destination
 }

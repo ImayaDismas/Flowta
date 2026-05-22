@@ -49,9 +49,35 @@
     <string name="home_tab_history">Historia</string>
     <string name="home_tab_insights">Maarifa</string>
 
-    <!-- Wallets empty -->
+    <!-- Wallets list -->
+    <string name="wallets_section_title">Pochi zako</string>
     <string name="wallets_empty_title">Bado huna pochi</string>
     <string name="wallets_empty_message">Ongeza pesa taslimu, M-Pesa, au akaunti ya benki ili kuanza kufuatilia pesa zako ziko wapi.</string>
+
+    <!-- Wallet types -->
+    <string name="wallet_type_cash">Pesa taslimu</string>
+    <string name="wallet_type_mpesa">M-Pesa</string>
+    <string name="wallet_type_airtel">Airtel Money</string>
+    <string name="wallet_type_tkash">T-Kash</string>
+    <string name="wallet_type_bank">Benki</string>
+    <string name="wallet_type_other">Nyingine</string>
+
+    <!-- Add Wallet -->
+    <string name="add_wallet_title">Ongeza pochi</string>
+    <string name="add_wallet_type_label">Aina</string>
+    <string name="add_wallet_name_label">Jina la pochi</string>
+    <string name="add_wallet_opening_balance_label">Salio la kuanzia (%1$s)</string>
+    <string name="add_wallet_cta">Ongeza pochi</string>
+    <string name="add_wallet_missing_business">Hakuna biashara iliyochaguliwa. Anza upya programu.</string>
+    <string name="add_wallet_error_name_blank">Tafadhali ipe pochi hii jina</string>
+    <string name="add_wallet_error_name_too_long">Jina ni refu mno (kiwango cha juu herufi 80)</string>
+    <string name="add_wallet_error_balance_invalid">Weka kiasi sahihi</string>
+    <string name="add_wallet_hint_cash">k.m. Boksi ya pesa</string>
+    <string name="add_wallet_hint_mpesa">k.m. Till ya M-Pesa 12345</string>
+    <string name="add_wallet_hint_airtel">k.m. Airtel Money 0733…</string>
+    <string name="add_wallet_hint_tkash">k.m. T-Kash 0770…</string>
+    <string name="add_wallet_hint_bank">k.m. Equity – Mama Lucy</string>
+    <string name="add_wallet_hint_other">k.m. Kibubu cha akiba</string>
 
     <!-- History empty -->
     <string name="history_empty_title">Bado hakuna miamala</string>
