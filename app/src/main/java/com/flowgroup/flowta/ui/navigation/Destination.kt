@@ -8,5 +8,6 @@ sealed interface Destination {
     @Serializable data object AddBusiness : Destination
     @Serializable data object SetPin : Destination
     @Serializable data object SetupComplete : Destination
+    @Serializable data object PinUnlock : Destination
     @Serializable data object Home : Destination
 }

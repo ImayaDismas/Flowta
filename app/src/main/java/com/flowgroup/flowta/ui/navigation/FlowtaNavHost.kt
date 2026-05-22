@@ -5,12 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.flowgroup.flowta.ui.screen.HomePlaceholderScreen
 import com.flowgroup.flowta.ui.screen.SplashRoute
+import com.flowgroup.flowta.ui.screen.home.HomeScreen
 import com.flowgroup.flowta.ui.screen.onboarding.AddBusinessScreen
 import com.flowgroup.flowta.ui.screen.onboarding.GetStartedScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetPinScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetupCompleteScreen
+import com.flowgroup.flowta.ui.screen.unlock.PinUnlockScreen
 
 @Composable
 fun FlowtaNavHost(
@@ -27,8 +28,13 @@ fun FlowtaNavHost(
                         popUpTo(Destination.Splash) { inclusive = true }
                     }
                 },
-                onToHome = {
-                    navController.navigate(Destination.Home) {
+                onToSetPin = {
+                    navController.navigate(Destination.SetPin) {
+                        popUpTo(Destination.Splash) { inclusive = true }
+                    }
+                },
+                onToUnlock = {
+                    navController.navigate(Destination.PinUnlock) {
                         popUpTo(Destination.Splash) { inclusive = true }
                     }
                 },
@@ -59,8 +65,16 @@ fun FlowtaNavHost(
             })
         }
 
+        composable<Destination.PinUnlock> {
+            PinUnlockScreen(onUnlocked = {
+                navController.navigate(Destination.Home) {
+                    popUpTo(Destination.PinUnlock) { inclusive = true }
+                }
+            })
+        }
+
         composable<Destination.Home> {
-            HomePlaceholderScreen()
+            HomeScreen()
         }
     }
 }

@@ -31,6 +31,12 @@
     <string name="setup_complete_subtitle">Start recording your money flow.</string>
     <string name="setup_complete_cta">Open Flowta</string>
 
+    <!-- PIN Unlock -->
+    <string name="pin_unlock_title">Enter your PIN</string>
+    <string name="pin_unlock_subtitle">Unlock Flowta to continue</string>
+    <string name="pin_unlock_incorrect">Incorrect PIN. Try again.</string>
+    <string name="pin_unlock_unexpected">Something went wrong. Try again.</string>
+
     <!-- Currencies -->
     <string name="currency_kes">Kenyan Shilling (KES)</string>
     <string name="currency_ugx">Ugandan Shilling (UGX)</string>
@@ -38,6 +44,20 @@
     <string name="currency_rwf">Rwandan Franc (RWF)</string>
     <string name="currency_usd">US Dollar (USD)</string>
 
-    <!-- Home placeholder -->
-    <string name="home_placeholder_title">Home coming soon</string>
+    <!-- Home tabs -->
+    <string name="home_tab_wallets">Wallets</string>
+    <string name="home_tab_history">History</string>
+    <string name="home_tab_insights">Insights</string>
+
+    <!-- Wallets empty -->
+    <string name="wallets_empty_title">No wallets yet</string>
+    <string name="wallets_empty_message">Add cash, M-Pesa, or a bank account to start tracking where your money lives.</string>
+
+    <!-- History empty -->
+    <string name="history_empty_title">No transactions yet</string>
+    <string name="history_empty_message">Record a sale or expense and it will appear here.</string>
+
+    <!-- Insights empty -->
+    <string name="insights_empty_title">Insights are on the way</string>
+    <string name="insights_empty_message">Record some transactions and Flowta will show how your business is flowing.</string>
 </resources>

@@ -20,14 +20,16 @@ import com.flowgroup.flowta.ui.viewmodel.SplashViewModel
 @Composable
 fun SplashRoute(
     onToOnboarding: () -> Unit,
-    onToHome: () -> Unit,
+    onToSetPin: () -> Unit,
+    onToUnlock: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(viewModel) {
         viewModel.destination.collect { destination ->
             when (destination) {
                 SplashViewModel.SplashDestination.Onboarding -> onToOnboarding()
-                SplashViewModel.SplashDestination.Home -> onToHome()
+                SplashViewModel.SplashDestination.SetPin -> onToSetPin()
+                SplashViewModel.SplashDestination.Unlock -> onToUnlock()
             }
         }
     }

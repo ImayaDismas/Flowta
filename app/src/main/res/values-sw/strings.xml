@@ -31,6 +31,12 @@
     <string name="setup_complete_subtitle">Anza kurekodi mtiririko wa pesa yako.</string>
     <string name="setup_complete_cta">Fungua Flowta</string>
 
+    <!-- PIN Unlock -->
+    <string name="pin_unlock_title">Weka PIN yako</string>
+    <string name="pin_unlock_subtitle">Fungua Flowta kuendelea</string>
+    <string name="pin_unlock_incorrect">PIN si sahihi. Jaribu tena.</string>
+    <string name="pin_unlock_unexpected">Hitilafu imetokea. Jaribu tena.</string>
+
     <!-- Currencies -->
     <string name="currency_kes">Shilingi ya Kenya (KES)</string>
     <string name="currency_ugx">Shilingi ya Uganda (UGX)</string>
@@ -38,6 +44,20 @@
     <string name="currency_rwf">Faranga ya Rwanda (RWF)</string>
     <string name="currency_usd">Dola ya Marekani (USD)</string>
 
-    <!-- Home placeholder -->
-    <string name="home_placeholder_title">Nyumbani inakuja hivi karibuni</string>
+    <!-- Home tabs -->
+    <string name="home_tab_wallets">Pochi</string>
+    <string name="home_tab_history">Historia</string>
+    <string name="home_tab_insights">Maarifa</string>
+
+    <!-- Wallets empty -->
+    <string name="wallets_empty_title">Bado huna pochi</string>
+    <string name="wallets_empty_message">Ongeza pesa taslimu, M-Pesa, au akaunti ya benki ili kuanza kufuatilia pesa zako ziko wapi.</string>
+
+    <!-- History empty -->
+    <string name="history_empty_title">Bado hakuna miamala</string>
+    <string name="history_empty_message">Rekodi mauzo au matumizi na yataonekana hapa.</string>
+
+    <!-- Insights empty -->
+    <string name="insights_empty_title">Maarifa yanakuja</string>
+    <string name="insights_empty_message">Rekodi miamala michache na Flowta itakuonyesha jinsi biashara yako inavyoendelea.</string>
 </resources>
