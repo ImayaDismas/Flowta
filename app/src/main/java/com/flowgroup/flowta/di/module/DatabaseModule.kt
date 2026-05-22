@@ -1,0 +1,35 @@
+package com.flowgroup.flowta.di.module
+
+import android.content.Context
+import androidx.room.Room
+import com.flowgroup.flowta.data.datasource.local.FlowtaDatabase
+import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
+import com.flowgroup.flowta.data.datasource.local.security.DatabaseKeyProvider
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
+
+    @Provides
+    @Singleton
+    fun provideFlowtaDatabase(
+        @ApplicationContext context: Context,
+        keyProvider: DatabaseKeyProvider,
+    ): FlowtaDatabase {
+        val passphrase = keyProvider.obtainPassphrase()
+        val factory = SupportOpenHelperFactory(passphrase)
+        return Room.databaseBuilder(context, FlowtaDatabase::class.java, FlowtaDatabase.DATABASE_NAME)
+            .openHelperFactory(factory)
+            .build()
+    }
+
+    @Provides
+    fun provideBusinessDao(database: FlowtaDatabase): BusinessDao = database.businessDao()
+}

@@ -26,3 +26,9 @@ scripts/
 concept/
 examples/
 CLAUDE.md
+
+# Local environment overrides
+.env
+.env.*
+.mcp-credentials
+local.properties
