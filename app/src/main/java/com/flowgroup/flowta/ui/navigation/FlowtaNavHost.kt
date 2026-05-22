@@ -11,6 +11,7 @@ import com.flowgroup.flowta.ui.screen.onboarding.AddBusinessScreen
 import com.flowgroup.flowta.ui.screen.onboarding.GetStartedScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetPinScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetupCompleteScreen
+import com.flowgroup.flowta.ui.screen.transaction.RecordTransactionScreen
 import com.flowgroup.flowta.ui.screen.unlock.PinUnlockScreen
 import com.flowgroup.flowta.ui.screen.wallet.AddWalletScreen
 
@@ -77,6 +78,7 @@ fun FlowtaNavHost(
         composable<Destination.Home> {
             HomeScreen(
                 onAddWallet = { navController.navigate(Destination.AddWallet) },
+                onRecordTransaction = { navController.navigate(Destination.RecordTransaction) },
             )
         }
 
@@ -84,6 +86,18 @@ fun FlowtaNavHost(
             AddWalletScreen(
                 onClose = { navController.popBackStack() },
                 onCreated = { navController.popBackStack() },
+            )
+        }
+
+        composable<Destination.RecordTransaction> {
+            RecordTransactionScreen(
+                onClose = { navController.popBackStack() },
+                onRecorded = { navController.popBackStack() },
+                onAddWallet = {
+                    navController.navigate(Destination.AddWallet) {
+                        popUpTo(Destination.RecordTransaction) { inclusive = true }
+                    }
+                },
             )
         }
     }

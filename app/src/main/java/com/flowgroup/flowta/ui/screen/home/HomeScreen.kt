@@ -42,10 +42,15 @@ import com.flowgroup.flowta.ui.viewmodel.home.HomeViewModel
 @Composable
 fun HomeScreen(
     onAddWallet: () -> Unit,
+    onRecordTransaction: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    HomeContent(uiState = uiState, onAddWallet = onAddWallet)
+    HomeContent(
+        uiState = uiState,
+        onAddWallet = onAddWallet,
+        onRecordTransaction = onRecordTransaction,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,6 +58,7 @@ fun HomeScreen(
 private fun HomeContent(
     uiState: HomeUiState,
     onAddWallet: () -> Unit,
+    onRecordTransaction: () -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(HomeTab.Wallets) }
 
@@ -85,13 +91,20 @@ private fun HomeContent(
             )
         },
         floatingActionButton = {
-            if (selectedTab == HomeTab.Wallets) {
-                FloatingActionButton(onClick = onAddWallet) {
+            when (selectedTab) {
+                HomeTab.Wallets -> FloatingActionButton(onClick = onAddWallet) {
                     Icon(
                         imageVector = Icons.Outlined.Add,
                         contentDescription = stringResource(R.string.add_wallet_cta),
                     )
                 }
+                HomeTab.History -> FloatingActionButton(onClick = onRecordTransaction) {
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = stringResource(R.string.record_tx_title),
+                    )
+                }
+                HomeTab.Insights -> Unit
             }
         },
     ) { padding ->
@@ -148,6 +161,7 @@ private fun HomePreview() {
                 currency = CurrencyCode.KES,
             ),
             onAddWallet = {},
+            onRecordTransaction = {},
         )
     }
 }

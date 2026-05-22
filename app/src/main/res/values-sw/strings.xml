@@ -83,6 +83,21 @@
     <string name="history_empty_title">Bado hakuna miamala</string>
     <string name="history_empty_message">Rekodi mauzo au matumizi na yataonekana hapa.</string>
 
+    <!-- Record transaction -->
+    <string name="record_tx_title">Rekodi muamala</string>
+    <string name="record_tx_type_sale">Mauzo</string>
+    <string name="record_tx_type_expense">Matumizi</string>
+    <string name="record_tx_wallet_label">Pochi</string>
+    <string name="record_tx_amount_label">Kiasi (%1$s)</string>
+    <string name="record_tx_note_label">Maelezo (si lazima)</string>
+    <string name="record_tx_note_hint">k.m. Sukari × kilo 2</string>
+    <string name="record_tx_cta_sale">Rekodi mauzo</string>
+    <string name="record_tx_cta_expense">Rekodi matumizi</string>
+    <string name="record_tx_error_amount_required">Weka kiasi</string>
+    <string name="record_tx_error_amount_invalid">Kiasi lazima kiwe zaidi ya sifuri</string>
+    <string name="record_tx_no_wallets_title">Bado huna pochi</string>
+    <string name="record_tx_no_wallets_message">Ongeza pochi kabla ya kurekodi muamala wako wa kwanza.</string>
+
     <!-- Insights empty -->
     <string name="insights_empty_title">Maarifa yanakuja</string>
     <string name="insights_empty_message">Rekodi miamala michache na Flowta itakuonyesha jinsi biashara yako inavyoendelea.</string>

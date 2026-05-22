@@ -2,6 +2,7 @@ package com.flowgroup.flowta.data.datasource.local
 
 import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
 import com.flowgroup.flowta.data.model.entity.WalletEntity
+import com.flowgroup.flowta.data.model.entity.projection.WalletWithBalanceProjection
 import com.flowgroup.flowta.di.qualifier.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,9 @@ class WalletLocalDataSource @Inject constructor(
 ) {
     fun observeForBusiness(businessId: String): Flow<List<WalletEntity>> =
         dao.observeForBusiness(businessId).flowOn(ioDispatcher)
+
+    fun observeWithBalanceForBusiness(businessId: String): Flow<List<WalletWithBalanceProjection>> =
+        dao.observeWithBalanceForBusiness(businessId).flowOn(ioDispatcher)
 
     suspend fun getById(id: String): WalletEntity? =
         withContext(ioDispatcher) { dao.getById(id) }

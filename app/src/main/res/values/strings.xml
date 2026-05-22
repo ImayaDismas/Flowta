@@ -83,6 +83,21 @@
     <string name="history_empty_title">No transactions yet</string>
     <string name="history_empty_message">Record a sale or expense and it will appear here.</string>
 
+    <!-- Record transaction -->
+    <string name="record_tx_title">Record transaction</string>
+    <string name="record_tx_type_sale">Sale</string>
+    <string name="record_tx_type_expense">Expense</string>
+    <string name="record_tx_wallet_label">Wallet</string>
+    <string name="record_tx_amount_label">Amount (%1$s)</string>
+    <string name="record_tx_note_label">Note (optional)</string>
+    <string name="record_tx_note_hint">e.g. Sukari × 2 kilos</string>
+    <string name="record_tx_cta_sale">Record sale</string>
+    <string name="record_tx_cta_expense">Record expense</string>
+    <string name="record_tx_error_amount_required">Enter an amount</string>
+    <string name="record_tx_error_amount_invalid">Amount must be greater than zero</string>
+    <string name="record_tx_no_wallets_title">No wallets yet</string>
+    <string name="record_tx_no_wallets_message">Add a wallet before recording your first transaction.</string>
+
     <!-- Insights empty -->
     <string name="insights_empty_title">Insights are on the way</string>
     <string name="insights_empty_message">Record some transactions and Flowta will show how your business is flowing.</string>

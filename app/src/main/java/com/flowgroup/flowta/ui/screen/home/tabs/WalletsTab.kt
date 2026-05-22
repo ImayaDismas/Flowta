@@ -44,7 +44,7 @@ private fun WalletsTabContent(
             message = uiState.message.ifBlank { stringResource(R.string.wallets_empty_message) },
             modifier = modifier,
         )
-        is WalletsTabUiState.Content -> if (uiState.wallets.isEmpty()) {
+        is WalletsTabUiState.Content -> if (uiState.items.isEmpty()) {
             EmptyState(
                 icon = Icons.Outlined.AccountBalanceWallet,
                 title = stringResource(R.string.wallets_empty_title),
@@ -64,8 +64,8 @@ private fun WalletsTabContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                items(uiState.wallets, key = { it.id }) { wallet ->
-                    WalletListItem(wallet = wallet)
+                items(uiState.items, key = { it.wallet.id }) { item ->
+                    WalletListItem(item = item)
                 }
             }
         }

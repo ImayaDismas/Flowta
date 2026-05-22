@@ -2,6 +2,7 @@ package com.flowgroup.flowta.data.repository
 
 import com.flowgroup.flowta.data.datasource.local.WalletLocalDataSource
 import com.flowgroup.flowta.data.model.entity.WalletEntity
+import com.flowgroup.flowta.data.model.entity.projection.WalletWithBalanceProjection
 import com.flowgroup.flowta.data.model.mapper.toDomain
 import com.flowgroup.flowta.data.model.mapper.toEntity
 import com.flowgroup.flowta.domain.common.AppException
@@ -10,6 +11,7 @@ import com.flowgroup.flowta.domain.common.resultOf
 import com.flowgroup.flowta.domain.model.Money
 import com.flowgroup.flowta.domain.model.Wallet
 import com.flowgroup.flowta.domain.model.WalletType
+import com.flowgroup.flowta.domain.model.WalletWithBalance
 import com.flowgroup.flowta.domain.repository.WalletRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -29,6 +31,13 @@ class WalletRepositoryImpl @Inject constructor(
         local.observeForBusiness(businessId)
             .map<List<WalletEntity>, Result<List<Wallet>>> { entities ->
                 Result.Success(entities.map { it.toDomain() })
+            }
+            .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
+
+    override fun observeWithBalanceForBusiness(businessId: String): Flow<Result<List<WalletWithBalance>>> =
+        local.observeWithBalanceForBusiness(businessId)
+            .map<List<WalletWithBalanceProjection>, Result<List<WalletWithBalance>>> { rows ->
+                Result.Success(rows.map { it.toDomain() })
             }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
 

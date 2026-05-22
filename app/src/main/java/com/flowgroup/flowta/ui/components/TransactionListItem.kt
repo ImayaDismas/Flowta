@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountBalance
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.Payments
-import androidx.compose.material.icons.outlined.PhoneAndroid
+import androidx.compose.material.icons.automirrored.outlined.TrendingDown
+import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,17 +19,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.flowgroup.flowta.domain.model.WalletType
-import com.flowgroup.flowta.domain.model.WalletWithBalance
+import com.flowgroup.flowta.domain.model.TransactionType
+import com.flowgroup.flowta.domain.model.TransactionWithWallet
+import com.flowgroup.flowta.ui.theme.MoneyIn
+import com.flowgroup.flowta.ui.theme.MoneyOut
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
-fun WalletListItem(
-    item: WalletWithBalance,
+fun TransactionListItem(
+    item: TransactionWithWallet,
     modifier: Modifier = Modifier,
 ) {
-    val wallet = item.wallet
+    val isSale = item.transaction.type == TransactionType.SALE
+    val accent: Color = if (isSale) MoneyIn else MoneyOut
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
@@ -49,9 +52,10 @@ fun WalletListItem(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = wallet.type.icon(),
+                    imageVector = if (isSale) Icons.AutoMirrored.Outlined.TrendingUp
+                    else Icons.AutoMirrored.Outlined.TrendingDown,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = accent,
                 )
             }
             Column(
@@ -60,43 +64,35 @@ fun WalletListItem(
                     .weight(1f),
             ) {
                 Text(
-                    text = wallet.name,
+                    text = item.transaction.note?.takeIf { it.isNotBlank() } ?: item.walletName,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = wallet.type.displayName(),
+                    text = "${item.walletName} · ${formatOccurredAt(item)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Text(
-                text = formatBalance(item),
+                text = formatAmount(item),
                 style = MaterialTheme.typography.titleMedium,
-                color = if (item.currentBalanceMinor < 0L) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.onSurface,
+                color = accent,
             )
         }
     }
 }
 
-private fun formatBalance(item: WalletWithBalance): String {
-    val currency = item.wallet.openingBalance.currency.iso4217
-    return "${item.currentBalanceMinor} $currency"
+private fun formatAmount(item: TransactionWithWallet): String {
+    val sign = if (item.transaction.type == TransactionType.SALE) "+" else "-"
+    return "$sign${item.transaction.amount.minorUnits} ${item.transaction.amount.currency.iso4217}"
 }
 
-private fun WalletType.icon(): ImageVector = when (this) {
-    WalletType.CASH -> Icons.Outlined.Payments
-    WalletType.MPESA, WalletType.AIRTEL_MONEY, WalletType.T_KASH -> Icons.Outlined.PhoneAndroid
-    WalletType.BANK -> Icons.Outlined.AccountBalance
-    WalletType.OTHER -> Icons.Outlined.AccountBalanceWallet
-}
-
-private fun WalletType.displayName(): String = when (this) {
-    WalletType.CASH -> "Cash"
-    WalletType.MPESA -> "M-Pesa"
-    WalletType.AIRTEL_MONEY -> "Airtel Money"
-    WalletType.T_KASH -> "T-Kash"
-    WalletType.BANK -> "Bank"
-    WalletType.OTHER -> "Other"
+private fun formatOccurredAt(item: TransactionWithWallet): String {
+    val ldt = item.transaction.occurredAt.toLocalDateTime(TimeZone.currentSystemDefault())
+    val day = ldt.dayOfMonth.toString().padStart(2, '0')
+    val month = ldt.monthNumber.toString().padStart(2, '0')
+    val hour = ldt.hour.toString().padStart(2, '0')
+    val minute = ldt.minute.toString().padStart(2, '0')
+    return "$day/$month $hour:$minute"
 }

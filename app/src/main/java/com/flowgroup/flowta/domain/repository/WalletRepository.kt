@@ -4,10 +4,12 @@ import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.model.Money
 import com.flowgroup.flowta.domain.model.Wallet
 import com.flowgroup.flowta.domain.model.WalletType
+import com.flowgroup.flowta.domain.model.WalletWithBalance
 import kotlinx.coroutines.flow.Flow
 
 interface WalletRepository {
     fun observeForBusiness(businessId: String): Flow<Result<List<Wallet>>>
+    fun observeWithBalanceForBusiness(businessId: String): Flow<Result<List<WalletWithBalance>>>
     suspend fun getById(id: String): Result<Wallet?>
     suspend fun create(
         businessId: String,
