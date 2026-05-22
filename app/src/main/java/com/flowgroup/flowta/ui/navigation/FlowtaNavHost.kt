@@ -1,19 +1,16 @@
 package com.flowgroup.flowta.ui.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.flowgroup.flowta.ui.screen.HomePlaceholderScreen
+import com.flowgroup.flowta.ui.screen.SplashRoute
+import com.flowgroup.flowta.ui.screen.onboarding.AddBusinessScreen
+import com.flowgroup.flowta.ui.screen.onboarding.GetStartedScreen
+import com.flowgroup.flowta.ui.screen.onboarding.SetPinScreen
+import com.flowgroup.flowta.ui.screen.onboarding.SetupCompleteScreen
 
 @Composable
 fun FlowtaNavHost(
@@ -24,25 +21,46 @@ fun FlowtaNavHost(
         startDestination = Destination.Splash,
     ) {
         composable<Destination.Splash> {
-            SplashRoute()
+            SplashRoute(
+                onToOnboarding = {
+                    navController.navigate(Destination.GetStarted) {
+                        popUpTo(Destination.Splash) { inclusive = true }
+                    }
+                },
+                onToHome = {
+                    navController.navigate(Destination.Home) {
+                        popUpTo(Destination.Splash) { inclusive = true }
+                    }
+                },
+            )
         }
-    }
-}
 
-@Composable
-private fun SplashRoute() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = "Flowta", style = MaterialTheme.typography.displayLarge)
-        Text(
-            text = "Know your money flow",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        composable<Destination.GetStarted> {
+            GetStartedScreen(onContinue = { navController.navigate(Destination.AddBusiness) })
+        }
+
+        composable<Destination.AddBusiness> {
+            AddBusinessScreen(onNext = { navController.navigate(Destination.SetPin) })
+        }
+
+        composable<Destination.SetPin> {
+            SetPinScreen(onNext = {
+                navController.navigate(Destination.SetupComplete) {
+                    popUpTo(Destination.GetStarted) { inclusive = true }
+                }
+            })
+        }
+
+        composable<Destination.SetupComplete> {
+            SetupCompleteScreen(onOpenApp = {
+                navController.navigate(Destination.Home) {
+                    popUpTo(Destination.SetupComplete) { inclusive = true }
+                }
+            })
+        }
+
+        composable<Destination.Home> {
+            HomePlaceholderScreen()
+        }
     }
 }

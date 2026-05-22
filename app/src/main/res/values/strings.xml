@@ -1,3 +1,43 @@
 <resources>
     <string name="app_name">Flowta</string>
+    <string name="app_tagline">Know your money flow</string>
+
+    <!-- Common -->
+    <string name="common_continue">Continue</string>
+    <string name="common_back">Back</string>
+
+    <!-- Get Started -->
+    <string name="get_started_subtitle">Simple. Reliable. Offline.</string>
+    <string name="get_started_cta">Get started</string>
+
+    <!-- Add Business -->
+    <string name="add_business_title">Your business</string>
+    <string name="add_business_subtitle">What do you call it, and what currency do you trade in?</string>
+    <string name="add_business_name_label">Business name</string>
+    <string name="add_business_name_hint">e.g. Mama Lucy Kiosk</string>
+    <string name="add_business_currency_label">Currency</string>
+    <string name="add_business_error_blank">Please add your business name</string>
+    <string name="add_business_error_too_long">Name is too long (max 80 characters)</string>
+
+    <!-- Set PIN -->
+    <string name="set_pin_title_enter">Create your PIN</string>
+    <string name="set_pin_title_confirm">Confirm your PIN</string>
+    <string name="set_pin_subtitle">Choose a 4-digit code to lock the app</string>
+    <string name="set_pin_mismatch">PINs do not match. Try again.</string>
+    <string name="set_pin_backspace">Backspace</string>
+
+    <!-- Setup Complete -->
+    <string name="setup_complete_title">You\'re all set</string>
+    <string name="setup_complete_subtitle">Start recording your money flow.</string>
+    <string name="setup_complete_cta">Open Flowta</string>
+
+    <!-- Currencies -->
+    <string name="currency_kes">Kenyan Shilling (KES)</string>
+    <string name="currency_ugx">Ugandan Shilling (UGX)</string>
+    <string name="currency_tzs">Tanzanian Shilling (TZS)</string>
+    <string name="currency_rwf">Rwandan Franc (RWF)</string>
+    <string name="currency_usd">US Dollar (USD)</string>
+
+    <!-- Home placeholder -->
+    <string name="home_placeholder_title">Home coming soon</string>
 </resources>

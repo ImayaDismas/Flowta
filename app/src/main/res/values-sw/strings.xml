@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Flowta</string>
+    <string name="app_tagline">Jua mtiririko wa pesa yako</string>
+
+    <!-- Common -->
+    <string name="common_continue">Endelea</string>
+    <string name="common_back">Nyuma</string>
+
+    <!-- Get Started -->
+    <string name="get_started_subtitle">Rahisi. Ya kuaminika. Bila mtandao.</string>
+    <string name="get_started_cta">Anza</string>
+
+    <!-- Add Business -->
+    <string name="add_business_title">Biashara yako</string>
+    <string name="add_business_subtitle">Unaiitaje, na unafanya biashara kwa sarafu gani?</string>
+    <string name="add_business_name_label">Jina la biashara</string>
+    <string name="add_business_name_hint">k.m. Kiosk ya Mama Lucy</string>
+    <string name="add_business_currency_label">Sarafu</string>
+    <string name="add_business_error_blank">Tafadhali ongeza jina la biashara yako</string>
+    <string name="add_business_error_too_long">Jina ni refu mno (kiwango cha juu herufi 80)</string>
+
+    <!-- Set PIN -->
+    <string name="set_pin_title_enter">Tengeneza PIN yako</string>
+    <string name="set_pin_title_confirm">Thibitisha PIN yako</string>
+    <string name="set_pin_subtitle">Chagua nambari ya tarakimu 4 kufunga programu</string>
+    <string name="set_pin_mismatch">PIN hazifanani. Jaribu tena.</string>
+    <string name="set_pin_backspace">Futa</string>
+
+    <!-- Setup Complete -->
+    <string name="setup_complete_title">Umemaliza</string>
+    <string name="setup_complete_subtitle">Anza kurekodi mtiririko wa pesa yako.</string>
+    <string name="setup_complete_cta">Fungua Flowta</string>
+
+    <!-- Currencies -->
+    <string name="currency_kes">Shilingi ya Kenya (KES)</string>
+    <string name="currency_ugx">Shilingi ya Uganda (UGX)</string>
+    <string name="currency_tzs">Shilingi ya Tanzania (TZS)</string>
+    <string name="currency_rwf">Faranga ya Rwanda (RWF)</string>
+    <string name="currency_usd">Dola ya Marekani (USD)</string>
+
+    <!-- Home placeholder -->
+    <string name="home_placeholder_title">Nyumbani inakuja hivi karibuni</string>
+</resources>
