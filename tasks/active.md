@@ -12,7 +12,10 @@
 
 _None — Customer credit (deni) slice landed in `fcc7f2f` (2026-05-23). Pick next from Next Session._
 
-> Open follow-up: interactive in-app verification still pending for the wallet-detail, insights, transaction-detail, and **deni** flows — no device/emulator/AVD has been available. Verify on a device before treating any of these as user-tested. Deni reminders (WorkManager notification) especially need on-device confirmation.
+> Verification status (emulator API 36, 2026-05-23):
+> - **Deni** flows verified on-device: v3→v4 migration on existing data, notification-permission prompt, dashboard "owed to you" card updating reactively (0 → 5,000 → 3,000), add-customer (+initial credit), customer detail, and partial payment. **Still unconfirmed:** the reminder notification actually rendering — the `DeniReminderWorker` is scheduled (verified in jobscheduler) but couldn't be force-run via CLI; it fires on the daily cadence.
+> - **Still pending on-device:** wallet-detail/edit/delete, insights dashboard, and transaction-detail/edit/delete flows (build/test-verified only).
+> - Test data left on the emulator: customer "Mama Achieng" (KES 3,000); no delete-customer flow in v1.
 
 ---
 
