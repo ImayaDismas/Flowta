@@ -65,6 +65,7 @@ fun WalletDetailScreen(
     onEdit: (String) -> Unit,
     onRecordTransaction: () -> Unit,
     onViewAllHistory: () -> Unit,
+    onOpenTransaction: (String) -> Unit,
     viewModel: WalletDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -74,6 +75,7 @@ fun WalletDetailScreen(
         onEdit = { onEdit(viewModel.walletId) },
         onRecordTransaction = onRecordTransaction,
         onViewAllHistory = onViewAllHistory,
+        onOpenTransaction = onOpenTransaction,
     )
 }
 
@@ -85,6 +87,7 @@ private fun WalletDetailContent(
     onEdit: () -> Unit,
     onRecordTransaction: () -> Unit,
     onViewAllHistory: () -> Unit,
+    onOpenTransaction: (String) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -139,6 +142,7 @@ private fun WalletDetailContent(
                 is WalletDetailUiState.Content -> WalletDetailBody(
                     detail = uiState.detail,
                     onViewAllHistory = onViewAllHistory,
+                    onOpenTransaction = onOpenTransaction,
                 )
             }
         }
@@ -149,6 +153,7 @@ private fun WalletDetailContent(
 private fun WalletDetailBody(
     detail: WalletDetail,
     onViewAllHistory: () -> Unit,
+    onOpenTransaction: (String) -> Unit,
 ) {
     val wallet = detail.wallet
     val currency = wallet.openingBalance.currency
@@ -187,7 +192,10 @@ private fun WalletDetailBody(
             }
         } else {
             items(detail.recentTransactions, key = { it.transaction.id }) { item ->
-                TransactionListItem(item = item)
+                TransactionListItem(
+                    item = item,
+                    onClick = { onOpenTransaction(item.transaction.id) },
+                )
             }
         }
         item { Spacer(modifier = Modifier.height(72.dp)) }

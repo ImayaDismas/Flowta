@@ -154,4 +154,26 @@
     <string name="edit_wallet_delete_blocked_message">This wallet has %1$d transactions. Archive is coming in a future update.</string>
     <string name="edit_wallet_delete_blocked_cta">Got it</string>
     <string name="common_cancel">Cancel</string>
+
+    <!-- Transaction Detail -->
+    <string name="transaction_detail_title">Transaction details</string>
+    <string name="transaction_detail_edit">Edit transaction</string>
+    <string name="transaction_detail_delete">Delete transaction</string>
+    <string name="transaction_detail_amount_label">Transaction amount</string>
+    <string name="transaction_detail_datetime_label">Date &amp; time</string>
+    <string name="transaction_detail_wallet_label">Payment mode</string>
+    <string name="transaction_detail_type_label">Transaction type</string>
+    <string name="transaction_detail_reference_label">Reference ID</string>
+    <string name="transaction_detail_receipt_note">This is an automatically generated record for your books.</string>
+    <string name="transaction_detail_share">Share</string>
+    <string name="transaction_detail_share_coming_soon">Receipt sharing is coming soon.</string>
+    <string name="transaction_detail_delete_title">Delete this transaction?</string>
+    <string name="transaction_detail_delete_message">This will permanently remove it from your records.</string>
+    <string name="transaction_detail_delete_confirm">Delete</string>
+    <string name="transaction_detail_not_found_title">Transaction not found</string>
+    <string name="transaction_detail_not_found_message">It may have been removed.</string>
+
+    <!-- Edit Transaction -->
+    <string name="edit_tx_title">Edit transaction</string>
+    <string name="edit_tx_cta_save">Save changes</string>
 </resources>

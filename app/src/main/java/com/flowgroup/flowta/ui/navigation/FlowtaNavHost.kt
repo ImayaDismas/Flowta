@@ -11,7 +11,9 @@ import com.flowgroup.flowta.ui.screen.onboarding.AddBusinessScreen
 import com.flowgroup.flowta.ui.screen.onboarding.GetStartedScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetPinScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetupCompleteScreen
+import com.flowgroup.flowta.ui.screen.transaction.EditTransactionScreen
 import com.flowgroup.flowta.ui.screen.transaction.RecordTransactionScreen
+import com.flowgroup.flowta.ui.screen.transaction.TransactionDetailScreen
 import com.flowgroup.flowta.ui.screen.unlock.PinUnlockScreen
 import com.flowgroup.flowta.ui.screen.wallet.AddWalletScreen
 import com.flowgroup.flowta.ui.screen.wallet.EditWalletScreen
@@ -86,6 +88,9 @@ fun FlowtaNavHost(
                 onOpenWallet = { walletId ->
                     navController.navigate(Destination.WalletDetail(walletId))
                 },
+                onOpenTransaction = { transactionId ->
+                    navController.navigate(Destination.TransactionDetail(transactionId))
+                },
             )
         }
 
@@ -104,6 +109,9 @@ fun FlowtaNavHost(
                 },
                 onRecordTransaction = { navController.navigate(Destination.RecordTransaction) },
                 onViewAllHistory = { navController.popBackStack() },
+                onOpenTransaction = { transactionId ->
+                    navController.navigate(Destination.TransactionDetail(transactionId))
+                },
             )
         }
 
@@ -126,6 +134,22 @@ fun FlowtaNavHost(
                         popUpTo(Destination.RecordTransaction) { inclusive = true }
                     }
                 },
+            )
+        }
+
+        composable<Destination.TransactionDetail> {
+            TransactionDetailScreen(
+                onBack = { navController.popBackStack() },
+                onEdit = { transactionId ->
+                    navController.navigate(Destination.EditTransaction(transactionId))
+                },
+            )
+        }
+
+        composable<Destination.EditTransaction> {
+            EditTransactionScreen(
+                onBack = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
             )
         }
     }

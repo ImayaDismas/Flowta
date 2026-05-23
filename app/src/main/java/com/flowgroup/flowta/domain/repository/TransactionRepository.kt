@@ -17,6 +17,8 @@ interface TransactionRepository {
         endExclusive: Instant,
     ): Flow<Result<TransactionTotals>>
     fun observeRecentForWallet(walletId: String, limit: Int): Flow<Result<List<TransactionWithWallet>>>
+    fun observeByIdWithWallet(id: String): Flow<Result<TransactionWithWallet?>>
+    suspend fun getById(id: String): Result<Transaction?>
     fun observeCountForWallet(walletId: String): Flow<Result<Int>>
     suspend fun countForWallet(walletId: String): Result<Int>
     fun observeWalletTotalsBetween(
@@ -31,5 +33,12 @@ interface TransactionRepository {
         amount: Money,
         note: String?,
     ): Result<Transaction>
+    suspend fun update(
+        id: String,
+        walletId: String,
+        type: TransactionType,
+        amount: Money,
+        note: String?,
+    ): Result<Unit>
     suspend fun deleteById(id: String): Result<Unit>
 }

@@ -154,4 +154,26 @@
     <string name="edit_wallet_delete_blocked_message">Pochi hii ina miamala %1$d. Uwezo wa kuhifadhi (archive) unakuja katika sasisho lijalo.</string>
     <string name="edit_wallet_delete_blocked_cta">Nimeelewa</string>
     <string name="common_cancel">Ghairi</string>
+
+    <!-- Transaction Detail -->
+    <string name="transaction_detail_title">Maelezo ya muamala</string>
+    <string name="transaction_detail_edit">Hariri muamala</string>
+    <string name="transaction_detail_delete">Futa muamala</string>
+    <string name="transaction_detail_amount_label">Kiasi cha muamala</string>
+    <string name="transaction_detail_datetime_label">Tarehe na saa</string>
+    <string name="transaction_detail_wallet_label">Njia ya malipo</string>
+    <string name="transaction_detail_type_label">Aina ya muamala</string>
+    <string name="transaction_detail_reference_label">Kitambulisho</string>
+    <string name="transaction_detail_receipt_note">Hii ni rekodi iliyotengenezwa kiotomatiki kwa kumbukumbu zako.</string>
+    <string name="transaction_detail_share">Sambaza</string>
+    <string name="transaction_detail_share_coming_soon">Kusambaza risiti kunakuja hivi karibuni.</string>
+    <string name="transaction_detail_delete_title">Futa muamala huu?</string>
+    <string name="transaction_detail_delete_message">Hii itauondoa kabisa kutoka kwa rekodi zako.</string>
+    <string name="transaction_detail_delete_confirm">Futa</string>
+    <string name="transaction_detail_not_found_title">Muamala haukupatikana</string>
+    <string name="transaction_detail_not_found_message">Huenda uliondolewa.</string>
+
+    <!-- Edit Transaction -->
+    <string name="edit_tx_title">Hariri muamala</string>
+    <string name="edit_tx_cta_save">Hifadhi mabadiliko</string>
 </resources>

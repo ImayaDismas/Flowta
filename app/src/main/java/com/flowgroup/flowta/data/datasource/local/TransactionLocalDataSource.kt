@@ -38,6 +38,12 @@ class TransactionLocalDataSource @Inject constructor(
     ): Flow<List<TransactionWithWalletProjection>> =
         dao.observeRecentForWallet(walletId, limit).flowOn(ioDispatcher)
 
+    fun observeByIdWithWallet(id: String): Flow<TransactionWithWalletProjection?> =
+        dao.observeByIdWithWallet(id).flowOn(ioDispatcher)
+
+    suspend fun getById(id: String): TransactionEntity? =
+        withContext(ioDispatcher) { dao.getById(id) }
+
     fun observeCountForWallet(walletId: String): Flow<Int> =
         dao.observeCountForWallet(walletId).flowOn(ioDispatcher)
 

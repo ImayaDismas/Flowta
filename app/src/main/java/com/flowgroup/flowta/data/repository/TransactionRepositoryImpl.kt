@@ -57,6 +57,17 @@ class TransactionRepositoryImpl @Inject constructor(
             }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
 
+    override fun observeByIdWithWallet(id: String): Flow<Result<TransactionWithWallet?>> =
+        local.observeByIdWithWallet(id)
+            .map<TransactionWithWalletProjection?, Result<TransactionWithWallet?>> { row ->
+                Result.Success(row?.toDomain())
+            }
+            .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
+
+    override suspend fun getById(id: String): Result<Transaction?> = resultOf {
+        local.getById(id)?.toDomain()
+    }
+
     override fun observeCountForWallet(walletId: String): Flow<Result<Int>> =
         local.observeCountForWallet(walletId)
             .map<Int, Result<Int>> { Result.Success(it) }
@@ -110,6 +121,29 @@ class TransactionRepositoryImpl @Inject constructor(
         )
         local.upsert(transaction.toEntity())
         transaction
+    }
+
+    override suspend fun update(
+        id: String,
+        walletId: String,
+        type: TransactionType,
+        amount: Money,
+        note: String?,
+    ): Result<Unit> {
+        val existing = local.getById(id)
+            ?: return Result.Error(AppException.LocalException("Transaction not found"))
+        return resultOf {
+            local.upsert(
+                existing.copy(
+                    walletId = walletId,
+                    type = type,
+                    amountMinor = amount.minorUnits,
+                    currencyCode = amount.currency,
+                    note = note?.trim()?.takeIf { it.isNotEmpty() },
+                    updatedAt = clock.now(),
+                )
+            )
+        }
     }
 
     override suspend fun deleteById(id: String): Result<Unit> = resultOf {

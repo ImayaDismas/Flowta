@@ -22,16 +22,22 @@ import com.flowgroup.flowta.ui.viewmodel.home.HistoryTabViewModel
 
 @Composable
 fun HistoryTab(
+    onOpenTransaction: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HistoryTabViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    HistoryTabContent(uiState = uiState, modifier = modifier)
+    HistoryTabContent(
+        uiState = uiState,
+        onOpenTransaction = onOpenTransaction,
+        modifier = modifier,
+    )
 }
 
 @Composable
 private fun HistoryTabContent(
     uiState: HistoryTabUiState,
+    onOpenTransaction: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -56,7 +62,10 @@ private fun HistoryTabContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(uiState.items, key = { it.transaction.id }) { item ->
-                    TransactionListItem(item = item)
+                    TransactionListItem(
+                        item = item,
+                        onClick = { onOpenTransaction(item.transaction.id) },
+                    )
                 }
             }
         }
