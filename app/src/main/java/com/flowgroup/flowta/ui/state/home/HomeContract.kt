@@ -11,4 +11,4 @@ sealed class HomeUiState {
     data object MissingBusiness : HomeUiState()
 }
 
-enum class HomeTab { Wallets, History, Insights }
+enum class HomeTab { Dashboard, Wallets, Insights, History }

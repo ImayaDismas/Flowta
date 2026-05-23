@@ -45,9 +45,30 @@
     <string name="currency_usd">US Dollar (USD)</string>
 
     <!-- Home tabs -->
+    <string name="home_tab_dashboard">Home</string>
     <string name="home_tab_wallets">Wallets</string>
     <string name="home_tab_history">History</string>
     <string name="home_tab_insights">Insights</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_quick_actions">Quick Actions</string>
+    <string name="dashboard_action_record_sale">Record Sale</string>
+    <string name="dashboard_action_record_expense">Record Expense</string>
+    <string name="dashboard_action_new_wallet">New Wallet</string>
+    <string name="dashboard_action_record_salary">Record Salary</string>
+    <string name="dashboard_action_coming_soon">Soon</string>
+    <string name="dashboard_business_health">Business Health</string>
+    <string name="dashboard_period_this_week">This Week</string>
+    <string name="dashboard_revenue">Revenue</string>
+    <string name="dashboard_expenses">Expenses</string>
+    <string name="dashboard_wow_delta">%1$s vs Last Week</string>
+    <string name="dashboard_wow_delta_none">— vs Last Week</string>
+    <string name="dashboard_wallets_at_a_glance">Wallets at a Glance</string>
+    <string name="dashboard_see_all">See all</string>
+    <string name="dashboard_no_business_title">No business yet</string>
+    <string name="dashboard_no_business_message">Set up your business to start seeing your money flow.</string>
+    <string name="dashboard_error_title">Couldn\'t load your dashboard</string>
+    <string name="dashboard_error_message">Try again in a moment.</string>
 
     <!-- Wallets list -->
     <string name="wallets_section_title">Your wallets</string>
@@ -101,4 +122,36 @@
     <!-- Insights empty -->
     <string name="insights_empty_title">Insights are on the way</string>
     <string name="insights_empty_message">Record some transactions and Flowta will show how your business is flowing.</string>
+
+    <!-- Wallet Detail -->
+    <string name="wallet_detail_title">Wallet Details</string>
+    <string name="wallet_detail_edit">Edit wallet</string>
+    <string name="wallet_detail_balance_label">Current Balance</string>
+    <string name="wallet_detail_created_on">Created %1$s</string>
+    <string name="wallet_detail_this_week_in">In this week</string>
+    <string name="wallet_detail_this_week_out">Out this week</string>
+    <string name="wallet_detail_recent">Recent Transactions</string>
+    <string name="wallet_detail_view_all">View All</string>
+    <string name="wallet_detail_recent_empty">No transactions on this wallet yet.</string>
+    <string name="wallet_detail_record">Record transaction</string>
+    <string name="wallet_detail_not_found_title">Wallet not found</string>
+    <string name="wallet_detail_not_found_message">It may have been removed.</string>
+
+    <!-- Edit Wallet -->
+    <string name="edit_wallet_title">Edit Wallet</string>
+    <string name="edit_wallet_name_label">Wallet name</string>
+    <string name="edit_wallet_type_label">Type</string>
+    <string name="edit_wallet_opening_balance_label">Opening balance</string>
+    <string name="edit_wallet_opening_balance_hint">Locked to keep your history accurate.</string>
+    <string name="edit_wallet_save">Save changes</string>
+    <string name="edit_wallet_delete">Delete wallet</string>
+    <string name="edit_wallet_error_name_blank">Please give this wallet a name</string>
+    <string name="edit_wallet_error_name_too_long">Name is too long (max 80 characters)</string>
+    <string name="edit_wallet_delete_confirm_title">Delete this wallet?</string>
+    <string name="edit_wallet_delete_confirm_message">This wallet has no transactions. It will be removed permanently.</string>
+    <string name="edit_wallet_delete_confirm_cta">Delete</string>
+    <string name="edit_wallet_delete_blocked_title">Can\'t delete this wallet</string>
+    <string name="edit_wallet_delete_blocked_message">This wallet has %1$d transactions. Archive is coming in a future update.</string>
+    <string name="edit_wallet_delete_blocked_cta">Got it</string>
+    <string name="common_cancel">Cancel</string>
 </resources>

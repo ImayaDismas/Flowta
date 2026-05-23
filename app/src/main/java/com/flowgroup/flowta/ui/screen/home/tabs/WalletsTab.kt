@@ -25,15 +25,17 @@ import com.flowgroup.flowta.ui.viewmodel.home.WalletsTabViewModel
 @Composable
 fun WalletsTab(
     modifier: Modifier = Modifier,
+    onOpenWallet: (String) -> Unit = {},
     viewModel: WalletsTabViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    WalletsTabContent(uiState = uiState, modifier = modifier)
+    WalletsTabContent(uiState = uiState, onOpenWallet = onOpenWallet, modifier = modifier)
 }
 
 @Composable
 private fun WalletsTabContent(
     uiState: WalletsTabUiState,
+    onOpenWallet: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -65,7 +67,7 @@ private fun WalletsTabContent(
                     )
                 }
                 items(uiState.items, key = { it.wallet.id }) { item ->
-                    WalletListItem(item = item)
+                    WalletListItem(item = item, onClick = { onOpenWallet(item.wallet.id) })
                 }
             }
         }

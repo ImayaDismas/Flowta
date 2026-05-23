@@ -11,5 +11,7 @@ sealed interface Destination {
     @Serializable data object PinUnlock : Destination
     @Serializable data object Home : Destination
     @Serializable data object AddWallet : Destination
+    @Serializable data class WalletDetail(val walletId: String) : Destination
+    @Serializable data class EditWallet(val walletId: String) : Destination
     @Serializable data object RecordTransaction : Destination
 }

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowgroup.flowta.R
 import com.flowgroup.flowta.domain.model.CurrencyCode
+import com.flowgroup.flowta.ui.screen.home.tabs.DashboardTab
 import com.flowgroup.flowta.ui.screen.home.tabs.HistoryTab
 import com.flowgroup.flowta.ui.screen.home.tabs.InsightsTab
 import com.flowgroup.flowta.ui.screen.home.tabs.WalletsTab
@@ -42,14 +44,20 @@ import com.flowgroup.flowta.ui.viewmodel.home.HomeViewModel
 @Composable
 fun HomeScreen(
     onAddWallet: () -> Unit,
+    onRecordSale: () -> Unit,
+    onRecordExpense: () -> Unit,
     onRecordTransaction: () -> Unit,
+    onOpenWallet: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     HomeContent(
         uiState = uiState,
         onAddWallet = onAddWallet,
+        onRecordSale = onRecordSale,
+        onRecordExpense = onRecordExpense,
         onRecordTransaction = onRecordTransaction,
+        onOpenWallet = onOpenWallet,
     )
 }
 
@@ -58,9 +66,12 @@ fun HomeScreen(
 private fun HomeContent(
     uiState: HomeUiState,
     onAddWallet: () -> Unit,
+    onRecordSale: () -> Unit,
+    onRecordExpense: () -> Unit,
     onRecordTransaction: () -> Unit,
+    onOpenWallet: (String) -> Unit,
 ) {
-    var selectedTab by rememberSaveable { mutableStateOf(HomeTab.Wallets) }
+    var selectedTab by rememberSaveable { mutableStateOf(HomeTab.Dashboard) }
 
     Scaffold(
         topBar = {
@@ -92,6 +103,7 @@ private fun HomeContent(
         },
         floatingActionButton = {
             when (selectedTab) {
+                HomeTab.Dashboard -> Unit
                 HomeTab.Wallets -> FloatingActionButton(onClick = onAddWallet) {
                     Icon(
                         imageVector = Icons.Outlined.Add,
@@ -114,7 +126,14 @@ private fun HomeContent(
                 .padding(padding),
         ) {
             when (selectedTab) {
-                HomeTab.Wallets -> WalletsTab()
+                HomeTab.Dashboard -> DashboardTab(
+                    onRecordSale = onRecordSale,
+                    onRecordExpense = onRecordExpense,
+                    onAddWallet = onAddWallet,
+                    onSeeAllWallets = { selectedTab = HomeTab.Wallets },
+                    onOpenWallet = onOpenWallet,
+                )
+                HomeTab.Wallets -> WalletsTab(onOpenWallet = onOpenWallet)
                 HomeTab.History -> HistoryTab()
                 HomeTab.Insights -> InsightsTab()
             }
@@ -140,15 +159,17 @@ private fun HomeBottomBar(
 }
 
 private fun HomeTab.icon(): ImageVector = when (this) {
+    HomeTab.Dashboard -> Icons.Outlined.Home
     HomeTab.Wallets -> Icons.Outlined.AccountBalanceWallet
-    HomeTab.History -> Icons.AutoMirrored.Outlined.ReceiptLong
     HomeTab.Insights -> Icons.Outlined.Insights
+    HomeTab.History -> Icons.AutoMirrored.Outlined.ReceiptLong
 }
 
 private fun HomeTab.labelRes(): Int = when (this) {
+    HomeTab.Dashboard -> R.string.home_tab_dashboard
     HomeTab.Wallets -> R.string.home_tab_wallets
-    HomeTab.History -> R.string.home_tab_history
     HomeTab.Insights -> R.string.home_tab_insights
+    HomeTab.History -> R.string.home_tab_history
 }
 
 @Preview(showBackground = true, widthDp = 390, heightDp = 844)
@@ -161,7 +182,10 @@ private fun HomePreview() {
                 currency = CurrencyCode.KES,
             ),
             onAddWallet = {},
+            onRecordSale = {},
+            onRecordExpense = {},
             onRecordTransaction = {},
+            onOpenWallet = {},
         )
     }
 }

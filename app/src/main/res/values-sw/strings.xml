@@ -45,9 +45,30 @@
     <string name="currency_usd">Dola ya Marekani (USD)</string>
 
     <!-- Home tabs -->
+    <string name="home_tab_dashboard">Nyumbani</string>
     <string name="home_tab_wallets">Pochi</string>
     <string name="home_tab_history">Historia</string>
     <string name="home_tab_insights">Maarifa</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_quick_actions">Vitendo vya Haraka</string>
+    <string name="dashboard_action_record_sale">Rekodi Mauzo</string>
+    <string name="dashboard_action_record_expense">Rekodi Matumizi</string>
+    <string name="dashboard_action_new_wallet">Pochi Mpya</string>
+    <string name="dashboard_action_record_salary">Rekodi Mshahara</string>
+    <string name="dashboard_action_coming_soon">Hivi Karibuni</string>
+    <string name="dashboard_business_health">Afya ya Biashara</string>
+    <string name="dashboard_period_this_week">Wiki Hii</string>
+    <string name="dashboard_revenue">Mapato</string>
+    <string name="dashboard_expenses">Matumizi</string>
+    <string name="dashboard_wow_delta">%1$s dhidi ya wiki iliyopita</string>
+    <string name="dashboard_wow_delta_none">— dhidi ya wiki iliyopita</string>
+    <string name="dashboard_wallets_at_a_glance">Pochi kwa Muhtasari</string>
+    <string name="dashboard_see_all">Ona zote</string>
+    <string name="dashboard_no_business_title">Bado hakuna biashara</string>
+    <string name="dashboard_no_business_message">Sajili biashara yako kuanza kuona mtiririko wa pesa.</string>
+    <string name="dashboard_error_title">Imeshindikana kupakia dashibodi</string>
+    <string name="dashboard_error_message">Jaribu tena baada ya muda mfupi.</string>
 
     <!-- Wallets list -->
     <string name="wallets_section_title">Pochi zako</string>
@@ -101,4 +122,36 @@
     <!-- Insights empty -->
     <string name="insights_empty_title">Maarifa yanakuja</string>
     <string name="insights_empty_message">Rekodi miamala michache na Flowta itakuonyesha jinsi biashara yako inavyoendelea.</string>
+
+    <!-- Wallet Detail -->
+    <string name="wallet_detail_title">Maelezo ya Pochi</string>
+    <string name="wallet_detail_edit">Hariri pochi</string>
+    <string name="wallet_detail_balance_label">Salio la Sasa</string>
+    <string name="wallet_detail_created_on">Imeundwa %1$s</string>
+    <string name="wallet_detail_this_week_in">Imeingia wiki hii</string>
+    <string name="wallet_detail_this_week_out">Imetoka wiki hii</string>
+    <string name="wallet_detail_recent">Miamala ya Hivi Karibuni</string>
+    <string name="wallet_detail_view_all">Ona zote</string>
+    <string name="wallet_detail_recent_empty">Hakuna miamala bado kwenye pochi hii.</string>
+    <string name="wallet_detail_record">Rekodi muamala</string>
+    <string name="wallet_detail_not_found_title">Pochi haikupatikana</string>
+    <string name="wallet_detail_not_found_message">Huenda iliondolewa.</string>
+
+    <!-- Edit Wallet -->
+    <string name="edit_wallet_title">Hariri Pochi</string>
+    <string name="edit_wallet_name_label">Jina la pochi</string>
+    <string name="edit_wallet_type_label">Aina</string>
+    <string name="edit_wallet_opening_balance_label">Salio la kuanzia</string>
+    <string name="edit_wallet_opening_balance_hint">Limefungwa ili historia yako ibaki sahihi.</string>
+    <string name="edit_wallet_save">Hifadhi mabadiliko</string>
+    <string name="edit_wallet_delete">Futa pochi</string>
+    <string name="edit_wallet_error_name_blank">Tafadhali ipe pochi hii jina</string>
+    <string name="edit_wallet_error_name_too_long">Jina ni refu mno (kiwango cha juu herufi 80)</string>
+    <string name="edit_wallet_delete_confirm_title">Futa pochi hii?</string>
+    <string name="edit_wallet_delete_confirm_message">Pochi hii haina miamala. Itaondolewa kabisa.</string>
+    <string name="edit_wallet_delete_confirm_cta">Futa</string>
+    <string name="edit_wallet_delete_blocked_title">Haiwezekani kufuta</string>
+    <string name="edit_wallet_delete_blocked_message">Pochi hii ina miamala %1$d. Uwezo wa kuhifadhi (archive) unakuja katika sasisho lijalo.</string>
+    <string name="edit_wallet_delete_blocked_cta">Nimeelewa</string>
+    <string name="common_cancel">Ghairi</string>
 </resources>

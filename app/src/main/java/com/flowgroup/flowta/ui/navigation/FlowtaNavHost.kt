@@ -14,6 +14,8 @@ import com.flowgroup.flowta.ui.screen.onboarding.SetupCompleteScreen
 import com.flowgroup.flowta.ui.screen.transaction.RecordTransactionScreen
 import com.flowgroup.flowta.ui.screen.unlock.PinUnlockScreen
 import com.flowgroup.flowta.ui.screen.wallet.AddWalletScreen
+import com.flowgroup.flowta.ui.screen.wallet.EditWalletScreen
+import com.flowgroup.flowta.ui.screen.wallet.WalletDetailScreen
 
 @Composable
 fun FlowtaNavHost(
@@ -78,7 +80,12 @@ fun FlowtaNavHost(
         composable<Destination.Home> {
             HomeScreen(
                 onAddWallet = { navController.navigate(Destination.AddWallet) },
+                onRecordSale = { navController.navigate(Destination.RecordTransaction) },
+                onRecordExpense = { navController.navigate(Destination.RecordTransaction) },
                 onRecordTransaction = { navController.navigate(Destination.RecordTransaction) },
+                onOpenWallet = { walletId ->
+                    navController.navigate(Destination.WalletDetail(walletId))
+                },
             )
         }
 
@@ -86,6 +93,27 @@ fun FlowtaNavHost(
             AddWalletScreen(
                 onClose = { navController.popBackStack() },
                 onCreated = { navController.popBackStack() },
+            )
+        }
+
+        composable<Destination.WalletDetail> {
+            WalletDetailScreen(
+                onBack = { navController.popBackStack() },
+                onEdit = { walletId ->
+                    navController.navigate(Destination.EditWallet(walletId))
+                },
+                onRecordTransaction = { navController.navigate(Destination.RecordTransaction) },
+                onViewAllHistory = { navController.popBackStack() },
+            )
+        }
+
+        composable<Destination.EditWallet> {
+            EditWalletScreen(
+                onBack = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
+                onDeleted = {
+                    navController.popBackStack(Destination.Home, inclusive = false)
+                },
             )
         }
 

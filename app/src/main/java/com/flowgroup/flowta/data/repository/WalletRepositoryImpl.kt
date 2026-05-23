@@ -41,8 +41,26 @@ class WalletRepositoryImpl @Inject constructor(
             }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
 
+    override fun observeById(id: String): Flow<Result<Wallet?>> =
+        local.observeById(id)
+            .map<WalletEntity?, Result<Wallet?>> { entity ->
+                Result.Success(entity?.toDomain())
+            }
+            .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
+
+    override fun observeWithBalanceById(id: String): Flow<Result<WalletWithBalance?>> =
+        local.observeWithBalanceById(id)
+            .map<WalletWithBalanceProjection?, Result<WalletWithBalance?>> { projection ->
+                Result.Success(projection?.toDomain())
+            }
+            .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
+
     override suspend fun getById(id: String): Result<Wallet?> = resultOf {
         local.getById(id)?.toDomain()
+    }
+
+    override suspend fun update(id: String, name: String, type: WalletType): Result<Unit> = resultOf {
+        local.updateNameAndType(id = id, name = name.trim(), type = type, updatedAt = clock.now())
     }
 
     override suspend fun create(

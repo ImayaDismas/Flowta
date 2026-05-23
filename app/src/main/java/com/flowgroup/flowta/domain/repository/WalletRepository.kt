@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface WalletRepository {
     fun observeForBusiness(businessId: String): Flow<Result<List<Wallet>>>
     fun observeWithBalanceForBusiness(businessId: String): Flow<Result<List<WalletWithBalance>>>
+    fun observeById(id: String): Flow<Result<Wallet?>>
+    fun observeWithBalanceById(id: String): Flow<Result<WalletWithBalance?>>
     suspend fun getById(id: String): Result<Wallet?>
     suspend fun create(
         businessId: String,
@@ -17,5 +19,6 @@ interface WalletRepository {
         type: WalletType,
         openingBalance: Money,
     ): Result<Wallet>
+    suspend fun update(id: String, name: String, type: WalletType): Result<Unit>
     suspend fun deleteById(id: String): Result<Unit>
 }
