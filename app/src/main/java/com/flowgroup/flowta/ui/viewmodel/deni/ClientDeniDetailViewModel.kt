@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.usecase.deni.RecordDeniCreditUseCase
 import com.flowgroup.flowta.domain.usecase.deni.RecordDeniPaymentUseCase
-import com.flowgroup.flowta.domain.usecase.deni.ObserveCustomerDeniUseCase
-import com.flowgroup.flowta.ui.state.deni.CustomerDeniDetailEvent
-import com.flowgroup.flowta.ui.state.deni.CustomerDeniDetailUiState
+import com.flowgroup.flowta.domain.usecase.deni.ObserveClientDeniUseCase
+import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailEvent
+import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,57 +18,57 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CustomerDeniDetailViewModel @Inject constructor(
+class ClientDeniDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    observeCustomerDeni: ObserveCustomerDeniUseCase,
+    observeClientDeni: ObserveClientDeniUseCase,
     private val recordCredit: RecordDeniCreditUseCase,
     private val recordPayment: RecordDeniPaymentUseCase,
 ) : ViewModel() {
 
-    val customerId: String = checkNotNull(savedStateHandle.get<String>("customerId"))
+    val clientId: String = checkNotNull(savedStateHandle.get<String>("clientId"))
 
-    private val _uiState = MutableStateFlow<CustomerDeniDetailUiState>(CustomerDeniDetailUiState.Loading)
-    val uiState: StateFlow<CustomerDeniDetailUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<ClientDeniDetailUiState>(ClientDeniDetailUiState.Loading)
+    val uiState: StateFlow<ClientDeniDetailUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            observeCustomerDeni(customerId).collect { result ->
+            observeClientDeni(clientId).collect { result ->
                 _uiState.update { current ->
                     when (result) {
                         is Result.Success -> result.data?.let { detail ->
-                            (current as? CustomerDeniDetailUiState.Content)?.copy(detail = detail)
-                                ?: CustomerDeniDetailUiState.Content(detail)
-                        } ?: CustomerDeniDetailUiState.NotFound
-                        is Result.Error -> CustomerDeniDetailUiState.Error(result.exception.message.orEmpty())
+                            (current as? ClientDeniDetailUiState.Content)?.copy(detail = detail)
+                                ?: ClientDeniDetailUiState.Content(detail)
+                        } ?: ClientDeniDetailUiState.NotFound
+                        is Result.Error -> ClientDeniDetailUiState.Error(result.exception.message.orEmpty())
                     }
                 }
             }
         }
     }
 
-    fun onEvent(event: CustomerDeniDetailEvent) {
+    fun onEvent(event: ClientDeniDetailEvent) {
         when (event) {
-            CustomerDeniDetailEvent.AddCreditClicked -> openDialog(CustomerDeniDetailUiState.Content.Dialog.CREDIT)
-            CustomerDeniDetailEvent.RecordPaymentClicked -> openDialog(CustomerDeniDetailUiState.Content.Dialog.PAYMENT)
-            CustomerDeniDetailEvent.DialogDismissed -> updateContent {
+            ClientDeniDetailEvent.AddCreditClicked -> openDialog(ClientDeniDetailUiState.Content.Dialog.CREDIT)
+            ClientDeniDetailEvent.RecordPaymentClicked -> openDialog(ClientDeniDetailUiState.Content.Dialog.PAYMENT)
+            ClientDeniDetailEvent.DialogDismissed -> updateContent {
                 it.copy(dialog = null, amountInput = "", noteInput = "", amountError = false, submitError = null)
             }
-            is CustomerDeniDetailEvent.AmountChanged -> updateContent {
+            is ClientDeniDetailEvent.AmountChanged -> updateContent {
                 it.copy(amountInput = event.input.filter { c -> c.isDigit() }, amountError = false, submitError = null)
             }
-            is CustomerDeniDetailEvent.NoteChanged -> updateContent {
+            is ClientDeniDetailEvent.NoteChanged -> updateContent {
                 it.copy(noteInput = event.note.take(MAX_NOTE_LENGTH))
             }
-            CustomerDeniDetailEvent.DialogConfirmed -> confirm()
+            ClientDeniDetailEvent.DialogConfirmed -> confirm()
         }
     }
 
-    private fun openDialog(dialog: CustomerDeniDetailUiState.Content.Dialog) = updateContent {
+    private fun openDialog(dialog: ClientDeniDetailUiState.Content.Dialog) = updateContent {
         it.copy(dialog = dialog, amountInput = "", noteInput = "", amountError = false, submitError = null)
     }
 
     private fun confirm() {
-        val current = _uiState.value as? CustomerDeniDetailUiState.Content ?: return
+        val current = _uiState.value as? ClientDeniDetailUiState.Content ?: return
         val dialog = current.dialog ?: return
         if (current.isSubmitting) return
 
@@ -82,8 +82,8 @@ class CustomerDeniDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val note = current.noteInput
             val result = when (dialog) {
-                CustomerDeniDetailUiState.Content.Dialog.CREDIT -> recordCredit(customerId, amount, note)
-                CustomerDeniDetailUiState.Content.Dialog.PAYMENT -> recordPayment(customerId, amount, note)
+                ClientDeniDetailUiState.Content.Dialog.CREDIT -> recordCredit(clientId, amount, note)
+                ClientDeniDetailUiState.Content.Dialog.PAYMENT -> recordPayment(clientId, amount, note)
             }
             when (result) {
                 is Result.Success -> updateContent {
@@ -104,11 +104,11 @@ class CustomerDeniDetailViewModel @Inject constructor(
     }
 
     private inline fun updateContent(
-        block: (CustomerDeniDetailUiState.Content) -> CustomerDeniDetailUiState.Content,
+        block: (ClientDeniDetailUiState.Content) -> ClientDeniDetailUiState.Content,
     ) {
         _uiState.update { state ->
             when (state) {
-                is CustomerDeniDetailUiState.Content -> block(state)
+                is ClientDeniDetailUiState.Content -> block(state)
                 else -> state
             }
         }

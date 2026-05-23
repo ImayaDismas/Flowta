@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 data class DeniEntry(
     val id: String,
     val businessId: String,
-    val customerId: String,
+    val clientId: String,
     val type: DeniEntryType,
     val amount: Money,
     val note: String?,

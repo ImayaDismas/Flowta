@@ -12,23 +12,23 @@ class RecordDeniCreditUseCase @Inject constructor(
     private val deniRepository: DeniRepository,
 ) {
     suspend operator fun invoke(
-        customerId: String,
+        clientId: String,
         amountMinor: Long,
         note: String?,
     ): Result<DeniEntry> {
         if (amountMinor <= 0L) {
             return Result.Error(AppException.LocalException("Amount must be greater than zero"))
         }
-        val customer = when (val r = deniRepository.getCustomer(customerId)) {
+        val client = when (val r = deniRepository.getClient(clientId)) {
             is Result.Success -> r.data
-                ?: return Result.Error(AppException.LocalException("Customer not found"))
+                ?: return Result.Error(AppException.LocalException("Client not found"))
             is Result.Error -> return r
         }
         return deniRepository.recordEntry(
-            businessId = customer.businessId,
-            customerId = customerId,
+            businessId = client.businessId,
+            clientId = clientId,
             type = DeniEntryType.CREDIT,
-            amount = Money(amountMinor, customer.currency),
+            amount = Money(amountMinor, client.currency),
             note = note,
         )
     }

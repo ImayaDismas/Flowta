@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowgroup.flowta.R
 import com.flowgroup.flowta.domain.model.CurrencyCode
-import com.flowgroup.flowta.domain.model.CustomerDeni
+import com.flowgroup.flowta.domain.model.ClientDeni
 import com.flowgroup.flowta.ui.components.EmptyState
 import com.flowgroup.flowta.ui.state.deni.DeniListUiState
 import com.flowgroup.flowta.ui.viewmodel.deni.DeniListViewModel
@@ -42,16 +42,16 @@ import com.flowgroup.flowta.ui.viewmodel.deni.DeniListViewModel
 @Composable
 fun DeniListScreen(
     onBack: () -> Unit,
-    onAddCustomer: () -> Unit,
-    onOpenCustomer: (String) -> Unit,
+    onAddClient: () -> Unit,
+    onOpenClient: (String) -> Unit,
     viewModel: DeniListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     DeniListContent(
         uiState = uiState,
         onBack = onBack,
-        onAddCustomer = onAddCustomer,
-        onOpenCustomer = onOpenCustomer,
+        onAddClient = onAddClient,
+        onOpenClient = onOpenClient,
     )
 }
 
@@ -60,8 +60,8 @@ fun DeniListScreen(
 private fun DeniListContent(
     uiState: DeniListUiState,
     onBack: () -> Unit,
-    onAddCustomer: () -> Unit,
-    onOpenCustomer: (String) -> Unit,
+    onAddClient: () -> Unit,
+    onOpenClient: (String) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -79,7 +79,7 @@ private fun DeniListContent(
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = onAddCustomer,
+                onClick = onAddClient,
                 icon = { Icon(Icons.Outlined.PersonAdd, contentDescription = null) },
                 text = { Text(stringResource(R.string.deni_add_customer)) },
             )
@@ -100,7 +100,7 @@ private fun DeniListContent(
                 )
                 is DeniListUiState.Content -> DeniList(
                     content = uiState,
-                    onOpenCustomer = onOpenCustomer,
+                    onOpenClient = onOpenClient,
                 )
             }
         }
@@ -110,7 +110,7 @@ private fun DeniListContent(
 @Composable
 private fun DeniList(
     content: DeniListUiState.Content,
-    onOpenCustomer: (String) -> Unit,
+    onOpenClient: (String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -123,8 +123,8 @@ private fun DeniList(
                 currency = content.currency,
             )
         }
-        items(content.customers, key = { it.customer.id }) { item ->
-            CustomerRow(item = item, onClick = { onOpenCustomer(item.customer.id) })
+        items(content.clients, key = { it.client.id }) { item ->
+            ClientRow(item = item, onClick = { onOpenClient(item.client.id) })
         }
     }
 }
@@ -152,7 +152,7 @@ private fun TotalOwedCard(totalMinor: Long, currency: CurrencyCode) {
 }
 
 @Composable
-private fun CustomerRow(item: CustomerDeni, onClick: () -> Unit) {
+private fun ClientRow(item: ClientDeni, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
@@ -164,11 +164,11 @@ private fun CustomerRow(item: CustomerDeni, onClick: () -> Unit) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = item.customer.name,
+                    text = item.client.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                item.customer.phone?.takeIf { it.isNotBlank() }?.let { phone ->
+                item.client.phone?.takeIf { it.isNotBlank() }?.let { phone ->
                     Text(
                         text = phone,
                         style = MaterialTheme.typography.bodySmall,
@@ -177,7 +177,7 @@ private fun CustomerRow(item: CustomerDeni, onClick: () -> Unit) {
                 }
             }
             Text(
-                text = formatMoney(item.outstandingMinor, item.customer.currency),
+                text = formatMoney(item.outstandingMinor, item.client.currency),
                 style = MaterialTheme.typography.titleMedium,
                 color = if (item.outstandingMinor > 0L) MaterialTheme.colorScheme.onSurface
                 else MaterialTheme.colorScheme.onSurfaceVariant,

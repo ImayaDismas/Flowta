@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import com.flowgroup.flowta.domain.common.Result as DomainResult
 
 /**
- * Periodic reminder that posts a local notification when customers still owe money (deni).
+ * Periodic reminder that posts a local notification when clients still owe money (deni).
  * Uses a Hilt [EntryPoint] rather than @HiltWorker so it works with WorkManager's default factory.
  */
 class DeniReminderWorker(

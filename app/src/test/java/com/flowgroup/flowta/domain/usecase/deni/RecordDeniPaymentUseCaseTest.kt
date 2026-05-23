@@ -2,7 +2,7 @@ package com.flowgroup.flowta.domain.usecase.deni
 
 import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.model.CurrencyCode
-import com.flowgroup.flowta.domain.model.Customer
+import com.flowgroup.flowta.domain.model.Client
 import com.flowgroup.flowta.domain.model.DeniEntryType
 import com.flowgroup.flowta.domain.model.Money
 import com.flowgroup.flowta.domain.repository.DeniRepository
@@ -19,7 +19,7 @@ class RecordDeniPaymentUseCaseTest {
     private val deniRepository: DeniRepository = mockk()
     private val useCase = RecordDeniPaymentUseCase(deniRepository)
 
-    private val customer = Customer(
+    private val client = Client(
         id = "c-1",
         businessId = "biz-1",
         name = "Mama Achieng",
@@ -30,21 +30,21 @@ class RecordDeniPaymentUseCaseTest {
     )
 
     @Test
-    fun givenZeroAmount_whenInvoked_thenErrorAndCustomerNotFetched() = runTest {
-        val result = useCase(customerId = "c-1", amountMinor = 0L, note = null)
+    fun givenZeroAmount_whenInvoked_thenErrorAndClientNotFetched() = runTest {
+        val result = useCase(clientId = "c-1", amountMinor = 0L, note = null)
 
         assertTrue(result is Result.Error)
-        coVerify(exactly = 0) { deniRepository.getCustomer(any()) }
+        coVerify(exactly = 0) { deniRepository.getClient(any()) }
     }
 
     @Test
-    fun givenValidAmount_whenInvoked_thenPaymentEntryRecordedInCustomerCurrency() = runTest {
-        coEvery { deniRepository.getCustomer("c-1") } returns Result.Success(customer)
+    fun givenValidAmount_whenInvoked_thenPaymentEntryRecordedInClientCurrency() = runTest {
+        coEvery { deniRepository.getClient("c-1") } returns Result.Success(client)
         coEvery {
             deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.PAYMENT, Money(300L, CurrencyCode.KES), "part payment")
         } returns Result.Success(mockk())
 
-        val result = useCase(customerId = "c-1", amountMinor = 300L, note = "part payment")
+        val result = useCase(clientId = "c-1", amountMinor = 300L, note = "part payment")
 
         assertTrue(result is Result.Success)
         coVerify {

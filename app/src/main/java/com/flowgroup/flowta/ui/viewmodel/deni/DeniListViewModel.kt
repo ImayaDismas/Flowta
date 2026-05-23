@@ -3,7 +3,7 @@ package com.flowgroup.flowta.ui.viewmodel.deni
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flowgroup.flowta.domain.common.Result
-import com.flowgroup.flowta.domain.usecase.deni.ObserveCustomersDeniForCurrentBusinessUseCase
+import com.flowgroup.flowta.domain.usecase.deni.ObserveClientsDeniForCurrentBusinessUseCase
 import com.flowgroup.flowta.domain.usecase.deni.ObserveTotalOutstandingForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.deni.DeniListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DeniListViewModel @Inject constructor(
-    observeCustomers: ObserveCustomersDeniForCurrentBusinessUseCase,
+    observeClients: ObserveClientsDeniForCurrentBusinessUseCase,
     observeTotal: ObserveTotalOutstandingForCurrentBusinessUseCase,
 ) : ViewModel() {
 
@@ -25,22 +25,22 @@ class DeniListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            combine(observeCustomers(), observeTotal()) { customersResult, totalResult ->
+            combine(observeClients(), observeTotal()) { customersResult, totalResult ->
                 when {
                     customersResult is Result.Error ->
                         DeniListUiState.Error(customersResult.exception.message.orEmpty())
                     totalResult is Result.Error ->
                         DeniListUiState.Error(totalResult.exception.message.orEmpty())
                     else -> {
-                        val customers = (customersResult as Result.Success).data
+                        val clients = (customersResult as Result.Success).data
                         val total = (totalResult as Result.Success).data
-                        if (customers.isEmpty()) {
+                        if (clients.isEmpty()) {
                             DeniListUiState.Empty
                         } else {
                             DeniListUiState.Content(
-                                customers = customers,
+                                clients = clients,
                                 totalOutstandingMinor = total,
-                                currency = customers.first().customer.currency,
+                                currency = clients.first().client.currency,
                             )
                         }
                     }

@@ -17,6 +17,6 @@ sealed interface Destination {
     @Serializable data class TransactionDetail(val transactionId: String) : Destination
     @Serializable data class EditTransaction(val transactionId: String) : Destination
     @Serializable data object DeniList : Destination
-    @Serializable data object AddCustomer : Destination
-    @Serializable data class CustomerDeniDetail(val customerId: String) : Destination
+    @Serializable data object AddClient : Destination
+    @Serializable data class ClientDeniDetail(val clientId: String) : Destination
 }

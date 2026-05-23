@@ -42,25 +42,25 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowgroup.flowta.R
-import com.flowgroup.flowta.domain.model.CustomerDeniDetail
+import com.flowgroup.flowta.domain.model.ClientDeniDetail
 import com.flowgroup.flowta.domain.model.DeniEntry
 import com.flowgroup.flowta.domain.model.DeniEntryType
 import com.flowgroup.flowta.ui.components.EmptyState
-import com.flowgroup.flowta.ui.state.deni.CustomerDeniDetailEvent
-import com.flowgroup.flowta.ui.state.deni.CustomerDeniDetailUiState
+import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailEvent
+import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailUiState
 import com.flowgroup.flowta.ui.theme.MoneyIn
 import com.flowgroup.flowta.ui.theme.MoneyOut
-import com.flowgroup.flowta.ui.viewmodel.deni.CustomerDeniDetailViewModel
+import com.flowgroup.flowta.ui.viewmodel.deni.ClientDeniDetailViewModel
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 @Composable
-fun CustomerDeniDetailScreen(
+fun ClientDeniDetailScreen(
     onBack: () -> Unit,
-    viewModel: CustomerDeniDetailViewModel = hiltViewModel(),
+    viewModel: ClientDeniDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    CustomerDeniDetailContent(
+    ClientDeniDetailContent(
         uiState = uiState,
         onBack = onBack,
         onEvent = viewModel::onEvent,
@@ -69,17 +69,17 @@ fun CustomerDeniDetailScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CustomerDeniDetailContent(
-    uiState: CustomerDeniDetailUiState,
+private fun ClientDeniDetailContent(
+    uiState: ClientDeniDetailUiState,
     onBack: () -> Unit,
-    onEvent: (CustomerDeniDetailEvent) -> Unit,
+    onEvent: (ClientDeniDetailEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = (uiState as? CustomerDeniDetailUiState.Content)?.detail?.customer?.name
+                        text = (uiState as? ClientDeniDetailUiState.Content)?.detail?.client?.name
                             ?: stringResource(R.string.customer_detail_title),
                     )
                 },
@@ -96,21 +96,21 @@ private fun CustomerDeniDetailContent(
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when (uiState) {
-                CustomerDeniDetailUiState.Loading -> Unit
-                CustomerDeniDetailUiState.NotFound -> EmptyState(
+                ClientDeniDetailUiState.Loading -> Unit
+                ClientDeniDetailUiState.NotFound -> EmptyState(
                     icon = Icons.Outlined.Group,
                     title = stringResource(R.string.customer_detail_not_found_title),
                     message = stringResource(R.string.customer_detail_not_found_message),
                 )
-                is CustomerDeniDetailUiState.Error -> EmptyState(
+                is ClientDeniDetailUiState.Error -> EmptyState(
                     icon = Icons.Outlined.Group,
                     title = stringResource(R.string.customer_detail_not_found_title),
                     message = uiState.message.ifBlank {
                         stringResource(R.string.customer_detail_not_found_message)
                     },
                 )
-                is CustomerDeniDetailUiState.Content -> {
-                    CustomerDeniBody(content = uiState, onEvent = onEvent)
+                is ClientDeniDetailUiState.Content -> {
+                    ClientDeniBody(content = uiState, onEvent = onEvent)
                     if (uiState.dialog != null) {
                         AmountDialog(content = uiState, onEvent = onEvent)
                     }
@@ -121,9 +121,9 @@ private fun CustomerDeniDetailContent(
 }
 
 @Composable
-private fun CustomerDeniBody(
-    content: CustomerDeniDetailUiState.Content,
-    onEvent: (CustomerDeniDetailEvent) -> Unit,
+private fun ClientDeniBody(
+    content: ClientDeniDetailUiState.Content,
+    onEvent: (ClientDeniDetailEvent) -> Unit,
 ) {
     val detail = content.detail
     LazyColumn(
@@ -135,7 +135,7 @@ private fun CustomerDeniBody(
         item(key = "actions") {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
-                    onClick = { onEvent(CustomerDeniDetailEvent.RecordPaymentClicked) },
+                    onClick = { onEvent(ClientDeniDetailEvent.RecordPaymentClicked) },
                     modifier = Modifier.weight(1f),
                 ) {
                     Icon(Icons.Outlined.Payments, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -145,7 +145,7 @@ private fun CustomerDeniBody(
                     )
                 }
                 Button(
-                    onClick = { onEvent(CustomerDeniDetailEvent.AddCreditClicked) },
+                    onClick = { onEvent(ClientDeniDetailEvent.AddCreditClicked) },
                     modifier = Modifier.weight(1f),
                 ) {
                     Icon(Icons.Outlined.Add, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -180,14 +180,14 @@ private fun CustomerDeniBody(
 }
 
 @Composable
-private fun OutstandingCard(detail: CustomerDeniDetail) {
+private fun OutstandingCard(detail: ClientDeniDetail) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            detail.customer.phone?.takeIf { it.isNotBlank() }?.let { phone ->
+            detail.client.phone?.takeIf { it.isNotBlank() }?.let { phone ->
                 Text(
                     text = phone,
                     style = MaterialTheme.typography.bodyMedium,
@@ -201,7 +201,7 @@ private fun OutstandingCard(detail: CustomerDeniDetail) {
                 modifier = Modifier.padding(top = 4.dp),
             )
             Text(
-                text = formatMoney(detail.outstandingMinor, detail.customer.currency),
+                text = formatMoney(detail.outstandingMinor, detail.client.currency),
                 style = MaterialTheme.typography.headlineMedium,
                 color = if (detail.outstandingMinor > 0L) MoneyOut else MaterialTheme.colorScheme.onSurface,
             )
@@ -250,13 +250,13 @@ private fun DeniEntryRow(entry: DeniEntry) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AmountDialog(
-    content: CustomerDeniDetailUiState.Content,
-    onEvent: (CustomerDeniDetailEvent) -> Unit,
+    content: ClientDeniDetailUiState.Content,
+    onEvent: (ClientDeniDetailEvent) -> Unit,
 ) {
-    val isCredit = content.dialog == CustomerDeniDetailUiState.Content.Dialog.CREDIT
-    val currency = content.detail.customer.currency
+    val isCredit = content.dialog == ClientDeniDetailUiState.Content.Dialog.CREDIT
+    val currency = content.detail.client.currency
     AlertDialog(
-        onDismissRequest = { onEvent(CustomerDeniDetailEvent.DialogDismissed) },
+        onDismissRequest = { onEvent(ClientDeniDetailEvent.DialogDismissed) },
         title = {
             Text(
                 stringResource(
@@ -268,7 +268,7 @@ private fun AmountDialog(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = content.amountInput,
-                    onValueChange = { onEvent(CustomerDeniDetailEvent.AmountChanged(it)) },
+                    onValueChange = { onEvent(ClientDeniDetailEvent.AmountChanged(it)) },
                     label = { Text(stringResource(R.string.deni_dialog_amount_label, currency.iso4217)) },
                     placeholder = { Text("0") },
                     singleLine = true,
@@ -281,7 +281,7 @@ private fun AmountDialog(
                 )
                 OutlinedTextField(
                     value = content.noteInput,
-                    onValueChange = { onEvent(CustomerDeniDetailEvent.NoteChanged(it)) },
+                    onValueChange = { onEvent(ClientDeniDetailEvent.NoteChanged(it)) },
                     label = { Text(stringResource(R.string.deni_dialog_note_label)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -295,12 +295,12 @@ private fun AmountDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { onEvent(CustomerDeniDetailEvent.DialogConfirmed) },
+                onClick = { onEvent(ClientDeniDetailEvent.DialogConfirmed) },
                 enabled = !content.isSubmitting,
             ) { Text(stringResource(R.string.deni_dialog_save)) }
         },
         dismissButton = {
-            TextButton(onClick = { onEvent(CustomerDeniDetailEvent.DialogDismissed) }) {
+            TextButton(onClick = { onEvent(ClientDeniDetailEvent.DialogDismissed) }) {
                 Text(stringResource(R.string.common_cancel))
             }
         },

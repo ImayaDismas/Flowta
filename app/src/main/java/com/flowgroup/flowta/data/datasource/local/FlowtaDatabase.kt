@@ -11,12 +11,12 @@ import com.flowgroup.flowta.data.datasource.local.converter.InstantConverter
 import com.flowgroup.flowta.data.datasource.local.converter.TransactionTypeConverter
 import com.flowgroup.flowta.data.datasource.local.converter.WalletTypeConverter
 import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
-import com.flowgroup.flowta.data.datasource.local.dao.CustomerDao
+import com.flowgroup.flowta.data.datasource.local.dao.ClientDao
 import com.flowgroup.flowta.data.datasource.local.dao.DeniEntryDao
 import com.flowgroup.flowta.data.datasource.local.dao.TransactionDao
 import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
 import com.flowgroup.flowta.data.model.entity.BusinessEntity
-import com.flowgroup.flowta.data.model.entity.CustomerEntity
+import com.flowgroup.flowta.data.model.entity.ClientEntity
 import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
 import com.flowgroup.flowta.data.model.entity.TransactionEntity
 import com.flowgroup.flowta.data.model.entity.WalletEntity
@@ -26,7 +26,7 @@ import com.flowgroup.flowta.data.model.entity.WalletEntity
         BusinessEntity::class,
         WalletEntity::class,
         TransactionEntity::class,
-        CustomerEntity::class,
+        ClientEntity::class,
         DeniEntryEntity::class,
     ],
     version = 4,
@@ -43,7 +43,7 @@ abstract class FlowtaDatabase : RoomDatabase() {
     abstract fun businessDao(): BusinessDao
     abstract fun walletDao(): WalletDao
     abstract fun transactionDao(): TransactionDao
-    abstract fun customerDao(): CustomerDao
+    abstract fun customerDao(): ClientDao
     abstract fun deniEntryDao(): DeniEntryDao
 
     companion object {

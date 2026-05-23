@@ -19,7 +19,7 @@ import kotlinx.datetime.Instant
             onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
-            entity = CustomerEntity::class,
+            entity = ClientEntity::class,
             parentColumns = ["customer_id"],
             childColumns = ["customer_id"],
             onDelete = ForeignKey.CASCADE,
@@ -33,7 +33,7 @@ import kotlinx.datetime.Instant
 data class DeniEntryEntity(
     @PrimaryKey @ColumnInfo(name = "deni_entry_id") val deniEntryId: String,
     @ColumnInfo(name = "business_id") val businessId: String,
-    @ColumnInfo(name = "customer_id") val customerId: String,
+    @ColumnInfo(name = "customer_id") val clientId: String,
     @ColumnInfo(name = "type") val type: DeniEntryType,
     @ColumnInfo(name = "amount_minor") val amountMinor: Long,
     @ColumnInfo(name = "currency_code") val currencyCode: CurrencyCode,

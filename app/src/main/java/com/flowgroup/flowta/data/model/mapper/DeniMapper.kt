@@ -1,15 +1,15 @@
 package com.flowgroup.flowta.data.model.mapper
 
-import com.flowgroup.flowta.data.model.entity.CustomerEntity
+import com.flowgroup.flowta.data.model.entity.ClientEntity
 import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
-import com.flowgroup.flowta.data.model.entity.projection.CustomerWithBalanceProjection
-import com.flowgroup.flowta.domain.model.Customer
-import com.flowgroup.flowta.domain.model.CustomerDeni
+import com.flowgroup.flowta.data.model.entity.projection.ClientWithBalanceProjection
+import com.flowgroup.flowta.domain.model.Client
+import com.flowgroup.flowta.domain.model.ClientDeni
 import com.flowgroup.flowta.domain.model.DeniEntry
 import com.flowgroup.flowta.domain.model.Money
 
-fun CustomerEntity.toDomain(): Customer = Customer(
-    id = customerId,
+fun ClientEntity.toDomain(): Client = Client(
+    id = clientId,
     businessId = businessId,
     name = name,
     phone = phone,
@@ -18,8 +18,8 @@ fun CustomerEntity.toDomain(): Customer = Customer(
     updatedAt = updatedAt,
 )
 
-fun Customer.toEntity(): CustomerEntity = CustomerEntity(
-    customerId = id,
+fun Client.toEntity(): ClientEntity = ClientEntity(
+    clientId = id,
     businessId = businessId,
     name = name,
     phone = phone,
@@ -28,15 +28,15 @@ fun Customer.toEntity(): CustomerEntity = CustomerEntity(
     updatedAt = updatedAt,
 )
 
-fun CustomerWithBalanceProjection.toDomain(): CustomerDeni = CustomerDeni(
-    customer = customer.toDomain(),
+fun ClientWithBalanceProjection.toDomain(): ClientDeni = ClientDeni(
+    client = client.toDomain(),
     outstandingMinor = outstandingMinor,
 )
 
 fun DeniEntryEntity.toDomain(): DeniEntry = DeniEntry(
     id = deniEntryId,
     businessId = businessId,
-    customerId = customerId,
+    clientId = clientId,
     type = type,
     amount = Money(minorUnits = amountMinor, currency = currencyCode),
     note = note,
@@ -48,7 +48,7 @@ fun DeniEntryEntity.toDomain(): DeniEntry = DeniEntry(
 fun DeniEntry.toEntity(): DeniEntryEntity = DeniEntryEntity(
     deniEntryId = id,
     businessId = businessId,
-    customerId = customerId,
+    clientId = clientId,
     type = type,
     amountMinor = amount.minorUnits,
     currencyCode = amount.currency,

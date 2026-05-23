@@ -1,17 +1,17 @@
 package com.flowgroup.flowta.data.repository
 
-import com.flowgroup.flowta.data.datasource.local.CustomerLocalDataSource
+import com.flowgroup.flowta.data.datasource.local.ClientLocalDataSource
 import com.flowgroup.flowta.data.datasource.local.DeniEntryLocalDataSource
 import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
-import com.flowgroup.flowta.data.model.entity.projection.CustomerWithBalanceProjection
+import com.flowgroup.flowta.data.model.entity.projection.ClientWithBalanceProjection
 import com.flowgroup.flowta.data.model.mapper.toDomain
 import com.flowgroup.flowta.data.model.mapper.toEntity
 import com.flowgroup.flowta.domain.common.AppException
 import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.common.resultOf
 import com.flowgroup.flowta.domain.model.CurrencyCode
-import com.flowgroup.flowta.domain.model.Customer
-import com.flowgroup.flowta.domain.model.CustomerDeni
+import com.flowgroup.flowta.domain.model.Client
+import com.flowgroup.flowta.domain.model.ClientDeni
 import com.flowgroup.flowta.domain.model.DeniEntry
 import com.flowgroup.flowta.domain.model.DeniEntryType
 import com.flowgroup.flowta.domain.model.Money
@@ -26,14 +26,14 @@ import javax.inject.Singleton
 
 @Singleton
 class DeniRepositoryImpl @Inject constructor(
-    private val customerLocal: CustomerLocalDataSource,
+    private val customerLocal: ClientLocalDataSource,
     private val deniEntryLocal: DeniEntryLocalDataSource,
     private val clock: Clock,
 ) : DeniRepository {
 
-    override fun observeCustomersWithBalance(businessId: String): Flow<Result<List<CustomerDeni>>> =
+    override fun observeClientsWithBalance(businessId: String): Flow<Result<List<ClientDeni>>> =
         customerLocal.observeWithBalanceForBusiness(businessId)
-            .map<List<CustomerWithBalanceProjection>, Result<List<CustomerDeni>>> { rows ->
+            .map<List<ClientWithBalanceProjection>, Result<List<ClientDeni>>> { rows ->
                 Result.Success(rows.map { it.toDomain() })
             }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
@@ -43,32 +43,32 @@ class DeniRepositoryImpl @Inject constructor(
             .map<Long, Result<Long>> { Result.Success(it) }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
 
-    override fun observeCustomerWithBalance(customerId: String): Flow<Result<CustomerDeni?>> =
-        customerLocal.observeWithBalanceById(customerId)
-            .map<CustomerWithBalanceProjection?, Result<CustomerDeni?>> { row ->
+    override fun observeClientWithBalance(clientId: String): Flow<Result<ClientDeni?>> =
+        customerLocal.observeWithBalanceById(clientId)
+            .map<ClientWithBalanceProjection?, Result<ClientDeni?>> { row ->
                 Result.Success(row?.toDomain())
             }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
 
-    override fun observeEntriesForCustomer(customerId: String): Flow<Result<List<DeniEntry>>> =
-        deniEntryLocal.observeForCustomer(customerId)
+    override fun observeEntriesForClient(clientId: String): Flow<Result<List<DeniEntry>>> =
+        deniEntryLocal.observeForClient(clientId)
             .map<List<DeniEntryEntity>, Result<List<DeniEntry>>> { rows ->
                 Result.Success(rows.map { it.toDomain() })
             }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
 
-    override suspend fun getCustomer(customerId: String): Result<Customer?> = resultOf {
-        customerLocal.getById(customerId)?.toDomain()
+    override suspend fun getClient(clientId: String): Result<Client?> = resultOf {
+        customerLocal.getById(clientId)?.toDomain()
     }
 
-    override suspend fun addCustomer(
+    override suspend fun addClient(
         businessId: String,
         name: String,
         phone: String?,
         currency: CurrencyCode,
-    ): Result<Customer> = resultOf {
+    ): Result<Client> = resultOf {
         val now = clock.now()
-        val customer = Customer(
+        val client = Client(
             id = UUID.randomUUID().toString(),
             businessId = businessId,
             name = name.trim(),
@@ -77,13 +77,13 @@ class DeniRepositoryImpl @Inject constructor(
             createdAt = now,
             updatedAt = now,
         )
-        customerLocal.upsert(customer.toEntity())
-        customer
+        customerLocal.upsert(client.toEntity())
+        client
     }
 
     override suspend fun recordEntry(
         businessId: String,
-        customerId: String,
+        clientId: String,
         type: DeniEntryType,
         amount: Money,
         note: String?,
@@ -92,7 +92,7 @@ class DeniRepositoryImpl @Inject constructor(
         val entry = DeniEntry(
             id = UUID.randomUUID().toString(),
             businessId = businessId,
-            customerId = customerId,
+            clientId = clientId,
             type = type,
             amount = amount,
             note = note?.trim()?.takeIf { it.isNotEmpty() },

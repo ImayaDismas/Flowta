@@ -32,28 +32,28 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowgroup.flowta.R
-import com.flowgroup.flowta.ui.state.deni.AddCustomerEvent
-import com.flowgroup.flowta.ui.state.deni.AddCustomerUiEvent
-import com.flowgroup.flowta.ui.state.deni.AddCustomerUiState
-import com.flowgroup.flowta.ui.viewmodel.deni.AddCustomerViewModel
+import com.flowgroup.flowta.ui.state.deni.AddClientEvent
+import com.flowgroup.flowta.ui.state.deni.AddClientUiEvent
+import com.flowgroup.flowta.ui.state.deni.AddClientUiState
+import com.flowgroup.flowta.ui.viewmodel.deni.AddClientViewModel
 
 @Composable
-fun AddCustomerScreen(
+fun AddClientScreen(
     onClose: () -> Unit,
     onCreated: () -> Unit,
-    viewModel: AddCustomerViewModel = hiltViewModel(),
+    viewModel: AddClientViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
-                AddCustomerUiEvent.Saved -> onCreated()
+                AddClientUiEvent.Saved -> onCreated()
             }
         }
     }
 
-    AddCustomerContent(
+    AddClientContent(
         uiState = uiState,
         onClose = onClose,
         onEvent = viewModel::onEvent,
@@ -62,10 +62,10 @@ fun AddCustomerScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AddCustomerContent(
-    uiState: AddCustomerUiState,
+private fun AddClientContent(
+    uiState: AddClientUiState,
     onClose: () -> Unit,
-    onEvent: (AddCustomerEvent) -> Unit,
+    onEvent: (AddClientEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -91,7 +91,7 @@ private fun AddCustomerContent(
         ) {
             OutlinedTextField(
                 value = uiState.name,
-                onValueChange = { onEvent(AddCustomerEvent.NameChanged(it)) },
+                onValueChange = { onEvent(AddClientEvent.NameChanged(it)) },
                 label = { Text(stringResource(R.string.add_customer_name_label)) },
                 placeholder = { Text(stringResource(R.string.add_customer_name_hint)) },
                 singleLine = true,
@@ -105,7 +105,7 @@ private fun AddCustomerContent(
 
             OutlinedTextField(
                 value = uiState.phone,
-                onValueChange = { onEvent(AddCustomerEvent.PhoneChanged(it)) },
+                onValueChange = { onEvent(AddClientEvent.PhoneChanged(it)) },
                 label = { Text(stringResource(R.string.add_customer_phone_label)) },
                 placeholder = { Text(stringResource(R.string.add_customer_phone_hint)) },
                 singleLine = true,
@@ -118,7 +118,7 @@ private fun AddCustomerContent(
 
             OutlinedTextField(
                 value = uiState.initialCreditInput,
-                onValueChange = { onEvent(AddCustomerEvent.InitialCreditChanged(it)) },
+                onValueChange = { onEvent(AddClientEvent.InitialCreditChanged(it)) },
                 label = { Text(stringResource(R.string.add_customer_initial_credit_label)) },
                 placeholder = { Text("0") },
                 singleLine = true,
@@ -140,7 +140,7 @@ private fun AddCustomerContent(
             Spacer(Modifier.weight(1f))
 
             Button(
-                onClick = { onEvent(AddCustomerEvent.Save) },
+                onClick = { onEvent(AddClientEvent.Save) },
                 enabled = !uiState.isSaving,
                 modifier = Modifier
                     .fillMaxWidth()

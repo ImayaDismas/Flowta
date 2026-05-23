@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.flowgroup.flowta.data.datasource.local.FlowtaDatabase
 import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
-import com.flowgroup.flowta.data.datasource.local.dao.CustomerDao
+import com.flowgroup.flowta.data.datasource.local.dao.ClientDao
 import com.flowgroup.flowta.data.datasource.local.dao.DeniEntryDao
 import com.flowgroup.flowta.data.datasource.local.dao.TransactionDao
 import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
@@ -49,7 +49,7 @@ object DatabaseModule {
     fun provideTransactionDao(database: FlowtaDatabase): TransactionDao = database.transactionDao()
 
     @Provides
-    fun provideCustomerDao(database: FlowtaDatabase): CustomerDao = database.customerDao()
+    fun provideClientDao(database: FlowtaDatabase): ClientDao = database.customerDao()
 
     @Provides
     fun provideDeniEntryDao(database: FlowtaDatabase): DeniEntryDao = database.deniEntryDao()

@@ -12,10 +12,10 @@ interface DeniEntryDao {
     @Query(
         "SELECT deni_entry_id, business_id, customer_id, type, amount_minor, currency_code, " +
             "note, occurred_at, created_at, updated_at " +
-            "FROM deni_entries WHERE customer_id = :customerId " +
+            "FROM deni_entries WHERE customer_id = :clientId " +
             "ORDER BY occurred_at DESC, created_at DESC"
     )
-    fun observeForCustomer(customerId: String): Flow<List<DeniEntryEntity>>
+    fun observeForClient(clientId: String): Flow<List<DeniEntryEntity>>
 
     @Query(
         "SELECT COALESCE(SUM(CASE WHEN type = 'CREDIT' THEN amount_minor " +

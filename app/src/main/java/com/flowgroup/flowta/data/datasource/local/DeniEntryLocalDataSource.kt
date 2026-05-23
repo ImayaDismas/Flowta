@@ -15,8 +15,8 @@ class DeniEntryLocalDataSource @Inject constructor(
     private val dao: DeniEntryDao,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
-    fun observeForCustomer(customerId: String): Flow<List<DeniEntryEntity>> =
-        dao.observeForCustomer(customerId).flowOn(ioDispatcher)
+    fun observeForClient(clientId: String): Flow<List<DeniEntryEntity>> =
+        dao.observeForClient(clientId).flowOn(ioDispatcher)
 
     fun observeTotalOutstandingForBusiness(businessId: String): Flow<Long> =
         dao.observeTotalOutstandingForBusiness(businessId).flowOn(ioDispatcher)

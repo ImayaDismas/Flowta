@@ -20,8 +20,8 @@ import kotlinx.datetime.Instant
     ],
     indices = [Index(value = ["business_id"], name = "index_customers_business_id")],
 )
-data class CustomerEntity(
-    @PrimaryKey @ColumnInfo(name = "customer_id") val customerId: String,
+data class ClientEntity(
+    @PrimaryKey @ColumnInfo(name = "customer_id") val clientId: String,
     @ColumnInfo(name = "business_id") val businessId: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "phone") val phone: String?,

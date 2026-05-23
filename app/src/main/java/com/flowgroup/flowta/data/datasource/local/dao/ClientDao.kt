@@ -4,12 +4,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.flowgroup.flowta.data.model.entity.CustomerEntity
-import com.flowgroup.flowta.data.model.entity.projection.CustomerWithBalanceProjection
+import com.flowgroup.flowta.data.model.entity.ClientEntity
+import com.flowgroup.flowta.data.model.entity.projection.ClientWithBalanceProjection
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface CustomerDao {
+interface ClientDao {
     @Query(
         "SELECT c.*, COALESCE(SUM(CASE WHEN d.type = 'CREDIT' THEN d.amount_minor " +
             "WHEN d.type = 'PAYMENT' THEN -d.amount_minor ELSE 0 END), 0) AS outstanding_minor " +
@@ -18,7 +18,7 @@ interface CustomerDao {
             "GROUP BY c.customer_id " +
             "ORDER BY outstanding_minor DESC, c.name ASC"
     )
-    fun observeWithBalanceForBusiness(businessId: String): Flow<List<CustomerWithBalanceProjection>>
+    fun observeWithBalanceForBusiness(businessId: String): Flow<List<ClientWithBalanceProjection>>
 
     @Query(
         "SELECT c.*, COALESCE(SUM(CASE WHEN d.type = 'CREDIT' THEN d.amount_minor " +
@@ -27,16 +27,16 @@ interface CustomerDao {
             "WHERE c.customer_id = :id " +
             "GROUP BY c.customer_id"
     )
-    fun observeWithBalanceById(id: String): Flow<CustomerWithBalanceProjection?>
+    fun observeWithBalanceById(id: String): Flow<ClientWithBalanceProjection?>
 
     @Query(
         "SELECT customer_id, business_id, name, phone, currency_code, created_at, updated_at " +
             "FROM customers WHERE customer_id = :id LIMIT 1"
     )
-    suspend fun getById(id: String): CustomerEntity?
+    suspend fun getById(id: String): ClientEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(entity: CustomerEntity)
+    suspend fun upsert(entity: ClientEntity)
 
     @Query("DELETE FROM customers WHERE customer_id = :id")
     suspend fun deleteById(id: String)

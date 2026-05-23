@@ -2,7 +2,7 @@ package com.flowgroup.flowta.domain.model
 
 import kotlinx.datetime.Instant
 
-data class Customer(
+data class Client(
     val id: String,
     val businessId: String,
     val name: String,

@@ -3,7 +3,7 @@ package com.flowgroup.flowta.domain.usecase.deni
 import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.model.Business
 import com.flowgroup.flowta.domain.model.CurrencyCode
-import com.flowgroup.flowta.domain.model.Customer
+import com.flowgroup.flowta.domain.model.Client
 import com.flowgroup.flowta.domain.model.DeniEntryType
 import com.flowgroup.flowta.domain.model.Money
 import com.flowgroup.flowta.domain.repository.BusinessRepository
@@ -19,12 +19,12 @@ import kotlinx.datetime.Instant
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class AddCustomerUseCaseTest {
+class AddClientUseCaseTest {
 
     private val deniRepository: DeniRepository = mockk()
     private val businessRepository: BusinessRepository = mockk()
     private val preferencesRepository: PreferencesRepository = mockk()
-    private val useCase = AddCustomerUseCase(deniRepository, businessRepository, preferencesRepository)
+    private val useCase = AddClientUseCase(deniRepository, businessRepository, preferencesRepository)
 
     private val business = Business(
         id = "biz-1",
@@ -34,7 +34,7 @@ class AddCustomerUseCaseTest {
         updatedAt = Instant.fromEpochMilliseconds(0),
     )
 
-    private val customer = Customer(
+    private val client = Client(
         id = "c-1",
         businessId = "biz-1",
         name = "Mama Achieng",
@@ -50,18 +50,18 @@ class AddCustomerUseCaseTest {
     }
 
     @Test
-    fun givenBlankName_whenInvoked_thenErrorAndNoCustomerCreated() = runTest {
+    fun givenBlankName_whenInvoked_thenErrorAndNoClientCreated() = runTest {
         val result = useCase(name = "   ", phone = null, initialCreditMinor = 0L)
 
         assertTrue(result is Result.Error)
-        coVerify(exactly = 0) { deniRepository.addCustomer(any(), any(), any(), CurrencyCode.KES) }
+        coVerify(exactly = 0) { deniRepository.addClient(any(), any(), any(), CurrencyCode.KES) }
     }
 
     @Test
-    fun givenInitialCredit_whenInvoked_thenCustomerCreatedAndCreditEntryRecorded() = runTest {
+    fun givenInitialCredit_whenInvoked_thenClientCreatedAndCreditEntryRecorded() = runTest {
         stubCurrentBusiness()
-        coEvery { deniRepository.addCustomer("biz-1", "Mama Achieng", null, CurrencyCode.KES) } returns
-            Result.Success(customer)
+        coEvery { deniRepository.addClient("biz-1", "Mama Achieng", null, CurrencyCode.KES) } returns
+            Result.Success(client)
         coEvery {
             deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.CREDIT, Money(500L, CurrencyCode.KES), null)
         } returns Result.Success(mockk())
@@ -77,8 +77,8 @@ class AddCustomerUseCaseTest {
     @Test
     fun givenNoInitialCredit_whenInvoked_thenNoEntryRecorded() = runTest {
         stubCurrentBusiness()
-        coEvery { deniRepository.addCustomer("biz-1", "Mama Achieng", null, CurrencyCode.KES) } returns
-            Result.Success(customer)
+        coEvery { deniRepository.addClient("biz-1", "Mama Achieng", null, CurrencyCode.KES) } returns
+            Result.Success(client)
 
         val result = useCase(name = "Mama Achieng", phone = null, initialCreditMinor = 0L)
 
