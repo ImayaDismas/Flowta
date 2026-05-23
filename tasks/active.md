@@ -10,9 +10,9 @@
 
 <!-- Claude sets exactly one task here at a time -->
 
-_None — Transaction Detail slice landed in `f991449` (2026-05-23). Pick next from Next Session._
+_None — Customer credit (deni) slice landed in `fcc7f2f` (2026-05-23). Pick next from Next Session._
 
-> Open follow-up: interactive in-app verification still pending for the wallet-detail/edit/delete, insights, and transaction-detail/edit/delete flows — no device/emulator/AVD has been available. Verify on a device before treating any of these as user-tested.
+> Open follow-up: interactive in-app verification still pending for the wallet-detail, insights, transaction-detail, and **deni** flows — no device/emulator/AVD has been available. Verify on a device before treating any of these as user-tested. Deni reminders (WorkManager notification) especially need on-device confirmation.
 
 ---
 
@@ -20,7 +20,7 @@ _None — Transaction Detail slice landed in `f991449` (2026-05-23). Pick next f
 
 <!-- Claude writes the next task to pick up here before closing -->
 
-**Pick up next:** open choice across the remaining areas below. Reconciliation and Credit (deni) are the core differentiators but need Stitch screens designed first.
+**Pick up next:** open choice across the remaining areas below. Reconciliation is the remaining core differentiator (needs Stitch screens designed first). Smaller options: CSV export, or the Phase 1 paywall.
 
 ### Phase 1 remaining — by feature area
 
@@ -34,10 +34,8 @@ _None — Transaction Detail slice landed in `f991449` (2026-05-23). Pick next f
 - [ ] (3) Statement import (PDF / CSV).
 - [ ] (4) SMS inbox scan — lowest priority (Play Store risk).
 
-**Credit (deni)**
-- [ ] Design Stitch screens (MISSING).
-- [ ] Customer credit tracking with partial payments.
-- [ ] Debt reminders via local notifications.
+**Credit (deni)** — core shipped in `fcc7f2f` (built in Compose, no Stitch).
+- [ ] Fast-follow: integrate credit into the Record-Sale flow (mark a sale fully/partly on credit → auto-create a deni credit entry). Currently deni uses a standalone "record credit / add customer" path.
 
 **Export**
 - [ ] Design Stitch screen (MISSING).
@@ -85,6 +83,7 @@ _None._
 - [x] Wallets — Wallet Detail + Edit + transaction-aware Delete (`616c4f8`).
 - [x] Summary — Insights dashboard: this-week revenue/expenses vs prior week, en+sw (`616c4f8`).
 - [x] Ledger — Transaction Detail (receipt) + Edit + Delete; Share placeholder (`f991449`).
+- [x] Credit (deni) — customer accounts, credit/partial-payment ledger, dashboard owed-card, WorkManager reminders, Room v4 (`fcc7f2f`).
 
 ---
 
