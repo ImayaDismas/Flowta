@@ -176,4 +176,47 @@
     <!-- Edit Transaction -->
     <string name="edit_tx_title">Edit transaction</string>
     <string name="edit_tx_cta_save">Save changes</string>
+
+    <!-- Deni (customer credit) -->
+    <string name="deni_title">Deni</string>
+    <string name="deni_add_customer">Add customer</string>
+    <string name="deni_empty_title">No one owes you yet</string>
+    <string name="deni_empty_message">Add a customer when they take goods on credit or borrow money.</string>
+    <string name="deni_total_owed_label">Total owed to you</string>
+    <string name="deni_entry_credit">Credit</string>
+    <string name="deni_entry_payment">Payment</string>
+    <string name="deni_credit_dialog_title">Add credit</string>
+    <string name="deni_payment_dialog_title">Record payment</string>
+    <string name="deni_dialog_amount_label">Amount (%1$s)</string>
+    <string name="deni_dialog_note_label">Note (optional)</string>
+    <string name="deni_dialog_save">Save</string>
+
+    <!-- Add customer -->
+    <string name="add_customer_title">Add customer</string>
+    <string name="add_customer_name_label">Customer name</string>
+    <string name="add_customer_name_hint">e.g. Mama Achieng</string>
+    <string name="add_customer_phone_label">Phone (optional)</string>
+    <string name="add_customer_phone_hint">e.g. 0712 345 678</string>
+    <string name="add_customer_initial_credit_label">Amount owed now (optional)</string>
+    <string name="add_customer_save">Add customer</string>
+    <string name="add_customer_error_name_blank">Please enter a name</string>
+
+    <!-- Customer deni detail -->
+    <string name="customer_detail_title">Customer</string>
+    <string name="customer_detail_outstanding_label">Owes you</string>
+    <string name="customer_detail_history">History</string>
+    <string name="customer_detail_record_payment">Payment</string>
+    <string name="customer_detail_add_credit">Add credit</string>
+    <string name="customer_detail_empty">No deni activity yet.</string>
+    <string name="customer_detail_not_found_title">Customer not found</string>
+    <string name="customer_detail_not_found_message">They may have been removed.</string>
+
+    <!-- Dashboard deni card -->
+    <string name="dashboard_deni_owed_label">Owed to you (Deni)</string>
+
+    <!-- Deni reminders (notifications) -->
+    <string name="deni_reminder_channel_name">Deni reminders</string>
+    <string name="deni_reminder_channel_desc">Reminders about money customers owe you</string>
+    <string name="deni_reminder_title">Money to collect</string>
+    <string name="deni_reminder_text">Some customers still owe you. Tap to review your deni.</string>
 </resources>

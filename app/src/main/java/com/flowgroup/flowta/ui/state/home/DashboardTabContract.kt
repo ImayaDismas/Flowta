@@ -13,6 +13,7 @@ sealed class DashboardTabUiState {
         val health: BusinessHealth,
         val walletPreview: List<WalletWithBalance>,
         val totalWalletCount: Int,
+        val outstandingDeniMinor: Long,
     ) : DashboardTabUiState()
     data class Error(val message: String) : DashboardTabUiState()
 }

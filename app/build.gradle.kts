@@ -102,6 +102,9 @@ dependencies {
     // Datetime
     implementation(libs.kotlinx.datetime)
 
+    // WorkManager (background deni reminders)
+    implementation(libs.androidx.work.runtime.ktx)
+
     // Unit tests
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

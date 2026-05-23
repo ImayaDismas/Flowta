@@ -11,6 +11,7 @@ import com.flowgroup.flowta.domain.model.Wallet
 import com.flowgroup.flowta.domain.model.WalletType
 import com.flowgroup.flowta.domain.model.WalletWithBalance
 import com.flowgroup.flowta.domain.usecase.business.ObserveCurrentBusinessUseCase
+import com.flowgroup.flowta.domain.usecase.deni.ObserveTotalOutstandingForCurrentBusinessUseCase
 import com.flowgroup.flowta.domain.usecase.transaction.ObserveBusinessHealthForCurrentBusinessUseCase
 import com.flowgroup.flowta.domain.usecase.wallet.ObserveWalletsWithBalanceForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.home.DashboardTabUiState
@@ -37,6 +38,7 @@ class DashboardTabViewModelTest {
     private val observeCurrentBusiness: ObserveCurrentBusinessUseCase = mockk()
     private val observeWallets: ObserveWalletsWithBalanceForCurrentBusinessUseCase = mockk()
     private val observeHealth: ObserveBusinessHealthForCurrentBusinessUseCase = mockk()
+    private val observeOutstandingDeni: ObserveTotalOutstandingForCurrentBusinessUseCase = mockk()
 
     private val business = Business(
         id = "biz-1",
@@ -70,6 +72,7 @@ class DashboardTabViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        every { observeOutstandingDeni() } returns flowOf(Result.Success(0L))
     }
 
     @After
@@ -83,7 +86,7 @@ class DashboardTabViewModelTest {
         every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
         every { observeHealth() } returns flowOf(Result.Success(health))
 
-        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth)
+        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth, observeOutstandingDeni)
 
         val state = viewModel.uiState.value
         assertTrue(state is DashboardTabUiState.Content)
@@ -101,7 +104,7 @@ class DashboardTabViewModelTest {
         every { observeWallets() } returns flowOf(Result.Success(emptyList()))
         every { observeHealth() } returns flowOf(Result.Success(null))
 
-        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth)
+        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth, observeOutstandingDeni)
 
         assertEquals(DashboardTabUiState.NoBusiness, viewModel.uiState.value)
     }
@@ -112,7 +115,7 @@ class DashboardTabViewModelTest {
         every { observeWallets() } returns flowOf(Result.Success(emptyList()))
         every { observeHealth() } returns flowOf(Result.Success(null))
 
-        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth)
+        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth, observeOutstandingDeni)
 
         val content = viewModel.uiState.value as DashboardTabUiState.Content
         assertEquals(0L, content.health.revenue.minorUnits)
@@ -129,7 +132,7 @@ class DashboardTabViewModelTest {
         every { observeWallets() } returns flowOf(Result.Success(emptyList()))
         every { observeHealth() } returns flowOf(Result.Success(null))
 
-        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth)
+        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth, observeOutstandingDeni)
 
         val state = viewModel.uiState.value
         assertTrue(state is DashboardTabUiState.Error)
@@ -145,7 +148,7 @@ class DashboardTabViewModelTest {
         every { observeWallets() } returns flowOf(Result.Success(many))
         every { observeHealth() } returns flowOf(Result.Success(health))
 
-        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth)
+        val viewModel = DashboardTabViewModel(observeCurrentBusiness, observeWallets, observeHealth, observeOutstandingDeni)
 
         val content = viewModel.uiState.value as DashboardTabUiState.Content
         assertEquals(5, content.walletPreview.size)

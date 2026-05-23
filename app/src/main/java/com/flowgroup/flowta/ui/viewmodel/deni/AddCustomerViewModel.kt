@@ -1,0 +1,73 @@
+package com.flowgroup.flowta.ui.viewmodel.deni
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.flowgroup.flowta.domain.common.Result
+import com.flowgroup.flowta.domain.usecase.deni.AddCustomerUseCase
+import com.flowgroup.flowta.ui.state.deni.AddCustomerEvent
+import com.flowgroup.flowta.ui.state.deni.AddCustomerUiEvent
+import com.flowgroup.flowta.ui.state.deni.AddCustomerUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class AddCustomerViewModel @Inject constructor(
+    private val addCustomer: AddCustomerUseCase,
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(AddCustomerUiState())
+    val uiState: StateFlow<AddCustomerUiState> = _uiState.asStateFlow()
+
+    private val _events = Channel<AddCustomerUiEvent>(Channel.BUFFERED)
+    val events: Flow<AddCustomerUiEvent> = _events.receiveAsFlow()
+
+    fun onEvent(event: AddCustomerEvent) {
+        when (event) {
+            is AddCustomerEvent.NameChanged -> _uiState.update {
+                it.copy(name = event.name.take(MAX_NAME_LENGTH), nameBlankError = false, submitError = null)
+            }
+            is AddCustomerEvent.PhoneChanged -> _uiState.update {
+                it.copy(phone = event.phone.take(MAX_PHONE_LENGTH))
+            }
+            is AddCustomerEvent.InitialCreditChanged -> _uiState.update {
+                it.copy(initialCreditInput = event.input.filter { c -> c.isDigit() }, submitError = null)
+            }
+            AddCustomerEvent.Save -> save()
+        }
+    }
+
+    private fun save() {
+        val current = _uiState.value
+        if (current.isSaving) return
+        if (current.name.isBlank()) {
+            _uiState.update { it.copy(nameBlankError = true) }
+            return
+        }
+        val initialCredit = current.initialCreditInput.toLongOrNull() ?: 0L
+        _uiState.update { it.copy(isSaving = true, submitError = null) }
+        viewModelScope.launch {
+            when (val result = addCustomer(current.name, current.phone, initialCredit)) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isSaving = false) }
+                    _events.send(AddCustomerUiEvent.Saved)
+                }
+                is Result.Error -> _uiState.update {
+                    it.copy(isSaving = false, submitError = result.exception.message)
+                }
+            }
+        }
+    }
+
+    private companion object {
+        const val MAX_NAME_LENGTH = 80
+        const val MAX_PHONE_LENGTH = 20
+    }
+}

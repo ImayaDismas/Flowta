@@ -176,4 +176,47 @@
     <!-- Edit Transaction -->
     <string name="edit_tx_title">Hariri muamala</string>
     <string name="edit_tx_cta_save">Hifadhi mabadiliko</string>
+
+    <!-- Deni (mkopo wa wateja) -->
+    <string name="deni_title">Deni</string>
+    <string name="deni_add_customer">Ongeza mteja</string>
+    <string name="deni_empty_title">Bado hakuna anayekudai</string>
+    <string name="deni_empty_message">Ongeza mteja anapochukua bidhaa kwa mkopo au kukopa pesa.</string>
+    <string name="deni_total_owed_label">Jumla unayodaiwa</string>
+    <string name="deni_entry_credit">Mkopo</string>
+    <string name="deni_entry_payment">Malipo</string>
+    <string name="deni_credit_dialog_title">Ongeza mkopo</string>
+    <string name="deni_payment_dialog_title">Rekodi malipo</string>
+    <string name="deni_dialog_amount_label">Kiasi (%1$s)</string>
+    <string name="deni_dialog_note_label">Maelezo (si lazima)</string>
+    <string name="deni_dialog_save">Hifadhi</string>
+
+    <!-- Ongeza mteja -->
+    <string name="add_customer_title">Ongeza mteja</string>
+    <string name="add_customer_name_label">Jina la mteja</string>
+    <string name="add_customer_name_hint">k.m. Mama Achieng</string>
+    <string name="add_customer_phone_label">Simu (si lazima)</string>
+    <string name="add_customer_phone_hint">k.m. 0712 345 678</string>
+    <string name="add_customer_initial_credit_label">Kiasi anachodaiwa sasa (si lazima)</string>
+    <string name="add_customer_save">Ongeza mteja</string>
+    <string name="add_customer_error_name_blank">Tafadhali weka jina</string>
+
+    <!-- Maelezo ya deni la mteja -->
+    <string name="customer_detail_title">Mteja</string>
+    <string name="customer_detail_outstanding_label">Deni lake</string>
+    <string name="customer_detail_history">Historia</string>
+    <string name="customer_detail_record_payment">Malipo</string>
+    <string name="customer_detail_add_credit">Ongeza mkopo</string>
+    <string name="customer_detail_empty">Bado hakuna shughuli za deni.</string>
+    <string name="customer_detail_not_found_title">Mteja hakupatikana</string>
+    <string name="customer_detail_not_found_message">Huenda aliondolewa.</string>
+
+    <!-- Kadi ya deni dashibodi -->
+    <string name="dashboard_deni_owed_label">Unayodaiwa (Deni)</string>
+
+    <!-- Vikumbusho vya deni (arifa) -->
+    <string name="deni_reminder_channel_name">Vikumbusho vya deni</string>
+    <string name="deni_reminder_channel_desc">Vikumbusho kuhusu pesa wateja wanazokudai</string>
+    <string name="deni_reminder_title">Pesa za kukusanya</string>
+    <string name="deni_reminder_text">Baadhi ya wateja bado wanakudai. Gusa kukagua deni lako.</string>
 </resources>

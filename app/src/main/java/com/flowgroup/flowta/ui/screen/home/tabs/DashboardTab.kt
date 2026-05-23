@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
@@ -56,6 +57,7 @@ fun DashboardTab(
     onAddWallet: () -> Unit,
     onSeeAllWallets: () -> Unit,
     onOpenWallet: (String) -> Unit,
+    onOpenDeni: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardTabViewModel = hiltViewModel(),
 ) {
@@ -67,6 +69,7 @@ fun DashboardTab(
         onAddWallet = onAddWallet,
         onSeeAllWallets = onSeeAllWallets,
         onOpenWallet = onOpenWallet,
+        onOpenDeni = onOpenDeni,
         modifier = modifier,
     )
 }
@@ -79,6 +82,7 @@ private fun DashboardTabContent(
     onAddWallet: () -> Unit,
     onSeeAllWallets: () -> Unit,
     onOpenWallet: (String) -> Unit,
+    onOpenDeni: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -102,6 +106,7 @@ private fun DashboardTabContent(
             onAddWallet = onAddWallet,
             onSeeAllWallets = onSeeAllWallets,
             onOpenWallet = onOpenWallet,
+            onOpenDeni = onOpenDeni,
             modifier = modifier,
         )
     }
@@ -115,6 +120,7 @@ private fun DashboardList(
     onAddWallet: () -> Unit,
     onSeeAllWallets: () -> Unit,
     onOpenWallet: (String) -> Unit,
+    onOpenDeni: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -131,6 +137,13 @@ private fun DashboardList(
         }
         item(key = "business_health") {
             BusinessHealthSection(health = content.health)
+        }
+        item(key = "deni_owed") {
+            DeniOwedCard(
+                outstandingMinor = content.outstandingDeniMinor,
+                currency = content.currency,
+                onClick = onOpenDeni,
+            )
         }
         item(key = "wallets_header") {
             WalletsHeader(
@@ -356,6 +369,43 @@ private fun WalletsHeader(
             TextButton(onClick = onSeeAll) {
                 Text(text = stringResource(R.string.dashboard_see_all))
             }
+        }
+    }
+}
+
+@Composable
+private fun DeniOwedCard(
+    outstandingMinor: Long,
+    currency: CurrencyCode,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.dashboard_deni_owed_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = formatMoney(outstandingMinor, currency),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

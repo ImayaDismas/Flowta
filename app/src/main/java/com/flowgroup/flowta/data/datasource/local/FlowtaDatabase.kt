@@ -6,19 +6,30 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.flowgroup.flowta.data.datasource.local.converter.CurrencyCodeConverter
+import com.flowgroup.flowta.data.datasource.local.converter.DeniEntryTypeConverter
 import com.flowgroup.flowta.data.datasource.local.converter.InstantConverter
 import com.flowgroup.flowta.data.datasource.local.converter.TransactionTypeConverter
 import com.flowgroup.flowta.data.datasource.local.converter.WalletTypeConverter
 import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
+import com.flowgroup.flowta.data.datasource.local.dao.CustomerDao
+import com.flowgroup.flowta.data.datasource.local.dao.DeniEntryDao
 import com.flowgroup.flowta.data.datasource.local.dao.TransactionDao
 import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
 import com.flowgroup.flowta.data.model.entity.BusinessEntity
+import com.flowgroup.flowta.data.model.entity.CustomerEntity
+import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
 import com.flowgroup.flowta.data.model.entity.TransactionEntity
 import com.flowgroup.flowta.data.model.entity.WalletEntity
 
 @Database(
-    entities = [BusinessEntity::class, WalletEntity::class, TransactionEntity::class],
-    version = 3,
+    entities = [
+        BusinessEntity::class,
+        WalletEntity::class,
+        TransactionEntity::class,
+        CustomerEntity::class,
+        DeniEntryEntity::class,
+    ],
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(
@@ -26,11 +37,14 @@ import com.flowgroup.flowta.data.model.entity.WalletEntity
     CurrencyCodeConverter::class,
     WalletTypeConverter::class,
     TransactionTypeConverter::class,
+    DeniEntryTypeConverter::class,
 )
 abstract class FlowtaDatabase : RoomDatabase() {
     abstract fun businessDao(): BusinessDao
     abstract fun walletDao(): WalletDao
     abstract fun transactionDao(): TransactionDao
+    abstract fun customerDao(): CustomerDao
+    abstract fun deniEntryDao(): DeniEntryDao
 
     companion object {
         const val DATABASE_NAME = "flowta.db"
@@ -85,6 +99,54 @@ abstract class FlowtaDatabase : RoomDatabase() {
                 db.execSQL(
                     "CREATE INDEX IF NOT EXISTS `index_transactions_wallet_id` " +
                         "ON `transactions` (`wallet_id`)"
+                )
+            }
+        }
+
+        val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `customers` (" +
+                        "`customer_id` TEXT NOT NULL, " +
+                        "`business_id` TEXT NOT NULL, " +
+                        "`name` TEXT NOT NULL, " +
+                        "`phone` TEXT, " +
+                        "`currency_code` TEXT NOT NULL, " +
+                        "`created_at` INTEGER NOT NULL, " +
+                        "`updated_at` INTEGER NOT NULL, " +
+                        "PRIMARY KEY(`customer_id`), " +
+                        "FOREIGN KEY(`business_id`) REFERENCES `businesses`(`business_id`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_customers_business_id` " +
+                        "ON `customers` (`business_id`)"
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `deni_entries` (" +
+                        "`deni_entry_id` TEXT NOT NULL, " +
+                        "`business_id` TEXT NOT NULL, " +
+                        "`customer_id` TEXT NOT NULL, " +
+                        "`type` TEXT NOT NULL, " +
+                        "`amount_minor` INTEGER NOT NULL, " +
+                        "`currency_code` TEXT NOT NULL, " +
+                        "`note` TEXT, " +
+                        "`occurred_at` INTEGER NOT NULL, " +
+                        "`created_at` INTEGER NOT NULL, " +
+                        "`updated_at` INTEGER NOT NULL, " +
+                        "PRIMARY KEY(`deni_entry_id`), " +
+                        "FOREIGN KEY(`business_id`) REFERENCES `businesses`(`business_id`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE, " +
+                        "FOREIGN KEY(`customer_id`) REFERENCES `customers`(`customer_id`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_deni_entries_business_id` " +
+                        "ON `deni_entries` (`business_id`)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_deni_entries_customer_id` " +
+                        "ON `deni_entries` (`customer_id`)"
                 )
             }
         }

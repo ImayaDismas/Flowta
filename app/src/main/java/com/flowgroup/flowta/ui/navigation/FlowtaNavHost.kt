@@ -6,6 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.flowgroup.flowta.ui.screen.SplashRoute
+import com.flowgroup.flowta.ui.screen.deni.AddCustomerScreen
+import com.flowgroup.flowta.ui.screen.deni.CustomerDeniDetailScreen
+import com.flowgroup.flowta.ui.screen.deni.DeniListScreen
 import com.flowgroup.flowta.ui.screen.home.HomeScreen
 import com.flowgroup.flowta.ui.screen.onboarding.AddBusinessScreen
 import com.flowgroup.flowta.ui.screen.onboarding.GetStartedScreen
@@ -91,6 +94,7 @@ fun FlowtaNavHost(
                 onOpenTransaction = { transactionId ->
                     navController.navigate(Destination.TransactionDetail(transactionId))
                 },
+                onOpenDeni = { navController.navigate(Destination.DeniList) },
             )
         }
 
@@ -150,6 +154,29 @@ fun FlowtaNavHost(
             EditTransactionScreen(
                 onBack = { navController.popBackStack() },
                 onSaved = { navController.popBackStack() },
+            )
+        }
+
+        composable<Destination.DeniList> {
+            DeniListScreen(
+                onBack = { navController.popBackStack() },
+                onAddCustomer = { navController.navigate(Destination.AddCustomer) },
+                onOpenCustomer = { customerId ->
+                    navController.navigate(Destination.CustomerDeniDetail(customerId))
+                },
+            )
+        }
+
+        composable<Destination.AddCustomer> {
+            AddCustomerScreen(
+                onClose = { navController.popBackStack() },
+                onCreated = { navController.popBackStack() },
+            )
+        }
+
+        composable<Destination.CustomerDeniDetail> {
+            CustomerDeniDetailScreen(
+                onBack = { navController.popBackStack() },
             )
         }
     }

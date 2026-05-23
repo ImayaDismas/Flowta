@@ -9,6 +9,7 @@ import com.flowgroup.flowta.domain.model.HealthPeriod
 import com.flowgroup.flowta.domain.model.Money
 import com.flowgroup.flowta.domain.model.WalletWithBalance
 import com.flowgroup.flowta.domain.usecase.business.ObserveCurrentBusinessUseCase
+import com.flowgroup.flowta.domain.usecase.deni.ObserveTotalOutstandingForCurrentBusinessUseCase
 import com.flowgroup.flowta.domain.usecase.transaction.ObserveBusinessHealthForCurrentBusinessUseCase
 import com.flowgroup.flowta.domain.usecase.wallet.ObserveWalletsWithBalanceForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.home.DashboardTabUiState
@@ -25,6 +26,7 @@ class DashboardTabViewModel @Inject constructor(
     observeCurrentBusiness: ObserveCurrentBusinessUseCase,
     observeWallets: ObserveWalletsWithBalanceForCurrentBusinessUseCase,
     observeHealth: ObserveBusinessHealthForCurrentBusinessUseCase,
+    observeOutstandingDeni: ObserveTotalOutstandingForCurrentBusinessUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DashboardTabUiState>(DashboardTabUiState.Loading)
@@ -36,8 +38,9 @@ class DashboardTabViewModel @Inject constructor(
                 observeCurrentBusiness(),
                 observeWallets(),
                 observeHealth(),
-            ) { businessResult, walletsResult, healthResult ->
-                mapToUiState(businessResult, walletsResult, healthResult)
+                observeOutstandingDeni(),
+            ) { businessResult, walletsResult, healthResult, deniResult ->
+                mapToUiState(businessResult, walletsResult, healthResult, deniResult)
             }.collect { _uiState.value = it }
         }
     }
@@ -46,6 +49,7 @@ class DashboardTabViewModel @Inject constructor(
         businessResult: Result<Business?>,
         walletsResult: Result<List<WalletWithBalance>>,
         healthResult: Result<BusinessHealth?>,
+        deniResult: Result<Long>,
     ): DashboardTabUiState {
         if (businessResult is Result.Error) {
             return DashboardTabUiState.Error(businessResult.exception.message.orEmpty())
@@ -55,6 +59,9 @@ class DashboardTabViewModel @Inject constructor(
         }
         if (healthResult is Result.Error) {
             return DashboardTabUiState.Error(healthResult.exception.message.orEmpty())
+        }
+        if (deniResult is Result.Error) {
+            return DashboardTabUiState.Error(deniResult.exception.message.orEmpty())
         }
         val business = (businessResult as Result.Success).data
             ?: return DashboardTabUiState.NoBusiness
@@ -72,6 +79,7 @@ class DashboardTabViewModel @Inject constructor(
             health = health,
             walletPreview = wallets.take(WALLET_PREVIEW_LIMIT),
             totalWalletCount = wallets.size,
+            outstandingDeniMinor = (deniResult as Result.Success).data,
         )
     }
 

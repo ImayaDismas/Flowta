@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.flowgroup.flowta.data.datasource.local.FlowtaDatabase
 import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
+import com.flowgroup.flowta.data.datasource.local.dao.CustomerDao
+import com.flowgroup.flowta.data.datasource.local.dao.DeniEntryDao
 import com.flowgroup.flowta.data.datasource.local.dao.TransactionDao
 import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
 import com.flowgroup.flowta.data.datasource.local.security.DatabaseKeyProvider
@@ -29,7 +31,11 @@ object DatabaseModule {
         val factory = SupportOpenHelperFactory(passphrase)
         return Room.databaseBuilder(context, FlowtaDatabase::class.java, FlowtaDatabase.DATABASE_NAME)
             .openHelperFactory(factory)
-            .addMigrations(FlowtaDatabase.MIGRATION_1_2, FlowtaDatabase.MIGRATION_2_3)
+            .addMigrations(
+                FlowtaDatabase.MIGRATION_1_2,
+                FlowtaDatabase.MIGRATION_2_3,
+                FlowtaDatabase.MIGRATION_3_4,
+            )
             .build()
     }
 
@@ -41,4 +47,10 @@ object DatabaseModule {
 
     @Provides
     fun provideTransactionDao(database: FlowtaDatabase): TransactionDao = database.transactionDao()
+
+    @Provides
+    fun provideCustomerDao(database: FlowtaDatabase): CustomerDao = database.customerDao()
+
+    @Provides
+    fun provideDeniEntryDao(database: FlowtaDatabase): DeniEntryDao = database.deniEntryDao()
 }
