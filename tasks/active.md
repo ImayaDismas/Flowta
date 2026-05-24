@@ -10,9 +10,9 @@
 
 <!-- Claude sets exactly one task here at a time -->
 
-**Airtel/T-Kash outbound parsing (2026-05-25): built, all 16 new tests pass, committed + pushed (`6788430`). No on-device verify needed — pure parsing logic covered by unit tests.**
+**Manual transaction picker in MatchReviewScreen (2026-05-25): built, FULLY VERIFIED on-device, committed (`5d7ce34`). Picker opens bottom sheet with all unmatched transactions of the right type; selecting one confirms the match.**
 
-> Prior: **Phase 1 paywall (2026-05-25): built, FULLY VERIFIED on-device, committed + pushed (`a25565d`).**
+> Prior: **Airtel/T-Kash outbound parsing (2026-05-25): built, all 16 new tests pass, committed + pushed (`6788430`). No on-device verify needed — pure parsing logic covered by unit tests.**
 
 30-day free trial tracked in encrypted DataStore from first post-onboard launch. On expiry, `SplashViewModel` routes to a hard-gate `PaywallScreen` that blocks the full app. User pays M-Pesa Paybill, receives an SMS activation code, enters it in-app; verified on-device via HMAC-SHA256(secret, businessId) — no server required. Activation persists in DataStore across restarts.
 
@@ -35,9 +35,9 @@ Verification status:
 
 <!-- Claude writes the next task to pick up here before closing -->
 
-**Pick up next:** "Match to a different sale/expense" manual picker in MatchReviewScreen, or pre-release polish (set real Paybill number).
+**Pick up next:** Pre-release polish (set real Paybill number in strings.xml), or refine Airtel/T-Kash regex with real samples when available.
 
-> **Pushed:** `develop` is in sync with `origin/develop` at **`6788430`** (Airtel/T-Kash outbound). Nothing outstanding to push.
+> **Unpushed:** `5d7ce34` (manual picker) is on `develop` but not yet pushed to `origin/develop`.
 
 ### Phase 1 remaining — by feature area
 
@@ -52,7 +52,7 @@ Verification status:
 - [ ] (4) SMS inbox scan — UI shell only; lowest priority (Play Store risk); needs permission flow + inbox read (source SMS_INBOX).
 - [x] Money-flow direction (IN/OUT) — outbound messages (sent/paybill/buygoods/withdraw + bank moves) now reconcile as EXPENSE; inbound as SALE. Room v6→v7. M-Pesa only so far. Verified on-device; committed + pushed (`9d19e36`).
 - [x] Airtel Money + T-Kash outbound (OUT) parsing — sent/paid/withdrawn patterns; Extracted-dispatch mirror of MpesaSmsParser; 16 new unit tests. Committed + pushed (`6788430`).
-- [ ] "Match to a different sale/expense" manual picker — in MatchReviewScreen, let user pick from a list instead of only the auto-suggestion.
+- [x] "Match to a different sale/expense" manual picker — in MatchReviewScreen, let user pick from a list instead of only the auto-suggestion. Built + verified on-device; committed (`5d7ce34`).
 - [ ] Refine Airtel/T-Kash regex with real samples when available.
 
 **Credit (deni)** — core shipped in `fcc7f2f`; wallet-linked in `0b5f666` (built in Compose, no Stitch).
