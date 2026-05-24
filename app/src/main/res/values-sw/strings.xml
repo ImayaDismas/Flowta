@@ -274,9 +274,16 @@
     <string name="match_review_no_wallet">Ongeza akaunti kwanza ili kuandika haya kama mauzo.</string>
     <string name="match_review_done">Imekamilika</string>
 
-    <!-- Njia za kuingiza (ulinganishaji) -->
+    <!-- Skani risiti (kamera OCR) -->
     <string name="scan_receipt_title">Skani</string>
-    <string name="scan_receipt_message">Elekeza kamera kwenye ujumbe wa malipo au risiti. Usomaji hufanyika kwenye simu yako — hakuna kinachotoka kwenye kifaa chako.</string>
+    <string name="scan_receipt_helper">Piga picha ujumbe wa malipo au risiti, au chagua kutoka kwenye galari yako. Usomaji hufanyika kwenye simu yako — hakuna kinachotoka kwenye kifaa chako.</string>
+    <string name="scan_receipt_take_photo">Piga picha</string>
+    <string name="scan_receipt_choose_gallery">Chagua kutoka galari</string>
+    <string name="scan_receipt_processing">Inasoma picha…</string>
+    <string name="scan_receipt_duplicate">Tayari yameongezwa — hakuna malipo mapya.</string>
+    <string name="scan_receipt_error_unreadable">Haikuweza kusoma malipo kutoka picha hiyo. Jaribu picha iliyo wazi zaidi.</string>
+
+    <!-- Njia za kuingiza (ulinganishaji) -->
     <string name="import_statement_title">Leta taarifa</string>
     <string name="import_statement_message">Leta taarifa ya M-Pesa (CSV) ili kulinganisha malipo mengi kwa pamoja.</string>
     <string name="import_statement_choose_file">Chagua faili la CSV</string>

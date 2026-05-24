@@ -217,7 +217,10 @@ fun FlowtaNavHost(
         }
 
         composable<Destination.ScanReceipt> {
-            ScanReceiptScreen(onBack = { navController.popBackStack() })
+            ScanReceiptScreen(
+                onBack = { navController.popBackStack() },
+                onParsed = { navController.popBackStack() },
+            )
         }
 
         composable<Destination.ImportStatement> {

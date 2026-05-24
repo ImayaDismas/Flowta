@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Inbox
-import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,9 +25,9 @@ import com.flowgroup.flowta.R
 import com.flowgroup.flowta.ui.components.EmptyState
 
 /**
- * Placeholder entry screens for reconciliation methods 2–4 (camera OCR, statement import, SMS
- * inbox scan). Each will feed the same parse→match pipeline as paste-SMS once implemented; for now
- * they explain the method and reassure on privacy.
+ * Placeholder entry screen for the SMS-inbox-scan reconciliation method (method 4). It feeds the
+ * same parse→match pipeline as paste-SMS once implemented; for now it explains the method and
+ * reassures on privacy.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,14 +63,6 @@ private fun ComingSoonScaffold(title: String, icon: ImageVector, message: String
         }
     }
 }
-
-@Composable
-fun ScanReceiptScreen(onBack: () -> Unit) = ComingSoonScaffold(
-    title = stringResource(R.string.scan_receipt_title),
-    icon = Icons.Outlined.PhotoCamera,
-    message = stringResource(R.string.scan_receipt_message),
-    onBack = onBack,
-)
 
 @Composable
 fun ScanInboxScreen(onBack: () -> Unit) = ComingSoonScaffold(

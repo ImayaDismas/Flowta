@@ -274,9 +274,16 @@
     <string name="match_review_no_wallet">Add a wallet first to record this as a sale.</string>
     <string name="match_review_done">Done</string>
 
-    <!-- Reconciliation input-method shells -->
+    <!-- Scan receipt (camera OCR) -->
     <string name="scan_receipt_title">Scan</string>
-    <string name="scan_receipt_message">Point your camera at a payment message or receipt. Reading happens on your phone — nothing leaves your device.</string>
+    <string name="scan_receipt_helper">Photograph a payment message or receipt, or pick one from your gallery. Reading happens on your phone — nothing leaves your device.</string>
+    <string name="scan_receipt_take_photo">Take photo</string>
+    <string name="scan_receipt_choose_gallery">Choose from gallery</string>
+    <string name="scan_receipt_processing">Reading the image…</string>
+    <string name="scan_receipt_duplicate">Already added — no new payments.</string>
+    <string name="scan_receipt_error_unreadable">Couldn\'t read a payment from that image. Try a clearer photo.</string>
+
+    <!-- Reconciliation input-method shells -->
     <string name="import_statement_title">Import statement</string>
     <string name="import_statement_message">Import an M-Pesa statement (CSV) to match many payments at once.</string>
     <string name="import_statement_choose_file">Choose CSV file</string>

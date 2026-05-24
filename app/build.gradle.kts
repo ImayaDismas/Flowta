@@ -105,6 +105,9 @@ dependencies {
     // WorkManager (background deni reminders)
     implementation(libs.androidx.work.runtime.ktx)
 
+    // On-device OCR (camera reconciliation)
+    implementation(libs.mlkit.text.recognition)
+
     // Unit tests
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
