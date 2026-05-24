@@ -2,13 +2,18 @@ package com.flowgroup.flowta.ui.viewmodel.transaction
 
 import app.cash.turbine.test
 import com.flowgroup.flowta.domain.common.Result
+import com.flowgroup.flowta.domain.model.Client
+import com.flowgroup.flowta.domain.model.ClientDeni
 import com.flowgroup.flowta.domain.model.CurrencyCode
 import com.flowgroup.flowta.domain.model.Money
 import com.flowgroup.flowta.domain.model.Transaction
 import com.flowgroup.flowta.domain.model.TransactionType
 import com.flowgroup.flowta.domain.model.Wallet
 import com.flowgroup.flowta.domain.model.WalletType
+import com.flowgroup.flowta.domain.usecase.deni.ObserveClientsDeniForCurrentBusinessUseCase
+import com.flowgroup.flowta.domain.usecase.transaction.RecordSaleOnCreditUseCase
 import com.flowgroup.flowta.domain.usecase.transaction.RecordTransactionUseCase
+import com.flowgroup.flowta.domain.usecase.transaction.SaleCreditClient
 import com.flowgroup.flowta.domain.usecase.wallet.ObserveWalletsForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.transaction.RecordTransactionEvent
 import com.flowgroup.flowta.ui.state.transaction.RecordTransactionUiEvent
@@ -35,7 +40,9 @@ import org.junit.Test
 class RecordTransactionViewModelTest {
 
     private val observeWallets: ObserveWalletsForCurrentBusinessUseCase = mockk()
+    private val observeClients: ObserveClientsDeniForCurrentBusinessUseCase = mockk()
     private val recordTransaction: RecordTransactionUseCase = mockk()
+    private val recordSaleOnCredit: RecordSaleOnCreditUseCase = mockk()
 
     private val cash = Wallet(
         id = "w-cash",
@@ -48,9 +55,23 @@ class RecordTransactionViewModelTest {
     )
     private val mpesa = cash.copy(id = "w-mpesa", name = "M-Pesa till", type = WalletType.MPESA)
 
+    private val mamaAchieng = ClientDeni(
+        client = Client(
+            id = "c-1",
+            businessId = "b-1",
+            name = "Mama Achieng",
+            phone = null,
+            currency = CurrencyCode.KES,
+            createdAt = Instant.fromEpochMilliseconds(0),
+            updatedAt = Instant.fromEpochMilliseconds(0),
+        ),
+        outstandingMinor = 0L,
+    )
+
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        every { observeClients() } returns flowOf(Result.Success(emptyList()))
     }
 
     @After
@@ -58,11 +79,18 @@ class RecordTransactionViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun viewModel() = RecordTransactionViewModel(
+        observeWallets,
+        observeClients,
+        recordTransaction,
+        recordSaleOnCredit,
+    )
+
     @Test
     fun givenWalletsLoaded_whenInitialised_thenContentStateWithFirstWalletSelected() = runTest {
         every { observeWallets() } returns flowOf(Result.Success(listOf(cash, mpesa)))
 
-        val viewModel = RecordTransactionViewModel(observeWallets, recordTransaction)
+        val viewModel = viewModel()
 
         val state = viewModel.uiState.value as RecordTransactionUiState.Content
         assertEquals(listOf(cash, mpesa), state.wallets)
@@ -74,7 +102,7 @@ class RecordTransactionViewModelTest {
     fun givenNoWallets_whenInitialised_thenNoWalletsState() = runTest {
         every { observeWallets() } returns flowOf(Result.Success(emptyList()))
 
-        val viewModel = RecordTransactionViewModel(observeWallets, recordTransaction)
+        val viewModel = viewModel()
 
         assertEquals(RecordTransactionUiState.NoWallets, viewModel.uiState.value)
     }
@@ -82,7 +110,7 @@ class RecordTransactionViewModelTest {
     @Test
     fun givenNonDigitAmountInput_whenChanged_thenInputIsSanitisedToDigitsOnly() = runTest {
         every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
-        val viewModel = RecordTransactionViewModel(observeWallets, recordTransaction)
+        val viewModel = viewModel()
 
         viewModel.onEvent(RecordTransactionEvent.AmountChanged("1a 2b3"))
 
@@ -93,7 +121,7 @@ class RecordTransactionViewModelTest {
     @Test
     fun givenBlankAmount_whenSubmit_thenAmountRequiredErrorAndRecordNotCalled() = runTest {
         every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
-        val viewModel = RecordTransactionViewModel(observeWallets, recordTransaction)
+        val viewModel = viewModel()
 
         viewModel.onEvent(RecordTransactionEvent.Submit)
 
@@ -105,7 +133,7 @@ class RecordTransactionViewModelTest {
     @Test
     fun givenZeroAmount_whenSubmit_thenAmountInvalidErrorAndRecordNotCalled() = runTest {
         every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
-        val viewModel = RecordTransactionViewModel(observeWallets, recordTransaction)
+        val viewModel = viewModel()
         viewModel.onEvent(RecordTransactionEvent.AmountChanged("0"))
 
         viewModel.onEvent(RecordTransactionEvent.Submit)
@@ -123,7 +151,7 @@ class RecordTransactionViewModelTest {
             recordTransaction(mpesa.id, TransactionType.EXPENSE, expectedAmount, "Stock")
         } returns Result.Success(mockk<Transaction>(relaxed = true))
 
-        val viewModel = RecordTransactionViewModel(observeWallets, recordTransaction)
+        val viewModel = viewModel()
         viewModel.onEvent(RecordTransactionEvent.WalletChanged(mpesa.id))
         viewModel.onEvent(RecordTransactionEvent.TypeChanged(TransactionType.EXPENSE))
         viewModel.onEvent(RecordTransactionEvent.AmountChanged("500"))
@@ -141,10 +169,98 @@ class RecordTransactionViewModelTest {
         // Single-emission test of fallback: only mpesa is available, so the picker should select it
         every { observeWallets() } returns flowOf(Result.Success(listOf(mpesa)))
 
-        val viewModel = RecordTransactionViewModel(observeWallets, recordTransaction)
+        val viewModel = viewModel()
 
         val state = viewModel.uiState.value as RecordTransactionUiState.Content
         assertEquals(mpesa.id, state.selectedWalletId)
         assertTrue(state.wallets.contains(mpesa))
+    }
+
+    @Test
+    fun givenCreditToggledOn_thenCreditDefaultsToFullAmount() = runTest {
+        every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
+        every { observeClients() } returns flowOf(Result.Success(listOf(mamaAchieng)))
+        val viewModel = viewModel()
+
+        viewModel.onEvent(RecordTransactionEvent.AmountChanged("1000"))
+        viewModel.onEvent(RecordTransactionEvent.CreditToggled(true))
+
+        val state = viewModel.uiState.value as RecordTransactionUiState.Content
+        assertTrue(state.onCredit)
+        assertEquals("1000", state.creditAmountInput)
+    }
+
+    @Test
+    fun givenOnCreditWithExistingClient_whenSubmit_thenRecordSaleOnCreditCalledWithPartialCredit() = runTest {
+        every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
+        every { observeClients() } returns flowOf(Result.Success(listOf(mamaAchieng)))
+        coEvery {
+            recordSaleOnCredit("w-cash", 1000L, 600L, "", SaleCreditClient.Existing("c-1"))
+        } returns Result.Success(Unit)
+
+        val viewModel = viewModel()
+        viewModel.onEvent(RecordTransactionEvent.AmountChanged("1000"))
+        viewModel.onEvent(RecordTransactionEvent.CreditToggled(true))
+        viewModel.onEvent(RecordTransactionEvent.ClientSelected("c-1"))
+        viewModel.onEvent(RecordTransactionEvent.CreditAmountChanged("600"))
+
+        viewModel.events.test {
+            viewModel.onEvent(RecordTransactionEvent.Submit)
+            assertEquals(RecordTransactionUiEvent.Recorded, awaitItem())
+        }
+        coVerify { recordSaleOnCredit("w-cash", 1000L, 600L, "", SaleCreditClient.Existing("c-1")) }
+        coVerify(exactly = 0) { recordTransaction(any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun givenOnCreditWithNewClient_whenSubmit_thenRecordSaleOnCreditCalledWithNewClient() = runTest {
+        every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
+        coEvery {
+            recordSaleOnCredit("w-cash", 800L, 800L, "", SaleCreditClient.New("Juma", null))
+        } returns Result.Success(Unit)
+
+        val viewModel = viewModel()
+        viewModel.onEvent(RecordTransactionEvent.AmountChanged("800"))
+        viewModel.onEvent(RecordTransactionEvent.CreditToggled(true))
+        // No existing clients, so addingNewClient defaults on; just supply a name.
+        viewModel.onEvent(RecordTransactionEvent.NewClientNameChanged("Juma"))
+
+        viewModel.events.test {
+            viewModel.onEvent(RecordTransactionEvent.Submit)
+            assertEquals(RecordTransactionUiEvent.Recorded, awaitItem())
+        }
+        coVerify { recordSaleOnCredit("w-cash", 800L, 800L, "", SaleCreditClient.New("Juma", null)) }
+    }
+
+    @Test
+    fun givenOnCreditButNoClientChosen_whenSubmit_thenClientErrorAndUseCaseNotCalled() = runTest {
+        every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
+        every { observeClients() } returns flowOf(Result.Success(listOf(mamaAchieng)))
+        val viewModel = viewModel()
+
+        viewModel.onEvent(RecordTransactionEvent.AmountChanged("1000"))
+        viewModel.onEvent(RecordTransactionEvent.CreditToggled(true))
+        viewModel.onEvent(RecordTransactionEvent.Submit)
+
+        val state = viewModel.uiState.value as RecordTransactionUiState.Content
+        assertTrue(state.clientError)
+        coVerify(exactly = 0) { recordSaleOnCredit(any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun givenCreditExceedsTotal_whenSubmit_thenExceedsErrorAndUseCaseNotCalled() = runTest {
+        every { observeWallets() } returns flowOf(Result.Success(listOf(cash)))
+        every { observeClients() } returns flowOf(Result.Success(listOf(mamaAchieng)))
+        val viewModel = viewModel()
+
+        viewModel.onEvent(RecordTransactionEvent.AmountChanged("500"))
+        viewModel.onEvent(RecordTransactionEvent.CreditToggled(true))
+        viewModel.onEvent(RecordTransactionEvent.ClientSelected("c-1"))
+        viewModel.onEvent(RecordTransactionEvent.CreditAmountChanged("900"))
+        viewModel.onEvent(RecordTransactionEvent.Submit)
+
+        val state = viewModel.uiState.value as RecordTransactionUiState.Content
+        assertEquals(RecordTransactionUiState.Content.CreditError.Exceeds, state.creditError)
+        coVerify(exactly = 0) { recordSaleOnCredit(any(), any(), any(), any(), any()) }
     }
 }

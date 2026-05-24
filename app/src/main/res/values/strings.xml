@@ -116,6 +116,17 @@
     <string name="record_tx_cta_expense">Record expense</string>
     <string name="record_tx_error_amount_required">Enter an amount</string>
     <string name="record_tx_error_amount_invalid">Amount must be greater than zero</string>
+    <string name="record_tx_on_credit_label">On credit (deni)</string>
+    <string name="record_tx_client_label">Client</string>
+    <string name="record_tx_client_select_hint">Select client</string>
+    <string name="record_tx_client_new">+ New client</string>
+    <string name="record_tx_new_client_name_label">Client name</string>
+    <string name="record_tx_new_client_phone_label">Phone (optional)</string>
+    <string name="record_tx_credit_amount_label">On credit (%1$s)</string>
+    <string name="record_tx_paid_now">Paid now: %1$s</string>
+    <string name="record_tx_error_credit_required">Enter the amount on credit</string>
+    <string name="record_tx_error_credit_exceeds">Credit can\'t be more than the sale</string>
+    <string name="record_tx_error_client_required">Choose or add a client</string>
     <string name="record_tx_no_wallets_title">No wallets yet</string>
     <string name="record_tx_no_wallets_message">Add a wallet before recording your first transaction.</string>
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -35,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -52,6 +56,7 @@ import com.flowgroup.flowta.domain.model.WalletType
 import com.flowgroup.flowta.ui.state.transaction.RecordTransactionEvent
 import com.flowgroup.flowta.ui.state.transaction.RecordTransactionUiEvent
 import com.flowgroup.flowta.ui.state.transaction.RecordTransactionUiState
+import com.flowgroup.flowta.ui.screen.reconciliation.formatMoney
 import com.flowgroup.flowta.ui.theme.FlowtaTheme
 import com.flowgroup.flowta.ui.viewmodel.transaction.RecordTransactionViewModel
 import kotlinx.datetime.Instant
@@ -193,6 +198,10 @@ private fun RecordTransactionForm(
             modifier = Modifier.fillMaxWidth(),
         )
 
+        if (content.type == TransactionType.SALE) {
+            CreditSection(content = content, onEvent = onEvent)
+        }
+
         OutlinedTextField(
             value = content.note,
             onValueChange = { onEvent(RecordTransactionEvent.NoteChanged(it)) },
@@ -295,6 +304,149 @@ private fun WalletDropdown(
                     },
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun CreditSection(
+    content: RecordTransactionUiState.Content,
+    onEvent: (RecordTransactionEvent) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.record_tx_on_credit_label),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = content.onCredit,
+                onCheckedChange = { onEvent(RecordTransactionEvent.CreditToggled(it)) },
+            )
+        }
+
+        if (content.onCredit) {
+            ClientDropdown(content = content, onEvent = onEvent)
+
+            if (content.addingNewClient) {
+                OutlinedTextField(
+                    value = content.newClientName,
+                    onValueChange = { onEvent(RecordTransactionEvent.NewClientNameChanged(it)) },
+                    label = { Text(stringResource(R.string.record_tx_new_client_name_label)) },
+                    placeholder = { Text(stringResource(R.string.add_customer_name_hint)) },
+                    singleLine = true,
+                    isError = content.clientError,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(
+                    value = content.newClientPhone,
+                    onValueChange = { onEvent(RecordTransactionEvent.NewClientPhoneChanged(it)) },
+                    label = { Text(stringResource(R.string.record_tx_new_client_phone_label)) },
+                    placeholder = { Text(stringResource(R.string.add_customer_phone_hint)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Next,
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+
+            if (content.clientError) {
+                Text(
+                    text = stringResource(R.string.record_tx_error_client_required),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            val currency = content.selectedWallet.openingBalance.currency
+            val total = content.amountInput.toLongOrNull() ?: 0L
+            val credit = content.creditAmountInput.toLongOrNull() ?: 0L
+            val paidNow = (total - credit).coerceAtLeast(0L)
+            OutlinedTextField(
+                value = content.creditAmountInput,
+                onValueChange = { onEvent(RecordTransactionEvent.CreditAmountChanged(it)) },
+                label = { Text(stringResource(R.string.record_tx_credit_amount_label, currency.iso4217)) },
+                placeholder = { Text("0") },
+                singleLine = true,
+                isError = content.creditError != null,
+                supportingText = {
+                    if (content.creditError != null) {
+                        Text(
+                            text = stringResource(content.creditError.messageRes),
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    } else {
+                        Text(stringResource(R.string.record_tx_paid_now, formatMoney(paidNow, currency)))
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ClientDropdown(
+    content: RecordTransactionUiState.Content,
+    onEvent: (RecordTransactionEvent) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val fieldValue = when {
+        content.addingNewClient -> stringResource(R.string.record_tx_client_new)
+        else -> content.selectedClientName.orEmpty()
+    }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        OutlinedTextField(
+            value = fieldValue,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.record_tx_client_label)) },
+            placeholder = { Text(stringResource(R.string.record_tx_client_select_hint)) },
+            isError = content.clientError,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                .fillMaxWidth(),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            content.clients.forEach { clientDeni ->
+                DropdownMenuItem(
+                    text = { Text(clientDeni.client.name) },
+                    onClick = {
+                        onEvent(RecordTransactionEvent.ClientSelected(clientDeni.client.id))
+                        expanded = false
+                    },
+                )
+            }
+            if (content.clients.isNotEmpty()) {
+                HorizontalDivider()
+            }
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.record_tx_client_new)) },
+                onClick = {
+                    onEvent(RecordTransactionEvent.NewClientSelected)
+                    expanded = false
+                },
+            )
         }
     }
 }

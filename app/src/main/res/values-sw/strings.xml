@@ -116,6 +116,17 @@
     <string name="record_tx_cta_expense">Rekodi matumizi</string>
     <string name="record_tx_error_amount_required">Weka kiasi</string>
     <string name="record_tx_error_amount_invalid">Kiasi lazima kiwe zaidi ya sifuri</string>
+    <string name="record_tx_on_credit_label">Kwa mkopo (deni)</string>
+    <string name="record_tx_client_label">Mteja</string>
+    <string name="record_tx_client_select_hint">Chagua mteja</string>
+    <string name="record_tx_client_new">+ Mteja mpya</string>
+    <string name="record_tx_new_client_name_label">Jina la mteja</string>
+    <string name="record_tx_new_client_phone_label">Simu (si lazima)</string>
+    <string name="record_tx_credit_amount_label">Kwa mkopo (%1$s)</string>
+    <string name="record_tx_paid_now">Amelipa sasa: %1$s</string>
+    <string name="record_tx_error_credit_required">Weka kiasi cha mkopo</string>
+    <string name="record_tx_error_credit_exceeds">Mkopo hauwezi kuzidi mauzo</string>
+    <string name="record_tx_error_client_required">Chagua au ongeza mteja</string>
     <string name="record_tx_no_wallets_title">Bado huna pochi</string>
     <string name="record_tx_no_wallets_message">Ongeza pochi kabla ya kurekodi muamala wako wa kwanza.</string>
 
