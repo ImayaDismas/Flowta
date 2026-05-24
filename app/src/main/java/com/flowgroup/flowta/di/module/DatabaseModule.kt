@@ -6,6 +6,7 @@ import com.flowgroup.flowta.data.datasource.local.FlowtaDatabase
 import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
 import com.flowgroup.flowta.data.datasource.local.dao.ClientDao
 import com.flowgroup.flowta.data.datasource.local.dao.DeniEntryDao
+import com.flowgroup.flowta.data.datasource.local.dao.ReceivedPaymentDao
 import com.flowgroup.flowta.data.datasource.local.dao.TransactionDao
 import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
 import com.flowgroup.flowta.data.datasource.local.security.DatabaseKeyProvider
@@ -36,6 +37,7 @@ object DatabaseModule {
                 FlowtaDatabase.MIGRATION_2_3,
                 FlowtaDatabase.MIGRATION_3_4,
                 FlowtaDatabase.MIGRATION_4_5,
+                FlowtaDatabase.MIGRATION_5_6,
             )
             .build()
     }
@@ -54,4 +56,8 @@ object DatabaseModule {
 
     @Provides
     fun provideDeniEntryDao(database: FlowtaDatabase): DeniEntryDao = database.deniEntryDao()
+
+    @Provides
+    fun provideReceivedPaymentDao(database: FlowtaDatabase): ReceivedPaymentDao =
+        database.receivedPaymentDao()
 }

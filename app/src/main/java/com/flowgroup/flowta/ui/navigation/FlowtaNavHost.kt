@@ -10,6 +10,12 @@ import com.flowgroup.flowta.ui.screen.deni.AddClientScreen
 import com.flowgroup.flowta.ui.screen.deni.ClientDeniDetailScreen
 import com.flowgroup.flowta.ui.screen.deni.DeniListScreen
 import com.flowgroup.flowta.ui.screen.home.HomeScreen
+import com.flowgroup.flowta.ui.screen.reconciliation.ImportStatementScreen
+import com.flowgroup.flowta.ui.screen.reconciliation.MatchReviewScreen
+import com.flowgroup.flowta.ui.screen.reconciliation.PasteSmsScreen
+import com.flowgroup.flowta.ui.screen.reconciliation.ReconciliationHubScreen
+import com.flowgroup.flowta.ui.screen.reconciliation.ScanInboxScreen
+import com.flowgroup.flowta.ui.screen.reconciliation.ScanReceiptScreen
 import com.flowgroup.flowta.ui.screen.onboarding.AddBusinessScreen
 import com.flowgroup.flowta.ui.screen.onboarding.GetStartedScreen
 import com.flowgroup.flowta.ui.screen.onboarding.SetPinScreen
@@ -95,6 +101,7 @@ fun FlowtaNavHost(
                     navController.navigate(Destination.TransactionDetail(transactionId))
                 },
                 onOpenDeni = { navController.navigate(Destination.DeniList) },
+                onOpenReconciliation = { navController.navigate(Destination.Reconciliation) },
             )
         }
 
@@ -178,6 +185,45 @@ fun FlowtaNavHost(
             ClientDeniDetailScreen(
                 onBack = { navController.popBackStack() },
             )
+        }
+
+        composable<Destination.Reconciliation> {
+            ReconciliationHubScreen(
+                onBack = { navController.popBackStack() },
+                onPaste = { navController.navigate(Destination.PasteSms) },
+                onScan = { navController.navigate(Destination.ScanReceipt) },
+                onImport = { navController.navigate(Destination.ImportStatement) },
+                onInbox = { navController.navigate(Destination.ScanInbox) },
+                onOpenPayment = { paymentId ->
+                    navController.navigate(Destination.MatchReview(paymentId))
+                },
+            )
+        }
+
+        composable<Destination.PasteSms> {
+            PasteSmsScreen(
+                onBack = { navController.popBackStack() },
+                onParsed = { navController.popBackStack() },
+            )
+        }
+
+        composable<Destination.MatchReview> {
+            MatchReviewScreen(
+                onBack = { navController.popBackStack() },
+                onDone = { navController.popBackStack() },
+            )
+        }
+
+        composable<Destination.ScanReceipt> {
+            ScanReceiptScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable<Destination.ImportStatement> {
+            ImportStatementScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable<Destination.ScanInbox> {
+            ScanInboxScreen(onBack = { navController.popBackStack() })
         }
     }
 }

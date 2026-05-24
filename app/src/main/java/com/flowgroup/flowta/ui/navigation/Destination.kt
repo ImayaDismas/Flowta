@@ -19,4 +19,10 @@ sealed interface Destination {
     @Serializable data object DeniList : Destination
     @Serializable data object AddClient : Destination
     @Serializable data class ClientDeniDetail(val clientId: String) : Destination
+    @Serializable data object Reconciliation : Destination
+    @Serializable data object PasteSms : Destination
+    @Serializable data class MatchReview(val paymentId: String) : Destination
+    @Serializable data object ScanReceipt : Destination
+    @Serializable data object ImportStatement : Destination
+    @Serializable data object ScanInbox : Destination
 }

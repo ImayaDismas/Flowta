@@ -8,16 +8,21 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.flowgroup.flowta.data.datasource.local.converter.CurrencyCodeConverter
 import com.flowgroup.flowta.data.datasource.local.converter.DeniEntryTypeConverter
 import com.flowgroup.flowta.data.datasource.local.converter.InstantConverter
+import com.flowgroup.flowta.data.datasource.local.converter.MobileMoneyProviderConverter
+import com.flowgroup.flowta.data.datasource.local.converter.PaymentSourceConverter
+import com.flowgroup.flowta.data.datasource.local.converter.ReconciliationStatusConverter
 import com.flowgroup.flowta.data.datasource.local.converter.TransactionTypeConverter
 import com.flowgroup.flowta.data.datasource.local.converter.WalletTypeConverter
 import com.flowgroup.flowta.data.datasource.local.dao.BusinessDao
 import com.flowgroup.flowta.data.datasource.local.dao.ClientDao
 import com.flowgroup.flowta.data.datasource.local.dao.DeniEntryDao
+import com.flowgroup.flowta.data.datasource.local.dao.ReceivedPaymentDao
 import com.flowgroup.flowta.data.datasource.local.dao.TransactionDao
 import com.flowgroup.flowta.data.datasource.local.dao.WalletDao
 import com.flowgroup.flowta.data.model.entity.BusinessEntity
 import com.flowgroup.flowta.data.model.entity.ClientEntity
 import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
+import com.flowgroup.flowta.data.model.entity.ReceivedPaymentEntity
 import com.flowgroup.flowta.data.model.entity.TransactionEntity
 import com.flowgroup.flowta.data.model.entity.WalletEntity
 
@@ -28,8 +33,9 @@ import com.flowgroup.flowta.data.model.entity.WalletEntity
         TransactionEntity::class,
         ClientEntity::class,
         DeniEntryEntity::class,
+        ReceivedPaymentEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
 )
 @TypeConverters(
@@ -38,6 +44,9 @@ import com.flowgroup.flowta.data.model.entity.WalletEntity
     WalletTypeConverter::class,
     TransactionTypeConverter::class,
     DeniEntryTypeConverter::class,
+    MobileMoneyProviderConverter::class,
+    ReconciliationStatusConverter::class,
+    PaymentSourceConverter::class,
 )
 abstract class FlowtaDatabase : RoomDatabase() {
     abstract fun businessDao(): BusinessDao
@@ -45,6 +54,7 @@ abstract class FlowtaDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun clientDao(): ClientDao
     abstract fun deniEntryDao(): DeniEntryDao
+    abstract fun receivedPaymentDao(): ReceivedPaymentDao
 
     companion object {
         const val DATABASE_NAME = "flowta.db"
@@ -157,6 +167,45 @@ abstract class FlowtaDatabase : RoomDatabase() {
                 db.execSQL(
                     "CREATE INDEX IF NOT EXISTS `index_deni_entries_wallet_id` " +
                         "ON `deni_entries` (`wallet_id`)"
+                )
+            }
+        }
+
+        val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `received_payments` (" +
+                        "`received_payment_id` TEXT NOT NULL, " +
+                        "`business_id` TEXT NOT NULL, " +
+                        "`provider` TEXT NOT NULL, " +
+                        "`amount_minor` INTEGER NOT NULL, " +
+                        "`currency_code` TEXT NOT NULL, " +
+                        "`reference` TEXT NOT NULL, " +
+                        "`sender_name` TEXT, " +
+                        "`sender_phone` TEXT, " +
+                        "`status` TEXT NOT NULL, " +
+                        "`matched_transaction_id` TEXT, " +
+                        "`source` TEXT NOT NULL, " +
+                        "`occurred_at` INTEGER NOT NULL, " +
+                        "`created_at` INTEGER NOT NULL, " +
+                        "`updated_at` INTEGER NOT NULL, " +
+                        "PRIMARY KEY(`received_payment_id`), " +
+                        "FOREIGN KEY(`business_id`) REFERENCES `businesses`(`business_id`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_received_payments_business_id` " +
+                        "ON `received_payments` (`business_id`)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS " +
+                        "`index_received_payments_matched_transaction_id` " +
+                        "ON `received_payments` (`matched_transaction_id`)"
+                )
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                        "`index_received_payments_business_id_provider_reference` " +
+                        "ON `received_payments` (`business_id`, `provider`, `reference`)"
                 )
             }
         }

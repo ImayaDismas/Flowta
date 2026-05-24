@@ -222,4 +222,53 @@
     <string name="deni_reminder_channel_desc">Reminders about money clients owe you</string>
     <string name="deni_reminder_title">Money to collect</string>
     <string name="deni_reminder_text">Some clients still owe you. Tap to review your deni.</string>
+
+    <!-- Reconciliation -->
+    <string name="reconciliation_title">Reconcile</string>
+    <string name="reconciliation_subtitle">Did all mobile payments match your sales?</string>
+    <string name="dashboard_reconcile_label">Reconcile mobile money</string>
+    <string name="reconciliation_matched_of_total">%1$d of %2$d matched</string>
+    <string name="reconciliation_matched">Matched</string>
+    <string name="reconciliation_unmatched">Needs review</string>
+    <string name="reconciliation_empty_title">No payments yet</string>
+    <string name="reconciliation_empty_message">Add a mobile-money message to match it against your sales.</string>
+    <string name="reconciliation_section_unmatched">Unmatched — needs action</string>
+    <string name="reconciliation_section_matched">Matched</string>
+    <string name="reconciliation_action_paste">Paste SMS</string>
+    <string name="reconciliation_action_scan">Scan</string>
+    <string name="reconciliation_action_import">Import</string>
+    <string name="reconciliation_action_inbox">Inbox</string>
+    <string name="reconciliation_match_cta">Match</string>
+
+    <!-- Paste SMS -->
+    <string name="paste_sms_title">Paste message</string>
+    <string name="paste_sms_helper">Copy a payment message and paste it here — works offline.</string>
+    <string name="paste_sms_input_hint">Paste the M-Pesa, Airtel Money or T-Kash message here</string>
+    <string name="paste_sms_parse_cta">Read &amp; match</string>
+    <string name="paste_sms_supported">Supports M-Pesa, Airtel Money and T-Kash.</string>
+    <string name="paste_sms_result_stored">Added %1$d payment(s) to reconcile.</string>
+    <string name="paste_sms_result_duplicate">Already added — no new payments.</string>
+    <string name="paste_sms_error_unreadable">Could not read a payment from that message.</string>
+
+    <!-- Match review -->
+    <string name="match_review_title">Match payment</string>
+    <string name="match_review_suggested">Suggested match</string>
+    <string name="match_review_exact">Exact match</string>
+    <string name="match_review_confirm">Confirm match</string>
+    <string name="match_review_not_a_match">Not a match</string>
+    <string name="match_review_record_sale">Record as new sale</string>
+    <string name="match_review_dismiss">Not a sale — dismiss</string>
+    <string name="match_review_no_suggestion">No matching sale found. Record it as a new sale.</string>
+    <string name="match_review_choose_wallet">Add to which account?</string>
+    <string name="match_review_no_wallet">Add a wallet first to record this as a sale.</string>
+    <string name="match_review_done">Done</string>
+
+    <!-- Reconciliation input-method shells -->
+    <string name="scan_receipt_title">Scan</string>
+    <string name="scan_receipt_message">Point your camera at a payment message or receipt. Reading happens on your phone — nothing leaves your device.</string>
+    <string name="import_statement_title">Import statement</string>
+    <string name="import_statement_message">Import an M-Pesa or bank statement (PDF or CSV) to match many payments at once.</string>
+    <string name="scan_inbox_title">Scan inbox</string>
+    <string name="scan_inbox_message">With your permission, Flowta reads only payment messages from your inbox, on your phone. Your messages never leave your device.</string>
+    <string name="reconciliation_coming_soon">Coming soon</string>
 </resources>

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -58,6 +59,7 @@ fun DashboardTab(
     onSeeAllWallets: () -> Unit,
     onOpenWallet: (String) -> Unit,
     onOpenDeni: () -> Unit,
+    onOpenReconciliation: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardTabViewModel = hiltViewModel(),
 ) {
@@ -70,6 +72,7 @@ fun DashboardTab(
         onSeeAllWallets = onSeeAllWallets,
         onOpenWallet = onOpenWallet,
         onOpenDeni = onOpenDeni,
+        onOpenReconciliation = onOpenReconciliation,
         modifier = modifier,
     )
 }
@@ -83,6 +86,7 @@ private fun DashboardTabContent(
     onSeeAllWallets: () -> Unit,
     onOpenWallet: (String) -> Unit,
     onOpenDeni: () -> Unit,
+    onOpenReconciliation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -107,6 +111,7 @@ private fun DashboardTabContent(
             onSeeAllWallets = onSeeAllWallets,
             onOpenWallet = onOpenWallet,
             onOpenDeni = onOpenDeni,
+            onOpenReconciliation = onOpenReconciliation,
             modifier = modifier,
         )
     }
@@ -121,6 +126,7 @@ private fun DashboardList(
     onSeeAllWallets: () -> Unit,
     onOpenWallet: (String) -> Unit,
     onOpenDeni: () -> Unit,
+    onOpenReconciliation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -144,6 +150,9 @@ private fun DashboardList(
                 currency = content.currency,
                 onClick = onOpenDeni,
             )
+        }
+        item(key = "reconcile") {
+            ReconcileCard(onClick = onOpenReconciliation)
         }
         item(key = "wallets_header") {
             WalletsHeader(
@@ -401,6 +410,38 @@ private fun DeniOwedCard(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
             }
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReconcileCard(onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Sync,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+            Text(
+                text = stringResource(R.string.dashboard_reconcile_label),
+                modifier = Modifier.weight(1f).padding(start = 12.dp),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
                 contentDescription = null,

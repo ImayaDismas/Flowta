@@ -222,4 +222,53 @@
     <string name="deni_reminder_channel_desc">Vikumbusho kuhusu pesa wateja wanazokudai</string>
     <string name="deni_reminder_title">Pesa za kukusanya</string>
     <string name="deni_reminder_text">Baadhi ya wateja bado wanakudai. Gusa kukagua deni lako.</string>
+
+    <!-- Ulinganishaji (reconciliation) -->
+    <string name="reconciliation_title">Linganisha</string>
+    <string name="reconciliation_subtitle">Je, malipo yote ya simu yalilingana na mauzo yako?</string>
+    <string name="dashboard_reconcile_label">Linganisha pesa za simu</string>
+    <string name="reconciliation_matched_of_total">%1$d kati ya %2$d yamelingana</string>
+    <string name="reconciliation_matched">Yamelingana</string>
+    <string name="reconciliation_unmatched">Yanahitaji kukaguliwa</string>
+    <string name="reconciliation_empty_title">Bado hakuna malipo</string>
+    <string name="reconciliation_empty_message">Ongeza ujumbe wa pesa za simu ili kuulinganisha na mauzo yako.</string>
+    <string name="reconciliation_section_unmatched">Hayajalingana — yanahitaji hatua</string>
+    <string name="reconciliation_section_matched">Yamelingana</string>
+    <string name="reconciliation_action_paste">Bandika SMS</string>
+    <string name="reconciliation_action_scan">Skani</string>
+    <string name="reconciliation_action_import">Leta</string>
+    <string name="reconciliation_action_inbox">Kikasha</string>
+    <string name="reconciliation_match_cta">Linganisha</string>
+
+    <!-- Bandika SMS -->
+    <string name="paste_sms_title">Bandika ujumbe</string>
+    <string name="paste_sms_helper">Nakili ujumbe wa malipo na ubandike hapa — hufanya kazi nje ya mtandao.</string>
+    <string name="paste_sms_input_hint">Bandika ujumbe wa M-Pesa, Airtel Money au T-Kash hapa</string>
+    <string name="paste_sms_parse_cta">Soma na ulinganishe</string>
+    <string name="paste_sms_supported">Inakubali M-Pesa, Airtel Money na T-Kash.</string>
+    <string name="paste_sms_result_stored">Imeongeza malipo %1$d ya kulinganisha.</string>
+    <string name="paste_sms_result_duplicate">Tayari yameongezwa — hakuna malipo mapya.</string>
+    <string name="paste_sms_error_unreadable">Haikuweza kusoma malipo kutoka ujumbe huo.</string>
+
+    <!-- Ulinganishaji wa malipo -->
+    <string name="match_review_title">Linganisha malipo</string>
+    <string name="match_review_suggested">Pendekezo la kulinganisha</string>
+    <string name="match_review_exact">Yamelingana kabisa</string>
+    <string name="match_review_confirm">Thibitisha</string>
+    <string name="match_review_not_a_match">Sio hili</string>
+    <string name="match_review_record_sale">Andika kama mauzo mapya</string>
+    <string name="match_review_dismiss">Sio mauzo — ondoa</string>
+    <string name="match_review_no_suggestion">Hakuna mauzo yanayolingana. Yaandike kama mauzo mapya.</string>
+    <string name="match_review_choose_wallet">Ongeza kwenye akaunti gani?</string>
+    <string name="match_review_no_wallet">Ongeza akaunti kwanza ili kuandika haya kama mauzo.</string>
+    <string name="match_review_done">Imekamilika</string>
+
+    <!-- Njia za kuingiza (ulinganishaji) -->
+    <string name="scan_receipt_title">Skani</string>
+    <string name="scan_receipt_message">Elekeza kamera kwenye ujumbe wa malipo au risiti. Usomaji hufanyika kwenye simu yako — hakuna kinachotoka kwenye kifaa chako.</string>
+    <string name="import_statement_title">Leta taarifa</string>
+    <string name="import_statement_message">Leta taarifa ya M-Pesa au benki (PDF au CSV) ili kulinganisha malipo mengi kwa pamoja.</string>
+    <string name="scan_inbox_title">Changanua kikasha</string>
+    <string name="scan_inbox_message">Kwa ruhusa yako, Flowta husoma ujumbe wa malipo pekee kutoka kikasha chako, kwenye simu yako. Ujumbe wako hautoki kwenye kifaa chako.</string>
+    <string name="reconciliation_coming_soon">Inakuja hivi karibuni</string>
 </resources>
