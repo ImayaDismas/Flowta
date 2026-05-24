@@ -10,7 +10,7 @@
 
 <!-- Claude sets exactly one task here at a time -->
 
-**Reconciliation — SMS-paste path built end-to-end (2026-05-24), NOT yet committed or verified on-device.**
+**Reconciliation (2026-05-24): SMS-paste + CSV statement import both built, verified on-device, SMS-paste committed+pushed (`77d9dbd`/`2559b68`). Statement import is NOT yet committed.**
 
 Built this session (Clean Architecture vertical slice, mirrors deni):
 - **Pluggable SMS parser engine** (concept non-negotiable): `PaymentSmsParser` interface + per-provider rules (`MpesaSmsParser`, `AirtelMoneySmsParser`, `TkashSmsParser`) bound `@IntoSet`; `PaymentSmsParserEngine` dispatches. M-Pesa rule is solid; Airtel/T-Kash seeded against canonical samples, to refine with real messages.
@@ -24,7 +24,7 @@ Verification status:
 - ✅ **FULLY VERIFIED on-device (emulator-5554, 2026-05-24):** installed v6 with `-r` over the existing v5 DB → **v5→v6 migration ran cleanly** (SQLCipher opened, no crash, data intact: Deni 3,300, balances preserved). `received_payments` table confirmed (hub queried it). Pasted an M-Pesa SMS → parsed **KES 1,234** (whole shillings, NOT 123,400) with correct sender/ref and **1:15 PM → 13:15 Nairobi** time → stored as unmatched. Match-review showed the correct **no-suggestion** path (no 1,234 sale existed) → "Record as new sale" into M-Pesa Till → payment → Matched ("1 of 1 matched"). Side effects correct: **revenue 2,020 → 3,254 (+1,234)**, **M-Pesa Till 27,195 → 28,429 (+1,234)**, Deni/expenses unchanged. No app errors in logcat.
 - Stitch screens generated (Sapphire Slate): hub, match, paste, camera, import, inbox. 2 duplicate "Match Payments Review" screens (`fea9ed06…`, `a1a538b7…`) need manual deletion in Stitch.
 
-> **Emulator test data CHANGED by this verification:** added a KES 1,234 SALE in M-Pesa Till + a matched received_payment (ref SGR45TXKLP). Now: revenue this week 3,254; M-Pesa Till 28,429; KCB 123,899; Cash Drawer 370; Deni owed 3,300 (Mama Achieng 2,500, Juma Test 800). The reconciliation hub has 1 matched payment, 0 unmatched. (No UI to delete a received_payment yet; the test sale can be deleted via History if a clean state is wanted.)
+> **Emulator test data CHANGED by verification.** SMS-paste test: added a KES 1,234 SALE in M-Pesa Till + matched received_payment (ref SGR45TXKLP) → revenue 3,254, M-Pesa Till 28,429. CSV-import test: imported `/sdcard/Download/flowta_statement.csv` → 2 unmatched payments stored (PETER KAMAU 500 / STMNTA0001, GRACE ATIENO 750 / STMNTB0002); the withdrawal row was correctly skipped. Reconciliation hub now: **1 matched, 2 unmatched**. KCB 123,899; Cash Drawer 370; Deni owed 3,300 (Mama Achieng 2,500, Juma Test 800). (No UI to delete a received_payment yet; test sale deletable via History.)
 
 > **Prior context (still standing):** Client rename (`1323c2e`) + wallet-linked deni (`0b5f666`) landed and fully verified on-device 2026-05-24 (v4→v5 migration clean; all picker paths; P&L isolation holds).
 
@@ -44,7 +44,7 @@ Verification status:
 
 <!-- Claude writes the next task to pick up here before closing -->
 
-**Pick up next:** **Verify the reconciliation SMS-paste path on-device** (build + 26 unit tests pass, but the v5→v6 migration and the paste→match flow are unverified on a real device). Then either continue reconciliation methods 2–4 (camera OCR / statement import / inbox scan — currently shells) or pivot to CSV export / Phase 1 paywall.
+**Pick up next:** **Commit the CSV statement-import work** (built + on-device verified, but uncommitted). Then remaining reconciliation methods — camera OCR (method 2) and SMS inbox scan (method 4, lowest priority) are still shells — or pivot to CSV export / Phase 1 paywall.
 
 ### Phase 1 remaining — by feature area
 
@@ -55,7 +55,7 @@ Verification status:
 - [x] Pluggable SMS parser engine — one rule per provider (per concept).
 - [x] (1) SMS copy-paste parse → match to sales — built end-to-end; **on-device verify pending** (incl. v5→v6 migration).
 - [ ] (2) Camera OCR scan — UI shell only; needs OCR + feed `ParseAndStorePaymentsUseCase` (source CAMERA_OCR).
-- [ ] (3) Statement import (PDF / CSV) — UI shell only; needs file pick + per-line parse (source STATEMENT_IMPORT).
+- [x] (3) Statement import (**CSV**) — built end-to-end + **verified on-device** (pluggable `StatementParser` engine + `MpesaStatementCsvParser`, SAF file pick, `ImportStatementUseCase`, real screen). PDF deferred (M-Pesa PDFs are password-protected; needs a heavy lib).
 - [ ] (4) SMS inbox scan — UI shell only; lowest priority (Play Store risk); needs permission flow + inbox read (source SMS_INBOX).
 - [ ] Follow-ups: "Match to a different sale" manual picker; refine Airtel/T-Kash regex with real samples.
 
