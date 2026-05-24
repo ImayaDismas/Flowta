@@ -10,7 +10,23 @@
 
 <!-- Claude sets exactly one task here at a time -->
 
-_None — Client rename (`1323c2e`) + wallet-linked deni (`0b5f666`) landed (2026-05-24). Pick next from Next Session._
+**Reconciliation — SMS-paste path built end-to-end (2026-05-24), NOT yet committed or verified on-device.**
+
+Built this session (Clean Architecture vertical slice, mirrors deni):
+- **Pluggable SMS parser engine** (concept non-negotiable): `PaymentSmsParser` interface + per-provider rules (`MpesaSmsParser`, `AirtelMoneySmsParser`, `TkashSmsParser`) bound `@IntoSet`; `PaymentSmsParserEngine` dispatches. M-Pesa rule is solid; Airtel/T-Kash seeded against canonical samples, to refine with real messages.
+- **Money unit gotcha handled:** app stores KES in *whole shillings* in `Money.minorUnits` (no cents) — parser rounds "Ksh2,500.00" → 2500 (not 250000), else matching breaks.
+- **Persistence:** `ReceivedPaymentEntity` (+ `received_payments` table), DAO with idempotent insert on unique (business_id, provider, reference), **Room v5→v6 migration**, mapper, datasource, 3 enum converters. `matched_transaction_id` is a soft link (indexed, no FK) like deni's wallet_id.
+- **Repo + use cases:** `ReconciliationRepository`(Impl); `ParseAndStorePayments`, `SuggestMatch` (exact-amount + closest-time within 48h, excludes already-matched), `ConfirmMatch`, `IgnorePayment`, `RecordSaleFromPayment`, `GetReceivedPayment`, `ObserveReconciliationSummaryForCurrentBusiness`.
+- **UI:** Reconciliation hub (summary + 4 input-method tiles + unmatched/matched lists), Paste-SMS, Match-review (confirm / not-a-match / record-as-new-sale w/ wallet pick / dismiss). Entry card on dashboard → `Destination.Reconciliation`. Methods 2–4 (camera/import/inbox) are "coming soon" shells feeding the same future pipeline. en+sw strings added.
+
+Verification status:
+- ✅ `assembleDebug` builds; Hilt graph valid; **26 reconciliation unit tests pass** (0 skipped/failed).
+- ✅ **FULLY VERIFIED on-device (emulator-5554, 2026-05-24):** installed v6 with `-r` over the existing v5 DB → **v5→v6 migration ran cleanly** (SQLCipher opened, no crash, data intact: Deni 3,300, balances preserved). `received_payments` table confirmed (hub queried it). Pasted an M-Pesa SMS → parsed **KES 1,234** (whole shillings, NOT 123,400) with correct sender/ref and **1:15 PM → 13:15 Nairobi** time → stored as unmatched. Match-review showed the correct **no-suggestion** path (no 1,234 sale existed) → "Record as new sale" into M-Pesa Till → payment → Matched ("1 of 1 matched"). Side effects correct: **revenue 2,020 → 3,254 (+1,234)**, **M-Pesa Till 27,195 → 28,429 (+1,234)**, Deni/expenses unchanged. No app errors in logcat.
+- Stitch screens generated (Sapphire Slate): hub, match, paste, camera, import, inbox. 2 duplicate "Match Payments Review" screens (`fea9ed06…`, `a1a538b7…`) need manual deletion in Stitch.
+
+> **Emulator test data CHANGED by this verification:** added a KES 1,234 SALE in M-Pesa Till + a matched received_payment (ref SGR45TXKLP). Now: revenue this week 3,254; M-Pesa Till 28,429; KCB 123,899; Cash Drawer 370; Deni owed 3,300 (Mama Achieng 2,500, Juma Test 800). The reconciliation hub has 1 matched payment, 0 unmatched. (No UI to delete a received_payment yet; the test sale can be deleted via History if a clean state is wanted.)
+
+> **Prior context (still standing):** Client rename (`1323c2e`) + wallet-linked deni (`0b5f666`) landed and fully verified on-device 2026-05-24 (v4→v5 migration clean; all picker paths; P&L isolation holds).
 
 > Verification status:
 > - **Wallet-linked deni FULLY VERIFIED on-device (emulator API 36, 2026-05-24):** Room **v4→v5 migration** ran cleanly on the prior encrypted DB (no crash, data intact). All three picker paths confirmed, each leaving revenue/expenses insights **unchanged at 2,020 / 10,000** (P&L isolation holds):
@@ -28,19 +44,20 @@ _None — Client rename (`1323c2e`) + wallet-linked deni (`0b5f666`) landed (202
 
 <!-- Claude writes the next task to pick up here before closing -->
 
-**Pick up next:** open choice across the remaining areas below. Reconciliation is the remaining core differentiator (needs Stitch screens designed first). Smaller options: CSV export, or the Phase 1 paywall.
+**Pick up next:** **Verify the reconciliation SMS-paste path on-device** (build + 26 unit tests pass, but the v5→v6 migration and the paste→match flow are unverified on a real device). Then either continue reconciliation methods 2–4 (camera OCR / statement import / inbox scan — currently shells) or pivot to CSV export / Phase 1 paywall.
 
 ### Phase 1 remaining — by feature area
 
 **Ledger** — core flows complete (record, history, wallet + transaction detail/edit/delete).
 
 **Reconciliation** (mobile money — M-Pesa / Airtel / T-Kash)
-- [ ] Design Stitch screens (MISSING).
-- [ ] Pluggable SMS parser engine — one rule per provider (per concept).
-- [ ] (1) SMS copy-paste parse → match to sales.
-- [ ] (2) Camera OCR scan.
-- [ ] (3) Statement import (PDF / CSV).
-- [ ] (4) SMS inbox scan — lowest priority (Play Store risk).
+- [x] Design Stitch screens (generated; delete 2 duplicate match screens).
+- [x] Pluggable SMS parser engine — one rule per provider (per concept).
+- [x] (1) SMS copy-paste parse → match to sales — built end-to-end; **on-device verify pending** (incl. v5→v6 migration).
+- [ ] (2) Camera OCR scan — UI shell only; needs OCR + feed `ParseAndStorePaymentsUseCase` (source CAMERA_OCR).
+- [ ] (3) Statement import (PDF / CSV) — UI shell only; needs file pick + per-line parse (source STATEMENT_IMPORT).
+- [ ] (4) SMS inbox scan — UI shell only; lowest priority (Play Store risk); needs permission flow + inbox read (source SMS_INBOX).
+- [ ] Follow-ups: "Match to a different sale" manual picker; refine Airtel/T-Kash regex with real samples.
 
 **Credit (deni)** — core shipped in `fcc7f2f`; wallet-linked in `0b5f666` (built in Compose, no Stitch).
 - [ ] Fast-follow: integrate credit into the Record-Sale flow (mark a sale fully/partly on credit → auto-create a deni credit entry). Currently deni uses a standalone "record credit / add client" path.
