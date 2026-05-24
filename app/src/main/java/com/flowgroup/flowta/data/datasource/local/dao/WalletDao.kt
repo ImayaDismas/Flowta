@@ -18,11 +18,14 @@ interface WalletDao {
 
     @Query(
         "SELECT w.*, " +
-            "COALESCE(SUM(CASE WHEN t.type = 'SALE' THEN t.amount_minor " +
-            "WHEN t.type = 'EXPENSE' THEN -t.amount_minor ELSE 0 END), 0) AS net_minor " +
-            "FROM wallets w LEFT JOIN transactions t ON t.wallet_id = w.wallet_id " +
+            "COALESCE((SELECT SUM(CASE WHEN t.type = 'SALE' THEN t.amount_minor " +
+            "WHEN t.type = 'EXPENSE' THEN -t.amount_minor ELSE 0 END) " +
+            "FROM transactions t WHERE t.wallet_id = w.wallet_id), 0) + " +
+            "COALESCE((SELECT SUM(CASE WHEN d.type = 'PAYMENT' THEN d.amount_minor " +
+            "WHEN d.type = 'CREDIT' THEN -d.amount_minor ELSE 0 END) " +
+            "FROM deni_entries d WHERE d.wallet_id = w.wallet_id), 0) AS net_minor " +
+            "FROM wallets w " +
             "WHERE w.business_id = :businessId " +
-            "GROUP BY w.wallet_id " +
             "ORDER BY w.created_at ASC"
     )
     fun observeWithBalanceForBusiness(businessId: String): Flow<List<WalletWithBalanceProjection>>
@@ -41,11 +44,14 @@ interface WalletDao {
 
     @Query(
         "SELECT w.*, " +
-            "COALESCE(SUM(CASE WHEN t.type = 'SALE' THEN t.amount_minor " +
-            "WHEN t.type = 'EXPENSE' THEN -t.amount_minor ELSE 0 END), 0) AS net_minor " +
-            "FROM wallets w LEFT JOIN transactions t ON t.wallet_id = w.wallet_id " +
-            "WHERE w.wallet_id = :id " +
-            "GROUP BY w.wallet_id"
+            "COALESCE((SELECT SUM(CASE WHEN t.type = 'SALE' THEN t.amount_minor " +
+            "WHEN t.type = 'EXPENSE' THEN -t.amount_minor ELSE 0 END) " +
+            "FROM transactions t WHERE t.wallet_id = w.wallet_id), 0) + " +
+            "COALESCE((SELECT SUM(CASE WHEN d.type = 'PAYMENT' THEN d.amount_minor " +
+            "WHEN d.type = 'CREDIT' THEN -d.amount_minor ELSE 0 END) " +
+            "FROM deni_entries d WHERE d.wallet_id = w.wallet_id), 0) AS net_minor " +
+            "FROM wallets w " +
+            "WHERE w.wallet_id = :id"
     )
     fun observeWithBalanceById(id: String): Flow<WalletWithBalanceProjection?>
 

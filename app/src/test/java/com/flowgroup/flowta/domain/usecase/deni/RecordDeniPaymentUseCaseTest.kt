@@ -31,7 +31,7 @@ class RecordDeniPaymentUseCaseTest {
 
     @Test
     fun givenZeroAmount_whenInvoked_thenErrorAndClientNotFetched() = runTest {
-        val result = useCase(clientId = "c-1", amountMinor = 0L, note = null)
+        val result = useCase(clientId = "c-1", amountMinor = 0L, note = null, walletId = null)
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 0) { deniRepository.getClient(any()) }
@@ -41,14 +41,14 @@ class RecordDeniPaymentUseCaseTest {
     fun givenValidAmount_whenInvoked_thenPaymentEntryRecordedInClientCurrency() = runTest {
         coEvery { deniRepository.getClient("c-1") } returns Result.Success(client)
         coEvery {
-            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.PAYMENT, Money(300L, CurrencyCode.KES), "part payment")
+            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.PAYMENT, Money(300L, CurrencyCode.KES), "part payment", null)
         } returns Result.Success(mockk())
 
-        val result = useCase(clientId = "c-1", amountMinor = 300L, note = "part payment")
+        val result = useCase(clientId = "c-1", amountMinor = 300L, note = "part payment", walletId = null)
 
         assertTrue(result is Result.Success)
         coVerify {
-            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.PAYMENT, Money(300L, CurrencyCode.KES), "part payment")
+            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.PAYMENT, Money(300L, CurrencyCode.KES), "part payment", null)
         }
     }
 }

@@ -7,12 +7,14 @@ import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.usecase.deni.RecordDeniCreditUseCase
 import com.flowgroup.flowta.domain.usecase.deni.RecordDeniPaymentUseCase
 import com.flowgroup.flowta.domain.usecase.deni.ObserveClientDeniUseCase
+import com.flowgroup.flowta.domain.usecase.wallet.ObserveWalletsWithBalanceForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailEvent
 import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class ClientDeniDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     observeClientDeni: ObserveClientDeniUseCase,
+    observeWallets: ObserveWalletsWithBalanceForCurrentBusinessUseCase,
     private val recordCredit: RecordDeniCreditUseCase,
     private val recordPayment: RecordDeniPaymentUseCase,
 ) : ViewModel() {
@@ -32,14 +35,16 @@ class ClientDeniDetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            observeClientDeni(clientId).collect { result ->
+            combine(observeClientDeni(clientId), observeWallets()) { detailResult, walletsResult ->
+                detailResult to ((walletsResult as? Result.Success)?.data ?: emptyList())
+            }.collect { (detailResult, wallets) ->
                 _uiState.update { current ->
-                    when (result) {
-                        is Result.Success -> result.data?.let { detail ->
-                            (current as? ClientDeniDetailUiState.Content)?.copy(detail = detail)
-                                ?: ClientDeniDetailUiState.Content(detail)
+                    when (detailResult) {
+                        is Result.Success -> detailResult.data?.let { detail ->
+                            (current as? ClientDeniDetailUiState.Content)?.copy(detail = detail, wallets = wallets)
+                                ?: ClientDeniDetailUiState.Content(detail = detail, wallets = wallets)
                         } ?: ClientDeniDetailUiState.NotFound
-                        is Result.Error -> ClientDeniDetailUiState.Error(result.exception.message.orEmpty())
+                        is Result.Error -> ClientDeniDetailUiState.Error(detailResult.exception.message.orEmpty())
                     }
                 }
             }
@@ -51,7 +56,7 @@ class ClientDeniDetailViewModel @Inject constructor(
             ClientDeniDetailEvent.AddCreditClicked -> openDialog(ClientDeniDetailUiState.Content.Dialog.CREDIT)
             ClientDeniDetailEvent.RecordPaymentClicked -> openDialog(ClientDeniDetailUiState.Content.Dialog.PAYMENT)
             ClientDeniDetailEvent.DialogDismissed -> updateContent {
-                it.copy(dialog = null, amountInput = "", noteInput = "", amountError = false, submitError = null)
+                it.copy(dialog = null, amountInput = "", noteInput = "", amountError = false, submitError = null, selectedWalletId = null)
             }
             is ClientDeniDetailEvent.AmountChanged -> updateContent {
                 it.copy(amountInput = event.input.filter { c -> c.isDigit() }, amountError = false, submitError = null)
@@ -59,12 +64,15 @@ class ClientDeniDetailViewModel @Inject constructor(
             is ClientDeniDetailEvent.NoteChanged -> updateContent {
                 it.copy(noteInput = event.note.take(MAX_NOTE_LENGTH))
             }
+            is ClientDeniDetailEvent.WalletSelected -> updateContent {
+                it.copy(selectedWalletId = event.walletId)
+            }
             ClientDeniDetailEvent.DialogConfirmed -> confirm()
         }
     }
 
     private fun openDialog(dialog: ClientDeniDetailUiState.Content.Dialog) = updateContent {
-        it.copy(dialog = dialog, amountInput = "", noteInput = "", amountError = false, submitError = null)
+        it.copy(dialog = dialog, amountInput = "", noteInput = "", amountError = false, submitError = null, selectedWalletId = null)
     }
 
     private fun confirm() {
@@ -81,9 +89,10 @@ class ClientDeniDetailViewModel @Inject constructor(
         updateContent { it.copy(isSubmitting = true, submitError = null) }
         viewModelScope.launch {
             val note = current.noteInput
+            val walletId = current.selectedWalletId
             val result = when (dialog) {
-                ClientDeniDetailUiState.Content.Dialog.CREDIT -> recordCredit(clientId, amount, note)
-                ClientDeniDetailUiState.Content.Dialog.PAYMENT -> recordPayment(clientId, amount, note)
+                ClientDeniDetailUiState.Content.Dialog.CREDIT -> recordCredit(clientId, amount, note, walletId)
+                ClientDeniDetailUiState.Content.Dialog.PAYMENT -> recordPayment(clientId, amount, note, walletId)
             }
             when (result) {
                 is Result.Success -> updateContent {
@@ -94,6 +103,7 @@ class ClientDeniDetailViewModel @Inject constructor(
                         amountError = false,
                         isSubmitting = false,
                         submitError = null,
+                        selectedWalletId = null,
                     )
                 }
                 is Result.Error -> updateContent {

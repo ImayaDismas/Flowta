@@ -51,7 +51,7 @@ class AddClientUseCaseTest {
 
     @Test
     fun givenBlankName_whenInvoked_thenErrorAndNoClientCreated() = runTest {
-        val result = useCase(name = "   ", phone = null, initialCreditMinor = 0L)
+        val result = useCase(name = "   ", phone = null, initialCreditMinor = 0L, walletId = null)
 
         assertTrue(result is Result.Error)
         coVerify(exactly = 0) { deniRepository.addClient(any(), any(), any(), CurrencyCode.KES) }
@@ -63,14 +63,14 @@ class AddClientUseCaseTest {
         coEvery { deniRepository.addClient("biz-1", "Mama Achieng", null, CurrencyCode.KES) } returns
             Result.Success(client)
         coEvery {
-            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.CREDIT, Money(500L, CurrencyCode.KES), null)
+            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.CREDIT, Money(500L, CurrencyCode.KES), null, null)
         } returns Result.Success(mockk())
 
-        val result = useCase(name = "Mama Achieng", phone = null, initialCreditMinor = 500L)
+        val result = useCase(name = "Mama Achieng", phone = null, initialCreditMinor = 500L, walletId = null)
 
         assertTrue(result is Result.Success)
         coVerify {
-            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.CREDIT, Money(500L, CurrencyCode.KES), null)
+            deniRepository.recordEntry("biz-1", "c-1", DeniEntryType.CREDIT, Money(500L, CurrencyCode.KES), null, null)
         }
     }
 
@@ -80,9 +80,9 @@ class AddClientUseCaseTest {
         coEvery { deniRepository.addClient("biz-1", "Mama Achieng", null, CurrencyCode.KES) } returns
             Result.Success(client)
 
-        val result = useCase(name = "Mama Achieng", phone = null, initialCreditMinor = 0L)
+        val result = useCase(name = "Mama Achieng", phone = null, initialCreditMinor = 0L, walletId = null)
 
         assertTrue(result is Result.Success)
-        coVerify(exactly = 0) { deniRepository.recordEntry(any(), any(), any(), any(), any()) }
+        coVerify(exactly = 0) { deniRepository.recordEntry(any(), any(), any(), any(), any(), any()) }
     }
 }

@@ -35,6 +35,7 @@ object DatabaseModule {
                 FlowtaDatabase.MIGRATION_1_2,
                 FlowtaDatabase.MIGRATION_2_3,
                 FlowtaDatabase.MIGRATION_3_4,
+                FlowtaDatabase.MIGRATION_4_5,
             )
             .build()
     }
@@ -49,7 +50,7 @@ object DatabaseModule {
     fun provideTransactionDao(database: FlowtaDatabase): TransactionDao = database.transactionDao()
 
     @Provides
-    fun provideClientDao(database: FlowtaDatabase): ClientDao = database.customerDao()
+    fun provideClientDao(database: FlowtaDatabase): ClientDao = database.clientDao()
 
     @Provides
     fun provideDeniEntryDao(database: FlowtaDatabase): DeniEntryDao = database.deniEntryDao()

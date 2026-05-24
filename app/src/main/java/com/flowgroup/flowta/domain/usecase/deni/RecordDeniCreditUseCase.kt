@@ -15,6 +15,7 @@ class RecordDeniCreditUseCase @Inject constructor(
         clientId: String,
         amountMinor: Long,
         note: String?,
+        walletId: String?,
     ): Result<DeniEntry> {
         if (amountMinor <= 0L) {
             return Result.Error(AppException.LocalException("Amount must be greater than zero"))
@@ -30,6 +31,7 @@ class RecordDeniCreditUseCase @Inject constructor(
             type = DeniEntryType.CREDIT,
             amount = Money(amountMinor, client.currency),
             note = note,
+            walletId = walletId,
         )
     }
 }

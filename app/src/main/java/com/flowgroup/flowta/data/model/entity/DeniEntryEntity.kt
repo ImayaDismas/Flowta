@@ -28,6 +28,7 @@ import kotlinx.datetime.Instant
     indices = [
         Index(value = ["business_id"], name = "index_deni_entries_business_id"),
         Index(value = ["customer_id"], name = "index_deni_entries_customer_id"),
+        Index(value = ["wallet_id"], name = "index_deni_entries_wallet_id"),
     ],
 )
 data class DeniEntryEntity(
@@ -38,6 +39,7 @@ data class DeniEntryEntity(
     @ColumnInfo(name = "amount_minor") val amountMinor: Long,
     @ColumnInfo(name = "currency_code") val currencyCode: CurrencyCode,
     @ColumnInfo(name = "note") val note: String?,
+    @ColumnInfo(name = "wallet_id") val walletId: String?,
     @ColumnInfo(name = "occurred_at") val occurredAt: Instant,
     @ColumnInfo(name = "created_at") val createdAt: Instant,
     @ColumnInfo(name = "updated_at") val updatedAt: Instant,

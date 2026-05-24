@@ -190,6 +190,9 @@
     <string name="deni_dialog_amount_label">Amount (%1$s)</string>
     <string name="deni_dialog_note_label">Note (optional)</string>
     <string name="deni_dialog_save">Save</string>
+    <string name="deni_wallet_picker_credit_label">Deduct from account (optional)</string>
+    <string name="deni_wallet_picker_payment_label">Add to account (optional)</string>
+    <string name="deni_wallet_picker_none">None</string>
 
     <!-- Add client -->
     <string name="add_customer_title">Add client</string>

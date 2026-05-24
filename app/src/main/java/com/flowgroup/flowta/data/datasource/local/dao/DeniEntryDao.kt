@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface DeniEntryDao {
     @Query(
         "SELECT deni_entry_id, business_id, customer_id, type, amount_minor, currency_code, " +
-            "note, occurred_at, created_at, updated_at " +
+            "note, wallet_id, occurred_at, created_at, updated_at " +
             "FROM deni_entries WHERE customer_id = :clientId " +
             "ORDER BY occurred_at DESC, created_at DESC"
     )

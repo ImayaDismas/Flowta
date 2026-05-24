@@ -29,7 +29,7 @@ import com.flowgroup.flowta.data.model.entity.WalletEntity
         ClientEntity::class,
         DeniEntryEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(
@@ -43,7 +43,7 @@ abstract class FlowtaDatabase : RoomDatabase() {
     abstract fun businessDao(): BusinessDao
     abstract fun walletDao(): WalletDao
     abstract fun transactionDao(): TransactionDao
-    abstract fun customerDao(): ClientDao
+    abstract fun clientDao(): ClientDao
     abstract fun deniEntryDao(): DeniEntryDao
 
     companion object {
@@ -147,6 +147,16 @@ abstract class FlowtaDatabase : RoomDatabase() {
                 db.execSQL(
                     "CREATE INDEX IF NOT EXISTS `index_deni_entries_customer_id` " +
                         "ON `deni_entries` (`customer_id`)"
+                )
+            }
+        }
+
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `deni_entries` ADD COLUMN `wallet_id` TEXT")
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_deni_entries_wallet_id` " +
+                        "ON `deni_entries` (`wallet_id`)"
                 )
             }
         }

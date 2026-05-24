@@ -9,6 +9,7 @@ data class DeniEntry(
     val type: DeniEntryType,
     val amount: Money,
     val note: String?,
+    val walletId: String?,
     val occurredAt: Instant,
     val createdAt: Instant,
     val updatedAt: Instant,

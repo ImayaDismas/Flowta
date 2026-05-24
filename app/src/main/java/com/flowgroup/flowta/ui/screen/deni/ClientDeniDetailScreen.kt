@@ -3,6 +3,8 @@ package com.flowgroup.flowta.ui.screen.deni
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,6 +48,7 @@ import com.flowgroup.flowta.R
 import com.flowgroup.flowta.domain.model.ClientDeniDetail
 import com.flowgroup.flowta.domain.model.DeniEntry
 import com.flowgroup.flowta.domain.model.DeniEntryType
+import com.flowgroup.flowta.domain.model.WalletWithBalance
 import com.flowgroup.flowta.ui.components.EmptyState
 import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailEvent
 import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailUiState
@@ -287,6 +291,17 @@ private fun AmountDialog(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     modifier = Modifier.fillMaxWidth(),
                 )
+                if (content.wallets.isNotEmpty()) {
+                    WalletPicker(
+                        label = stringResource(
+                            if (isCredit) R.string.deni_wallet_picker_credit_label
+                            else R.string.deni_wallet_picker_payment_label
+                        ),
+                        wallets = content.wallets,
+                        selectedWalletId = content.selectedWalletId,
+                        onSelect = { onEvent(ClientDeniDetailEvent.WalletSelected(it)) },
+                    )
+                }
                 content.submitError?.let { error ->
                     Text(error, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
                 }
@@ -305,6 +320,39 @@ private fun AmountDialog(
             }
         },
     )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+internal fun WalletPicker(
+    label: String,
+    wallets: List<WalletWithBalance>,
+    selectedWalletId: String?,
+    onSelect: (String?) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = selectedWalletId == null,
+                onClick = { onSelect(null) },
+                label = { Text(stringResource(R.string.deni_wallet_picker_none)) },
+            )
+            wallets.forEach { wb ->
+                FilterChip(
+                    selected = selectedWalletId == wb.wallet.id,
+                    onClick = { onSelect(wb.wallet.id) },
+                    label = {
+                        Text("${wb.wallet.name} · ${formatMoney(wb.currentBalanceMinor, wb.wallet.openingBalance.currency)}")
+                    },
+                )
+            }
+        }
+    }
 }
 
 private fun formatDate(instant: kotlinx.datetime.Instant): String {

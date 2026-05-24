@@ -129,6 +129,15 @@ private fun AddClientContent(
                 modifier = Modifier.fillMaxWidth(),
             )
 
+            if (uiState.wallets.isNotEmpty() && (uiState.initialCreditInput.toLongOrNull() ?: 0L) > 0L) {
+                WalletPicker(
+                    label = stringResource(R.string.deni_wallet_picker_credit_label),
+                    wallets = uiState.wallets,
+                    selectedWalletId = uiState.selectedWalletId,
+                    onSelect = { onEvent(AddClientEvent.WalletSelected(it)) },
+                )
+            }
+
             uiState.submitError?.let { error ->
                 Text(
                     text = error,

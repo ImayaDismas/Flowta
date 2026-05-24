@@ -27,5 +27,6 @@ interface DeniRepository {
         type: DeniEntryType,
         amount: Money,
         note: String?,
+        walletId: String?,
     ): Result<DeniEntry>
 }

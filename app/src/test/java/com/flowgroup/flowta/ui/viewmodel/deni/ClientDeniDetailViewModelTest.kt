@@ -5,9 +5,11 @@ import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.model.CurrencyCode
 import com.flowgroup.flowta.domain.model.Client
 import com.flowgroup.flowta.domain.model.ClientDeniDetail
+import com.flowgroup.flowta.domain.model.WalletWithBalance
 import com.flowgroup.flowta.domain.usecase.deni.ObserveClientDeniUseCase
 import com.flowgroup.flowta.domain.usecase.deni.RecordDeniCreditUseCase
 import com.flowgroup.flowta.domain.usecase.deni.RecordDeniPaymentUseCase
+import com.flowgroup.flowta.domain.usecase.wallet.ObserveWalletsWithBalanceForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailEvent
 import com.flowgroup.flowta.ui.state.deni.ClientDeniDetailUiState
 import io.mockk.coEvery
@@ -33,6 +35,7 @@ import org.junit.Test
 class ClientDeniDetailViewModelTest {
 
     private val observeClientDeni: ObserveClientDeniUseCase = mockk()
+    private val observeWallets: ObserveWalletsWithBalanceForCurrentBusinessUseCase = mockk()
     private val recordCredit: RecordDeniCreditUseCase = mockk()
     private val recordPayment: RecordDeniPaymentUseCase = mockk()
 
@@ -53,6 +56,7 @@ class ClientDeniDetailViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        every { observeWallets() } returns flowOf(Result.Success(emptyList<WalletWithBalance>()))
     }
 
     @After
@@ -63,6 +67,7 @@ class ClientDeniDetailViewModelTest {
     private fun viewModel() = ClientDeniDetailViewModel(
         savedStateHandle = SavedStateHandle(mapOf("clientId" to "c-1")),
         observeClientDeni = observeClientDeni,
+        observeWallets = observeWallets,
         recordCredit = recordCredit,
         recordPayment = recordPayment,
     )
@@ -80,14 +85,14 @@ class ClientDeniDetailViewModelTest {
     @Test
     fun givenPaymentDialog_whenConfirmed_thenPaymentRecordedAndDialogClosed() = runTest {
         every { observeClientDeni("c-1") } returns flowOf(Result.Success(detail))
-        coEvery { recordPayment("c-1", 300L, "") } returns Result.Success(mockk())
+        coEvery { recordPayment("c-1", 300L, "", null) } returns Result.Success(mockk())
 
         val viewModel = viewModel()
         viewModel.onEvent(ClientDeniDetailEvent.RecordPaymentClicked)
         viewModel.onEvent(ClientDeniDetailEvent.AmountChanged("300"))
         viewModel.onEvent(ClientDeniDetailEvent.DialogConfirmed)
 
-        coVerify { recordPayment("c-1", 300L, "") }
+        coVerify { recordPayment("c-1", 300L, "", null) }
         val state = viewModel.uiState.value as ClientDeniDetailUiState.Content
         assertNull(state.dialog)
     }
@@ -102,6 +107,6 @@ class ClientDeniDetailViewModelTest {
 
         val state = viewModel.uiState.value as ClientDeniDetailUiState.Content
         assertTrue(state.amountError)
-        coVerify(exactly = 0) { recordCredit(any(), any(), any()) }
+        coVerify(exactly = 0) { recordCredit(any(), any(), any(), any()) }
     }
 }

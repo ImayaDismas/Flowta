@@ -1,12 +1,15 @@
 package com.flowgroup.flowta.ui.state.deni
 
 import com.flowgroup.flowta.domain.model.ClientDeniDetail
+import com.flowgroup.flowta.domain.model.WalletWithBalance
 
 sealed class ClientDeniDetailUiState {
     data object Loading : ClientDeniDetailUiState()
     data object NotFound : ClientDeniDetailUiState()
     data class Content(
         val detail: ClientDeniDetail,
+        val wallets: List<WalletWithBalance> = emptyList(),
+        val selectedWalletId: String? = null,
         val dialog: Dialog? = null,
         val amountInput: String = "",
         val noteInput: String = "",
@@ -25,5 +28,6 @@ sealed class ClientDeniDetailEvent {
     data object DialogDismissed : ClientDeniDetailEvent()
     data class AmountChanged(val input: String) : ClientDeniDetailEvent()
     data class NoteChanged(val note: String) : ClientDeniDetailEvent()
+    data class WalletSelected(val walletId: String?) : ClientDeniDetailEvent()
     data object DialogConfirmed : ClientDeniDetailEvent()
 }

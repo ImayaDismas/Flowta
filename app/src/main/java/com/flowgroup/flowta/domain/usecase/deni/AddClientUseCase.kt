@@ -20,6 +20,7 @@ class AddClientUseCase @Inject constructor(
         name: String,
         phone: String?,
         initialCreditMinor: Long,
+        walletId: String?,
     ): Result<Client> {
         val trimmed = name.trim()
         if (trimmed.isBlank()) {
@@ -36,10 +37,10 @@ class AddClientUseCase @Inject constructor(
             is Result.Error -> return r
         }
 
-        val customerResult = deniRepository.addClient(businessId, trimmed, phone, business.currency)
-        val client = when (customerResult) {
-            is Result.Success -> customerResult.data
-            is Result.Error -> return customerResult
+        val clientResult = deniRepository.addClient(businessId, trimmed, phone, business.currency)
+        val client = when (clientResult) {
+            is Result.Success -> clientResult.data
+            is Result.Error -> return clientResult
         }
 
         if (initialCreditMinor > 0L) {
@@ -49,6 +50,7 @@ class AddClientUseCase @Inject constructor(
                 type = DeniEntryType.CREDIT,
                 amount = Money(initialCreditMinor, business.currency),
                 note = null,
+                walletId = walletId,
             )
             if (entryResult is Result.Error) return entryResult
         }

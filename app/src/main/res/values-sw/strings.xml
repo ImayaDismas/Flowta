@@ -190,6 +190,9 @@
     <string name="deni_dialog_amount_label">Kiasi (%1$s)</string>
     <string name="deni_dialog_note_label">Maelezo (si lazima)</string>
     <string name="deni_dialog_save">Hifadhi</string>
+    <string name="deni_wallet_picker_credit_label">Toa kwenye akaunti (si lazima)</string>
+    <string name="deni_wallet_picker_payment_label">Weka kwenye akaunti (si lazima)</string>
+    <string name="deni_wallet_picker_none">Hakuna</string>
 
     <!-- Ongeza mteja -->
     <string name="add_customer_title">Ongeza mteja</string>

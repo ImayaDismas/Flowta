@@ -87,6 +87,7 @@ class DeniRepositoryImpl @Inject constructor(
         type: DeniEntryType,
         amount: Money,
         note: String?,
+        walletId: String?,
     ): Result<DeniEntry> = resultOf {
         val now = clock.now()
         val entry = DeniEntry(
@@ -96,6 +97,7 @@ class DeniRepositoryImpl @Inject constructor(
             type = type,
             amount = amount,
             note = note?.trim()?.takeIf { it.isNotEmpty() },
+            walletId = walletId,
             occurredAt = now,
             createdAt = now,
             updatedAt = now,

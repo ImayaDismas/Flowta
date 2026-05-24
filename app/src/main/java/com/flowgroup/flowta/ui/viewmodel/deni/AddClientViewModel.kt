@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.usecase.deni.AddClientUseCase
+import com.flowgroup.flowta.domain.usecase.wallet.ObserveWalletsWithBalanceForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.deni.AddClientEvent
 import com.flowgroup.flowta.ui.state.deni.AddClientUiEvent
 import com.flowgroup.flowta.ui.state.deni.AddClientUiState
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddClientViewModel @Inject constructor(
     private val addClient: AddClientUseCase,
+    observeWallets: ObserveWalletsWithBalanceForCurrentBusinessUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddClientUiState())
@@ -28,6 +30,18 @@ class AddClientViewModel @Inject constructor(
 
     private val _events = Channel<AddClientUiEvent>(Channel.BUFFERED)
     val events: Flow<AddClientUiEvent> = _events.receiveAsFlow()
+
+    init {
+        viewModelScope.launch {
+            observeWallets().collect { result ->
+                val wallets = (result as? Result.Success)?.data ?: emptyList()
+                _uiState.update { state ->
+                    val stillValid = state.selectedWalletId?.takeIf { id -> wallets.any { it.wallet.id == id } }
+                    state.copy(wallets = wallets, selectedWalletId = stillValid)
+                }
+            }
+        }
+    }
 
     fun onEvent(event: AddClientEvent) {
         when (event) {
@@ -39,6 +53,9 @@ class AddClientViewModel @Inject constructor(
             }
             is AddClientEvent.InitialCreditChanged -> _uiState.update {
                 it.copy(initialCreditInput = event.input.filter { c -> c.isDigit() }, submitError = null)
+            }
+            is AddClientEvent.WalletSelected -> _uiState.update {
+                it.copy(selectedWalletId = event.walletId)
             }
             AddClientEvent.Save -> save()
         }
@@ -52,9 +69,10 @@ class AddClientViewModel @Inject constructor(
             return
         }
         val initialCredit = current.initialCreditInput.toLongOrNull() ?: 0L
+        val walletId = current.selectedWalletId?.takeIf { initialCredit > 0L }
         _uiState.update { it.copy(isSaving = true, submitError = null) }
         viewModelScope.launch {
-            when (val result = addClient(current.name, current.phone, initialCredit)) {
+            when (val result = addClient(current.name, current.phone, initialCredit, walletId)) {
                 is Result.Success -> {
                     _uiState.update { it.copy(isSaving = false) }
                     _events.send(AddClientUiEvent.Saved)
