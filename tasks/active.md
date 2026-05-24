@@ -44,7 +44,9 @@ Verification status:
 
 <!-- Claude writes the next task to pick up here before closing -->
 
-**Pick up next:** **Commit the CSV statement-import work** (built + on-device verified, but uncommitted). Then remaining reconciliation methods — camera OCR (method 2) and SMS inbox scan (method 4, lowest priority) are still shells — or pivot to CSV export / Phase 1 paywall.
+**Pick up next:** **Commit the CSV export work** (built + on-device verified, uncommitted; statement-import already committed in `39d149f`/`cfb214a`). Then remaining options: reconciliation camera OCR (method 2) / SMS inbox scan (method 4, lowest priority) — still shells — or the Phase 1 paywall.
+
+> Uncommitted + unpushed: export feature on top of `cfb214a`. Local branch is 5 commits ahead of `origin/develop` (push pending).
 
 ### Phase 1 remaining — by feature area
 
@@ -64,8 +66,8 @@ Verification status:
 - [ ] Optional: surface deni cash-movements as line items in the linked wallet's transaction history (today they move the balance only).
 
 **Export**
-- [ ] Design Stitch screen (MISSING).
-- [ ] Basic CSV export (free — "your data is always yours").
+- [x] Design — built directly in Compose (no Stitch), per user choice.
+- [x] Basic CSV export — transactions → CSV via `ExportTransactionsCsvUseCase` + SAF `CreateDocument`, dashboard entry card. Built + **verified on-device** (saved 5 txns, file well-formed, amounts in whole shillings). Exports transactions only for now; deni/received-payments export is a possible follow-up.
 
 **Security / licensing**
 - [x] PIN lock + SQLCipher encryption — done.
