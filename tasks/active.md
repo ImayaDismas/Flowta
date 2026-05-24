@@ -10,24 +10,21 @@
 
 <!-- Claude sets exactly one task here at a time -->
 
-**Credit→Sale integration (2026-05-24): built + FULLY VERIFIED on-device. NOT yet committed.**
+**Reconciliation Camera OCR (method 2) (2026-05-24): built, FULLY VERIFIED on-device, committed (`5eb2dad`) — not yet pushed.**
 
-Integrated credit (deni) into the Record-Sale flow — a sale can now be marked fully/partly on credit, auto-creating a deni CREDIT entry. Reuses existing primitives: **no schema change, no migration.**
-- **Accounting model (the key decision):** record the **full sale** as a SALE transaction (revenue +total, wallet +total) and the unpaid portion as a deni CREDIT **linked to the same wallet** (wallet −credit). The wallet nets to cash actually received (total − credit). This is the only consistent choice because deni payments never hit the P&L — recognising the full sale up front keeps the credit portion's revenue from being lost when the client later pays.
-- **Domain:** `RecordSaleOnCreditUseCase` (+ `SaleCreditClient.Existing/New`) — validates `0 < credit ≤ total`, resolves business currency, creates the client if new, then records SALE + deni CREDIT (sequential, non-atomic, mirrors `AddClientUseCase`).
-- **UI:** Record-Sale screen gains an "On credit (deni)" switch (SALE only); a client dropdown (existing clients + "+ New client" → inline name/phone fields); a credit-amount field defaulting to the full amount with a derived "Paid now: KES X" hint. ViewModel combines wallets+clients flows and branches `submit()`. en+sw strings added.
+Turned the camera-OCR placeholder into a real input method that reads a photographed M-Pesa message/receipt on-device and feeds the existing parse→match pipeline. Reuses `ParseAndStorePaymentsUseCase` with `PaymentSource.CAMERA_OCR` — **no schema change, no DB migration.**
+- **OCR engine:** ML Kit on-device Latin text recognition (`com.google.mlkit:text-recognition`, model bundled in APK — fully offline). Domain `ReceiptTextRecognizer` interface (URI as String, keeps domain/VM Android-free); `data/ocr/MlKitReceiptTextRecognizer` impl wraps the ML Kit Task in `suspendCancellableCoroutine`; bound via `OcrModule` (@Binds).
+- **OCR noise repair (the non-obvious bit):** ML Kit misreads digits in amounts (observed live: `Ksh1,250.00` → `Kshl,250.00`). Added `OcrTextNormalizer` (domain, pure + unit-tested) that fixes letter↔digit confusions (l/I/|→1, O/o→0, S→5, B→8, Z→2) **only in the amount run right after a `Ksh`/`KES` marker** — names/refs/prose untouched. Applied on the OCR path only; the shared SMS parser (exact paste text) is unchanged.
+- **UI:** `ScanReceiptScreen` (real) with **Take photo** (system camera via `TakePicture` + `FileProvider`, no CAMERA permission declared) and **Choose from gallery** (`PickVisualMedia` photo picker, no permission). ViewModel: recognize → parseAndStore(CAMERA_OCR); mirrors PasteSms states (isProcessing / storedCount / failed) and pops back to the hub on success. en+sw strings added. Manifest gains a FileProvider + `res/xml/file_paths.xml`.
 
 Verification status:
-- ✅ `assembleDebug` builds; Hilt graph valid; unit tests pass (`RecordSaleOnCreditUseCaseTest` + `RecordTransactionViewModel` credit-path tests); existing VM test updated for the new 4-arg constructor.
-- ✅ **FULLY VERIFIED on-device (emulator-5554, 2026-05-24)** — both code paths, no logcat errors:
-  1. **Existing client + partial credit** (M-Pesa Till): SALE 1,000 with 600 on credit to Mama Achieng → revenue **3,254→4,254** (+1,000), M-Pesa Till **28,429→28,829** (net **+400** cash), Mama Achieng **2,500→3,100**, total deni **3,300→3,900**. "Paid now: KES 400" hint correct.
-  2. **New client + full credit** (Cash Drawer): SALE 800 fully on credit to a brand-new client **"Wanjiku"** → revenue **4,254→5,054** (+800), **Cash Drawer unchanged at 370** (net 0), Wanjiku owes 800, total deni **3,900→4,700**.
+- ✅ `assembleDebug` builds; Hilt graph valid; unit tests pass (`ScanReceiptViewModelTest` 4 cases + `OcrTextNormalizerTest` 4 cases).
+- ✅ **FULLY VERIFIED on-device (emulator-5554, 2026-05-24)** — gallery path, no logcat errors. Pushed a rendered test M-Pesa SMS PNG to the gallery, scanned it: ML Kit OCR succeeded, normalizer fixed `Kshl,250.00`→`1,250.00`, parser recognised it, payment stored as CAMERA_OCR. Hub went **1 of 3 → 1 of 4 matched**; new unmatched payment **JOHN OCR · ref QGH7X2K9P1 · KES 1,250 · 14:30** appeared with all fields correct. Screen auto-returned to hub on success.
+- ⚠️ **Camera (Take photo) path NOT OCR-verified** — the emulator's synthetic camera scene can't produce a readable SMS image. It shares the exact OCR→parse→store code as the verified gallery path; only the image-source differs (standard `TakePicture`/FileProvider plumbing).
 
-> **Emulator test data CHANGED by this verification (2026-05-24).** Added two credit-sales (above). Now: **revenue 5,054**, **M-Pesa Till 28,829**, Cash Drawer 370, KCB 123,899. Deni total **4,700** — Mama Achieng 3,100, Juma Test 800, **Wanjiku 800** (new). Reconciliation hub still 1 matched / 2 unmatched (PETER KAMAU 500 / GRACE ATIENO 750). No UI to delete a deni client or received_payment in v1; test sales deletable via History.
+> **Emulator test data CHANGED by this verification (2026-05-24).** Reconciliation hub now **1 matched / 3 unmatched**: JOHN OCR 1,250 (new, from OCR) / GRACE ATIENO 750 / PETER KAMAU 500; matched JANE DOE 1,234. Ledger/deni unchanged (revenue 5,054, M-Pesa Till 28,829, Cash Drawer 370, KCB 123,899, deni 4,700). A test SMS image is left in the emulator gallery (`/sdcard/Pictures/mpesa_ocr_test.png`). No UI to delete a received_payment in v1.
 
-> **Design note (intentional, still standing):** deni cash-movements adjust the selected wallet's *balance* but do NOT appear as line items in that wallet's transaction history (they're not sales/expenses, and are excluded from the P&L). The credit→sale integration relies on exactly this: the deni CREDIT silently nets the wallet down without showing as a transaction. Surfacing these in wallet history is a possible follow-up.
-
-> **Prior context (still standing):** Reconciliation SMS-paste (`77d9dbd`/`2559b68`) + CSV statement import (`39d149f`/`cfb214a`) + CSV export (`5a22569`/`1699ae6`) all committed, pushed, and verified on-device. Wallet-linked deni (`0b5f666`) + Client rename (`1323c2e`) verified 2026-05-24. Reminder notification render still unconfirmed; wallet-detail/insights/transaction-detail flows still pending on-device.
+> **Prior context (still standing):** Credit→Sale integration committed + pushed (`61e07ca`/`bcf116e`). Reconciliation SMS-paste (`77d9dbd`/`2559b68`) + CSV statement import (`39d149f`/`cfb214a`) + CSV export (`5a22569`/`1699ae6`) all committed, pushed, and verified on-device. Wallet-linked deni (`0b5f666`) + Client rename (`1323c2e`) verified 2026-05-24. Reminder notification render still unconfirmed; wallet-detail/insights/transaction-detail flows still pending on-device.
 
 ---
 
@@ -35,9 +32,9 @@ Verification status:
 
 <!-- Claude writes the next task to pick up here before closing -->
 
-**Pick up next:** **Commit the credit→Record-Sale integration** (built + on-device verified this session, uncommitted). Suggested split per repo convention: `feat:` for the feature, then `chore:` recording on-device verification. Then remaining options: reconciliation camera OCR (method 2) / SMS inbox scan (method 4, lowest priority) — still shells — or the Phase 1 paywall.
+**Pick up next:** Phase 1 paywall (license state stored locally + encrypted, M-Pesa Paybill + SMS activation code), or reconciliation SMS inbox scan (method 4 — lowest priority, Play Store policy risk, still a shell). Reconciliation methods 1/2/3 are done; only method 4 remains.
 
-> Uncommitted: credit→Record-Sale integration (RecordSaleOnCreditUseCase + contract/VM/screen/strings/tests) on top of `1699ae6`. `develop` is currently up to date with `origin/develop`; CSV export was already committed+pushed (`5a22569`/`1699ae6`) — the prior note claiming it was uncommitted was stale.
+> **Unpushed:** Camera OCR commits (feat `5eb2dad` + the `chore:` tracking this active.md) sit on local `develop`, **ahead of `origin/develop` (`bcf116e`) — not yet pushed.** Push when ready. Optional reconciliation follow-ups: "Match to a different sale" manual picker; refine Airtel/T-Kash regex with real samples.
 
 ### Phase 1 remaining — by feature area
 
@@ -47,13 +44,13 @@ Verification status:
 - [x] Design Stitch screens (generated; delete 2 duplicate match screens).
 - [x] Pluggable SMS parser engine — one rule per provider (per concept).
 - [x] (1) SMS copy-paste parse → match to sales — built end-to-end; **on-device verify pending** (incl. v5→v6 migration).
-- [ ] (2) Camera OCR scan — UI shell only; needs OCR + feed `ParseAndStorePaymentsUseCase` (source CAMERA_OCR).
+- [x] (2) Camera OCR scan — built end-to-end (ML Kit on-device OCR + `OcrTextNormalizer` + real `ScanReceiptScreen` with camera/gallery) feeding `ParseAndStorePaymentsUseCase` (source CAMERA_OCR). **Verified on-device (gallery path); committed (`5eb2dad`, unpushed).** Camera path shares the same OCR code but is unverifiable on the emulator's synthetic camera.
 - [x] (3) Statement import (**CSV**) — built end-to-end + **verified on-device** (pluggable `StatementParser` engine + `MpesaStatementCsvParser`, SAF file pick, `ImportStatementUseCase`, real screen). PDF deferred (M-Pesa PDFs are password-protected; needs a heavy lib).
 - [ ] (4) SMS inbox scan — UI shell only; lowest priority (Play Store risk); needs permission flow + inbox read (source SMS_INBOX).
 - [ ] Follow-ups: "Match to a different sale" manual picker; refine Airtel/T-Kash regex with real samples.
 
 **Credit (deni)** — core shipped in `fcc7f2f`; wallet-linked in `0b5f666` (built in Compose, no Stitch).
-- [x] Fast-follow: integrate credit into the Record-Sale flow (mark a sale fully/partly on credit → auto-create a deni credit entry). Built + verified on-device 2026-05-24 (`RecordSaleOnCreditUseCase`); **uncommitted**. The standalone "record credit / add client" path still exists alongside it.
+- [x] Fast-follow: integrate credit into the Record-Sale flow (mark a sale fully/partly on credit → auto-create a deni credit entry). Built + verified on-device 2026-05-24 (`RecordSaleOnCreditUseCase`); committed + pushed (`61e07ca`/`bcf116e`). The standalone "record credit / add client" path still exists alongside it.
 - [ ] Optional: surface deni cash-movements as line items in the linked wallet's transaction history (today they move the balance only).
 
 **Export**
@@ -105,7 +102,8 @@ _None._
 - [x] Credit (deni) — customer accounts, credit/partial-payment ledger, dashboard owed-card, WorkManager reminders, Room v4 (`fcc7f2f`).
 - [x] Naming — renamed Customer → Client across the deni feature (code/UI); physical SQLite table kept, no migration (`1323c2e`).
 - [x] Credit (deni) — optional business-wallet link on credit/payment + add-client; wallet balance reflects cash moved; Room v4→v5 (`0b5f666`).
-- [x] Credit→Sale — record a sale fully/partly on credit from Record-Sale; full sale = revenue, unpaid portion = deni CREDIT linked to the wallet (wallet nets to cash received). Built + verified on-device; **uncommitted**.
+- [x] Credit→Sale — record a sale fully/partly on credit from Record-Sale; full sale = revenue, unpaid portion = deni CREDIT linked to the wallet (wallet nets to cash received). Built + verified on-device; committed + pushed (`61e07ca`/`bcf116e`).
+- [x] Reconciliation Camera OCR (method 2) — ML Kit on-device OCR + `OcrTextNormalizer` (digit/letter repair) + real `ScanReceiptScreen` (camera/gallery) → `ParseAndStorePaymentsUseCase` (CAMERA_OCR). Verified on-device (gallery path); committed (`5eb2dad`, unpushed).
 
 ---
 
