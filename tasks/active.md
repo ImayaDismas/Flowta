@@ -13,8 +13,12 @@
 _None — Client rename (`1323c2e`) + wallet-linked deni (`0b5f666`) landed (2026-05-24). Pick next from Next Session._
 
 > Verification status:
-> - **Wallet-linked deni VERIFIED on-device (emulator API 36, 2026-05-24):** Room **v4→v5 migration** ran cleanly on the prior encrypted DB (no crash, data intact). Recorded a KES 1,000 payment for "Mama Achieng" with **M-Pesa Till** selected via the picker → owed dropped 3,000→2,000, M-Pesa balance rose 26,995→27,995, Cash Drawer (other wallet) unchanged at 870, and **revenue/expenses insights unchanged** (2,020 / 10,000). Picker shows live balances + correct "Add to account" label; "Add client" rename live in UI. The two ledgers stay independent as designed.
-> - **Emulator test data now:** Mama Achieng owes KES 2,000 (was 3,000); M-Pesa Till = KES 27,995 (was 26,995). Credit-with-wallet and add-client-with-wallet picker paths NOT yet exercised on-device (only payment-with-wallet was).
+> - **Wallet-linked deni FULLY VERIFIED on-device (emulator API 36, 2026-05-24):** Room **v4→v5 migration** ran cleanly on the prior encrypted DB (no crash, data intact). All three picker paths confirmed, each leaving revenue/expenses insights **unchanged at 2,020 / 10,000** (P&L isolation holds):
+>   1. **Payment + wallet** (M-Pesa): owed 3,000→2,000, M-Pesa 26,995→27,995 (cash in, label "Add to account").
+>   2. **Credit + wallet** (Cash Drawer): owed 2,000→2,500, Cash Drawer 870→370 (cash out, label "Deduct from account").
+>   3. **Add-client + wallet** (M-Pesa, initial credit 800): new client "Juma Test"; total owed 2,500→3,300, M-Pesa 27,995→27,195. Picker correctly appears only once an amount is entered.
+>   Pickers show live balances; "Add client"/"Client name" rename live in UI. The cash ledger and receivable ledger stay independent as designed.
+> - **Emulator test data now:** Mama Achieng owes KES 2,500, Juma Test owes KES 800 (total 3,300); Cash Drawer = KES 370, M-Pesa Till = KES 27,195. No delete-client flow in v1.
 > - **Design note (intentional):** deni cash-movements adjust the selected wallet's *balance* but do NOT appear as line items in that wallet's transaction history (they're not sales/expenses, and excluded from the P&L). Surfacing them in wallet history is a possible follow-up.
 > - **From 2026-05-23 (still standing):** reminder notification render still unconfirmed; wallet-detail/insights/transaction-detail flows still pending on-device.
 
