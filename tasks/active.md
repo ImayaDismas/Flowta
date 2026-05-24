@@ -13,9 +13,10 @@
 _None — Client rename (`1323c2e`) + wallet-linked deni (`0b5f666`) landed (2026-05-24). Pick next from Next Session._
 
 > Verification status:
-> - **NOT yet verified on-device (2026-05-24):** the wallet-linked deni slice (`0b5f666`) is build/test-verified only. Needs on-device checks: **Room v4→v5 migration on existing data** (the emulator has prior deni rows — "Mama Achieng" KES 3,000), the account picker in the add-client form + credit/payment dialogs, and that picking a wallet actually moves its balance (credit deducts, payment adds) while the "Owed to you (Deni)" card and revenue/expense insights stay unchanged.
+> - **Wallet-linked deni VERIFIED on-device (emulator API 36, 2026-05-24):** Room **v4→v5 migration** ran cleanly on the prior encrypted DB (no crash, data intact). Recorded a KES 1,000 payment for "Mama Achieng" with **M-Pesa Till** selected via the picker → owed dropped 3,000→2,000, M-Pesa balance rose 26,995→27,995, Cash Drawer (other wallet) unchanged at 870, and **revenue/expenses insights unchanged** (2,020 / 10,000). Picker shows live balances + correct "Add to account" label; "Add client" rename live in UI. The two ledgers stay independent as designed.
+> - **Emulator test data now:** Mama Achieng owes KES 2,000 (was 3,000); M-Pesa Till = KES 27,995 (was 26,995). Credit-with-wallet and add-client-with-wallet picker paths NOT yet exercised on-device (only payment-with-wallet was).
 > - **Design note (intentional):** deni cash-movements adjust the selected wallet's *balance* but do NOT appear as line items in that wallet's transaction history (they're not sales/expenses, and excluded from the P&L). Surfacing them in wallet history is a possible follow-up.
-> - **From 2026-05-23 (still standing):** earlier deni flows verified on-device (migration, permission prompt, reactive owed-card, add-client, detail, partial payment); reminder notification render still unconfirmed; wallet-detail/insights/transaction-detail flows still pending on-device.
+> - **From 2026-05-23 (still standing):** reminder notification render still unconfirmed; wallet-detail/insights/transaction-detail flows still pending on-device.
 
 ---
 
