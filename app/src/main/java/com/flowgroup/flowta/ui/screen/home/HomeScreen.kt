@@ -51,6 +51,7 @@ fun HomeScreen(
     onOpenTransaction: (String) -> Unit,
     onOpenDeni: () -> Unit,
     onOpenReconciliation: () -> Unit,
+    onOpenExport: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -64,6 +65,7 @@ fun HomeScreen(
         onOpenTransaction = onOpenTransaction,
         onOpenDeni = onOpenDeni,
         onOpenReconciliation = onOpenReconciliation,
+        onOpenExport = onOpenExport,
     )
 }
 
@@ -79,6 +81,7 @@ private fun HomeContent(
     onOpenTransaction: (String) -> Unit,
     onOpenDeni: () -> Unit,
     onOpenReconciliation: () -> Unit,
+    onOpenExport: () -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(HomeTab.Dashboard) }
 
@@ -143,6 +146,7 @@ private fun HomeContent(
                     onOpenWallet = onOpenWallet,
                     onOpenDeni = onOpenDeni,
                     onOpenReconciliation = onOpenReconciliation,
+                    onOpenExport = onOpenExport,
                 )
                 HomeTab.Wallets -> WalletsTab(onOpenWallet = onOpenWallet)
                 HomeTab.History -> HistoryTab(onOpenTransaction = onOpenTransaction)
@@ -200,6 +204,7 @@ private fun HomePreview() {
             onOpenTransaction = {},
             onOpenDeni = {},
             onOpenReconciliation = {},
+            onOpenExport = {},
         )
     }
 }

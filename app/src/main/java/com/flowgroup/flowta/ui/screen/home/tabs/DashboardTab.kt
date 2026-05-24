@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.outlined.TrendingDown
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.Icon
@@ -60,6 +61,7 @@ fun DashboardTab(
     onOpenWallet: (String) -> Unit,
     onOpenDeni: () -> Unit,
     onOpenReconciliation: () -> Unit,
+    onOpenExport: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardTabViewModel = hiltViewModel(),
 ) {
@@ -73,6 +75,7 @@ fun DashboardTab(
         onOpenWallet = onOpenWallet,
         onOpenDeni = onOpenDeni,
         onOpenReconciliation = onOpenReconciliation,
+        onOpenExport = onOpenExport,
         modifier = modifier,
     )
 }
@@ -87,6 +90,7 @@ private fun DashboardTabContent(
     onOpenWallet: (String) -> Unit,
     onOpenDeni: () -> Unit,
     onOpenReconciliation: () -> Unit,
+    onOpenExport: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -112,6 +116,7 @@ private fun DashboardTabContent(
             onOpenWallet = onOpenWallet,
             onOpenDeni = onOpenDeni,
             onOpenReconciliation = onOpenReconciliation,
+            onOpenExport = onOpenExport,
             modifier = modifier,
         )
     }
@@ -127,6 +132,7 @@ private fun DashboardList(
     onOpenWallet: (String) -> Unit,
     onOpenDeni: () -> Unit,
     onOpenReconciliation: () -> Unit,
+    onOpenExport: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -153,6 +159,9 @@ private fun DashboardList(
         }
         item(key = "reconcile") {
             ReconcileCard(onClick = onOpenReconciliation)
+        }
+        item(key = "export") {
+            ExportCard(onClick = onOpenExport)
         }
         item(key = "wallets_header") {
             WalletsHeader(
@@ -438,6 +447,38 @@ private fun ReconcileCard(onClick: () -> Unit) {
             )
             Text(
                 text = stringResource(R.string.dashboard_reconcile_label),
+                modifier = Modifier.weight(1f).padding(start = 12.dp),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExportCard(onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.FileDownload,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+            Text(
+                text = stringResource(R.string.dashboard_export_label),
                 modifier = Modifier.weight(1f).padding(start = 12.dp),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,

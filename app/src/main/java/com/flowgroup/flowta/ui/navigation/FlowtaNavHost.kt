@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.flowgroup.flowta.ui.screen.SplashRoute
+import com.flowgroup.flowta.ui.screen.export.ExportScreen
 import com.flowgroup.flowta.ui.screen.deni.AddClientScreen
 import com.flowgroup.flowta.ui.screen.deni.ClientDeniDetailScreen
 import com.flowgroup.flowta.ui.screen.deni.DeniListScreen
@@ -102,6 +103,7 @@ fun FlowtaNavHost(
                 },
                 onOpenDeni = { navController.navigate(Destination.DeniList) },
                 onOpenReconciliation = { navController.navigate(Destination.Reconciliation) },
+                onOpenExport = { navController.navigate(Destination.Export) },
             )
         }
 
@@ -227,6 +229,10 @@ fun FlowtaNavHost(
 
         composable<Destination.ScanInbox> {
             ScanInboxScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable<Destination.Export> {
+            ExportScreen(onBack = { navController.popBackStack() })
         }
     }
 }

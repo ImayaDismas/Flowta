@@ -277,4 +277,14 @@
     <string name="scan_inbox_title">Changanua kikasha</string>
     <string name="scan_inbox_message">Kwa ruhusa yako, Flowta husoma ujumbe wa malipo pekee kutoka kikasha chako, kwenye simu yako. Ujumbe wako hautoki kwenye kifaa chako.</string>
     <string name="reconciliation_coming_soon">Inakuja hivi karibuni</string>
+
+    <!-- Hamisha data (export) -->
+    <string name="export_title">Hamisha data</string>
+    <string name="dashboard_export_label">Hamisha data (CSV)</string>
+    <string name="export_description">Hifadhi miamala yako yote kwenye faili la CSV. Data yako ni yako daima.</string>
+    <string name="export_cta">Hamisha kwa CSV</string>
+    <string name="export_preparing">Inaandaa…</string>
+    <string name="export_empty">Bado hakuna miamala ya kuhamisha.</string>
+    <string name="export_saved">Imehifadhi miamala %1$d kwa CSV.</string>
+    <string name="export_save_failed">Haikuweza kuhifadhi faili.</string>
 </resources>

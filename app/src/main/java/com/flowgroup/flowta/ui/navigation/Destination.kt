@@ -25,4 +25,5 @@ sealed interface Destination {
     @Serializable data object ScanReceipt : Destination
     @Serializable data object ImportStatement : Destination
     @Serializable data object ScanInbox : Destination
+    @Serializable data object Export : Destination
 }

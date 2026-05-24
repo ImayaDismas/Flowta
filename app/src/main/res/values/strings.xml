@@ -277,4 +277,14 @@
     <string name="scan_inbox_title">Scan inbox</string>
     <string name="scan_inbox_message">With your permission, Flowta reads only payment messages from your inbox, on your phone. Your messages never leave your device.</string>
     <string name="reconciliation_coming_soon">Coming soon</string>
+
+    <!-- Export -->
+    <string name="export_title">Export data</string>
+    <string name="dashboard_export_label">Export data (CSV)</string>
+    <string name="export_description">Save all your transactions to a CSV file. Your data is always yours.</string>
+    <string name="export_cta">Export to CSV</string>
+    <string name="export_preparing">Preparing…</string>
+    <string name="export_empty">No transactions to export yet.</string>
+    <string name="export_saved">Saved %1$d transactions to CSV.</string>
+    <string name="export_save_failed">Could not save the file.</string>
 </resources>
