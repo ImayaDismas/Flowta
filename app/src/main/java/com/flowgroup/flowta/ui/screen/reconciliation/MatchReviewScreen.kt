@@ -1,5 +1,6 @@
 package com.flowgroup.flowta.ui.screen.reconciliation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -17,14 +20,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +48,6 @@ import com.flowgroup.flowta.ui.state.reconciliation.MatchReviewUiState
 import com.flowgroup.flowta.ui.theme.MoneyIn
 import com.flowgroup.flowta.ui.theme.MoneyOut
 import com.flowgroup.flowta.ui.viewmodel.reconciliation.MatchReviewViewModel
-import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun MatchReviewScreen(
@@ -60,6 +66,9 @@ fun MatchReviewScreen(
         onBack = onBack,
         onConfirm = viewModel::onConfirmMatch,
         onNotAMatch = viewModel::onNotAMatch,
+        onPickDifferent = viewModel::onPickDifferent,
+        onSelectDifferentMatch = viewModel::onSelectDifferentMatch,
+        onCancelPicker = viewModel::onCancelPicker,
         onSelectWallet = viewModel::onSelectWallet,
         onRecordTransaction = viewModel::onRecordTransaction,
         onDismiss = viewModel::onDismiss,
@@ -73,6 +82,9 @@ private fun MatchReviewContent(
     onBack: () -> Unit,
     onConfirm: () -> Unit,
     onNotAMatch: () -> Unit,
+    onPickDifferent: () -> Unit,
+    onSelectDifferentMatch: (String) -> Unit,
+    onCancelPicker: () -> Unit,
     onSelectWallet: (String) -> Unit,
     onRecordTransaction: () -> Unit,
     onDismiss: () -> Unit,
@@ -99,51 +111,128 @@ private fun MatchReviewContent(
                 modifier = Modifier.padding(padding).padding(16.dp),
                 color = MaterialTheme.colorScheme.error,
             )
-            is MatchReviewUiState.Content -> Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
+            is MatchReviewUiState.Content -> {
                 val outbound = uiState.payment.direction == PaymentDirection.OUT
-                PaymentCard(uiState.payment)
 
-                if (uiState.showSuggestion && uiState.suggestion != null) {
-                    SuggestionCard(uiState.suggestion)
-                    Button(
-                        onClick = onConfirm,
-                        enabled = !uiState.working,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.match_review_confirm)) }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    PaymentCard(uiState.payment)
+
+                    if (uiState.showSuggestion && uiState.suggestion != null) {
+                        SuggestionCard(uiState.suggestion)
+                        Button(
+                            onClick = onConfirm,
+                            enabled = !uiState.working,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.match_review_confirm)) }
+                        OutlinedButton(
+                            onClick = onPickDifferent,
+                            enabled = !uiState.working,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                stringResource(
+                                    if (outbound) R.string.match_review_pick_different_expense
+                                    else R.string.match_review_pick_different_sale,
+                                ),
+                            )
+                        }
+                        TextButton(
+                            onClick = onNotAMatch,
+                            enabled = !uiState.working,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.match_review_not_a_match)) }
+                    } else {
+                        RecordAsNewSection(
+                            outbound = outbound,
+                            wallets = uiState.wallets,
+                            selectedWalletId = uiState.selectedWalletId,
+                            working = uiState.working,
+                            onSelectWallet = onSelectWallet,
+                            onRecordTransaction = onRecordTransaction,
+                        )
+                    }
+
                     TextButton(
-                        onClick = onNotAMatch,
+                        onClick = onDismiss,
                         enabled = !uiState.working,
                         modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.match_review_not_a_match)) }
-                } else {
-                    RecordAsNewSection(
-                        outbound = outbound,
-                        wallets = uiState.wallets,
-                        selectedWalletId = uiState.selectedWalletId,
-                        working = uiState.working,
-                        onSelectWallet = onSelectWallet,
-                        onRecordTransaction = onRecordTransaction,
-                    )
+                    ) {
+                        Text(
+                            stringResource(
+                                if (outbound) R.string.match_review_dismiss_expense
+                                else R.string.match_review_dismiss,
+                            ),
+                        )
+                    }
                 }
 
-                TextButton(
-                    onClick = onDismiss,
-                    enabled = !uiState.working,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        stringResource(
-                            if (outbound) R.string.match_review_dismiss_expense
-                            else R.string.match_review_dismiss,
-                        ),
+                if (uiState.showTransactionPicker) {
+                    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+                    ModalBottomSheet(
+                        onDismissRequest = onCancelPicker,
+                        sheetState = sheetState,
+                    ) {
+                        TransactionPickerSheet(
+                            outbound = outbound,
+                            transactions = uiState.pickableTransactions,
+                            onSelect = onSelectDifferentMatch,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TransactionPickerSheet(
+    outbound: Boolean,
+    transactions: List<Transaction>,
+    onSelect: (String) -> Unit,
+) {
+    Column(modifier = Modifier.padding(bottom = 16.dp)) {
+        Text(
+            text = stringResource(
+                if (outbound) R.string.match_review_picker_title_expense
+                else R.string.match_review_picker_title_sale,
+            ),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        )
+        HorizontalDivider()
+        if (transactions.isEmpty()) {
+            Text(
+                text = stringResource(R.string.match_review_picker_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally),
+            )
+        } else {
+            LazyColumn {
+                items(transactions, key = { it.id }) { tx ->
+                    ListItem(
+                        headlineContent = {
+                            Text(tx.note?.takeIf { it.isNotBlank() } ?: formatMoney(tx.amount.minorUnits, tx.amount.currency))
+                        },
+                        supportingContent = {
+                            Text(
+                                "${formatWhen(tx.occurredAt)} • ${formatMoney(tx.amount.minorUnits, tx.amount.currency)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
+                        modifier = Modifier.clickable { onSelect(tx.id) },
                     )
+                    HorizontalDivider()
                 }
             }
         }

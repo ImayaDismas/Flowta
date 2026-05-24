@@ -7,6 +7,7 @@ import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.model.MobileMoneyProvider
 import com.flowgroup.flowta.domain.model.WalletType
 import com.flowgroup.flowta.domain.usecase.reconciliation.ConfirmMatchUseCase
+import com.flowgroup.flowta.domain.usecase.reconciliation.GetMatchableTransactionsUseCase
 import com.flowgroup.flowta.domain.usecase.reconciliation.GetReceivedPaymentUseCase
 import com.flowgroup.flowta.domain.usecase.reconciliation.IgnorePaymentUseCase
 import com.flowgroup.flowta.domain.usecase.reconciliation.RecordTransactionFromPaymentUseCase
@@ -31,6 +32,7 @@ class MatchReviewViewModel @Inject constructor(
     private val ignorePayment: IgnorePaymentUseCase,
     private val recordTransaction: RecordTransactionFromPaymentUseCase,
     private val observeWallets: ObserveWalletsWithBalanceForCurrentBusinessUseCase,
+    private val getMatchableTransactions: GetMatchableTransactionsUseCase,
 ) : ViewModel() {
 
     private val paymentId: String = checkNotNull(savedStateHandle.get<String>("paymentId"))
@@ -74,6 +76,33 @@ class MatchReviewViewModel @Inject constructor(
     fun onNotAMatch() {
         _uiState.update { state ->
             (state as? MatchReviewUiState.Content)?.copy(showSuggestion = false) ?: state
+        }
+    }
+
+    fun onPickDifferent() {
+        val content = _uiState.value as? MatchReviewUiState.Content ?: return
+        viewModelScope.launch {
+            val transactions = (getMatchableTransactions(content.payment) as? Result.Success)?.data
+                ?: emptyList()
+            _uiState.update { state ->
+                (state as? MatchReviewUiState.Content)?.copy(
+                    pickableTransactions = transactions,
+                    showTransactionPicker = true,
+                ) ?: state
+            }
+        }
+    }
+
+    fun onSelectDifferentMatch(transactionId: String) {
+        _uiState.update { state ->
+            (state as? MatchReviewUiState.Content)?.copy(showTransactionPicker = false) ?: state
+        }
+        runWorking { confirmMatch(paymentId, transactionId) }
+    }
+
+    fun onCancelPicker() {
+        _uiState.update { state ->
+            (state as? MatchReviewUiState.Content)?.copy(showTransactionPicker = false) ?: state
         }
     }
 

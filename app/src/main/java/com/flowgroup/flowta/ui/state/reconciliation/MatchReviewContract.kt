@@ -15,6 +15,9 @@ sealed class MatchReviewUiState {
         val wallets: List<WalletWithBalance>,
         val selectedWalletId: String?,
         val working: Boolean = false,
+        /** When true, the manual transaction picker sheet is open. */
+        val showTransactionPicker: Boolean = false,
+        val pickableTransactions: List<Transaction> = emptyList(),
     ) : MatchReviewUiState()
 
     data class Error(val message: String) : MatchReviewUiState()
