@@ -7,6 +7,7 @@ sealed class HomeUiState {
     data class Content(
         val businessName: String,
         val currency: CurrencyCode,
+        val trialDaysRemaining: Int? = null,
     ) : HomeUiState()
     data object MissingBusiness : HomeUiState()
 }

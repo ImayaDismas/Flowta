@@ -110,6 +110,7 @@ fun FlowtaNavHost(
                 onOpenDeni = { navController.navigate(Destination.DeniList) },
                 onOpenReconciliation = { navController.navigate(Destination.Reconciliation) },
                 onOpenExport = { navController.navigate(Destination.Export) },
+                onOpenPaywall = { navController.navigate(Destination.Paywall) },
             )
         }
 

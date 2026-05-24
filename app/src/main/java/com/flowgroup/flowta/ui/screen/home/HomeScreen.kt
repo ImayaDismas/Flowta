@@ -1,8 +1,11 @@
 package com.flowgroup.flowta.ui.screen.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
@@ -10,6 +13,7 @@ import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Insights
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -18,15 +22,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,6 +60,7 @@ fun HomeScreen(
     onOpenDeni: () -> Unit,
     onOpenReconciliation: () -> Unit,
     onOpenExport: () -> Unit,
+    onOpenPaywall: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,6 +75,7 @@ fun HomeScreen(
         onOpenDeni = onOpenDeni,
         onOpenReconciliation = onOpenReconciliation,
         onOpenExport = onOpenExport,
+        onOpenPaywall = onOpenPaywall,
     )
 }
 
@@ -82,6 +92,7 @@ private fun HomeContent(
     onOpenDeni: () -> Unit,
     onOpenReconciliation: () -> Unit,
     onOpenExport: () -> Unit,
+    onOpenPaywall: () -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(HomeTab.Dashboard) }
 
@@ -132,25 +143,67 @@ private fun HomeContent(
             }
         },
     ) { padding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            when (selectedTab) {
-                HomeTab.Dashboard -> DashboardTab(
-                    onRecordSale = onRecordSale,
-                    onRecordExpense = onRecordExpense,
-                    onAddWallet = onAddWallet,
-                    onSeeAllWallets = { selectedTab = HomeTab.Wallets },
-                    onOpenWallet = onOpenWallet,
-                    onOpenDeni = onOpenDeni,
-                    onOpenReconciliation = onOpenReconciliation,
-                    onOpenExport = onOpenExport,
-                )
-                HomeTab.Wallets -> WalletsTab(onOpenWallet = onOpenWallet)
-                HomeTab.History -> HistoryTab(onOpenTransaction = onOpenTransaction)
-                HomeTab.Insights -> InsightsTab()
+            (uiState as? HomeUiState.Content)?.trialDaysRemaining?.let { days ->
+                TrialBanner(daysRemaining = days, onActivate = onOpenPaywall)
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                when (selectedTab) {
+                    HomeTab.Dashboard -> DashboardTab(
+                        onRecordSale = onRecordSale,
+                        onRecordExpense = onRecordExpense,
+                        onAddWallet = onAddWallet,
+                        onSeeAllWallets = { selectedTab = HomeTab.Wallets },
+                        onOpenWallet = onOpenWallet,
+                        onOpenDeni = onOpenDeni,
+                        onOpenReconciliation = onOpenReconciliation,
+                        onOpenExport = onOpenExport,
+                    )
+                    HomeTab.Wallets -> WalletsTab(onOpenWallet = onOpenWallet)
+                    HomeTab.History -> HistoryTab(onOpenTransaction = onOpenTransaction)
+                    HomeTab.Insights -> InsightsTab()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrialBanner(daysRemaining: Int, onActivate: () -> Unit) {
+    val isUrgent = daysRemaining <= 7
+    val containerColor = if (isUrgent) MaterialTheme.colorScheme.errorContainer
+    else MaterialTheme.colorScheme.tertiaryContainer
+    val contentColor = if (isUrgent) MaterialTheme.colorScheme.onErrorContainer
+    else MaterialTheme.colorScheme.onTertiaryContainer
+
+    Surface(color = containerColor) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 4.dp, top = 6.dp, bottom = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            val label = if (daysRemaining == 1) {
+                stringResource(R.string.home_trial_one_day)
+            } else {
+                stringResource(R.string.home_trial_days, daysRemaining)
+            }
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                color = contentColor,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(
+                onClick = onActivate,
+                colors = ButtonDefaults.textButtonColors(contentColor = contentColor),
+            ) {
+                Text(stringResource(R.string.home_trial_activate))
             }
         }
     }
@@ -205,6 +258,7 @@ private fun HomePreview() {
             onOpenDeni = {},
             onOpenReconciliation = {},
             onOpenExport = {},
+            onOpenPaywall = {},
         )
     }
 }

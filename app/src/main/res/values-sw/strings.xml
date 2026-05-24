@@ -311,6 +311,11 @@
     <string name="export_saved">Imehifadhi miamala %1$d kwa CSV.</string>
     <string name="export_save_failed">Haikuweza kuhifadhi faili.</string>
 
+    <!-- Bango la majaribio nyumbani (trial banner) -->
+    <string name="home_trial_one_day">Siku 1 imebaki katika kipindi chako cha majaribio</string>
+    <string name="home_trial_days">Siku %1$d zimebaki katika kipindi chako cha majaribio</string>
+    <string name="home_trial_activate">Amilisha</string>
+
     <!-- Ukuta wa malipo (paywall) -->
     <string name="paywall_title">Kipindi chako cha majaribio kimeisha</string>
     <string name="paywall_subtitle">Lipa kupitia M-Pesa ili kuendelea kutumia Flowta. Data yako iko salama.</string>

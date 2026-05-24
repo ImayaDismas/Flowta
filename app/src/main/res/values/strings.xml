@@ -311,6 +311,11 @@
     <string name="export_saved">Saved %1$d transactions to CSV.</string>
     <string name="export_save_failed">Could not save the file.</string>
 
+    <!-- Home trial banner -->
+    <string name="home_trial_one_day">1 day left in your free trial</string>
+    <string name="home_trial_days">%1$d days left in your free trial</string>
+    <string name="home_trial_activate">Activate</string>
+
     <!-- Paywall / license -->
     <!-- Update paywall_paybill_number with your real Paybill number before release -->
     <string name="paywall_title">Your free trial has ended</string>
