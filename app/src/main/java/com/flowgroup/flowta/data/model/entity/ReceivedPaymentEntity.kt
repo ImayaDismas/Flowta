@@ -7,6 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.flowgroup.flowta.domain.model.CurrencyCode
 import com.flowgroup.flowta.domain.model.MobileMoneyProvider
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.model.PaymentSource
 import com.flowgroup.flowta.domain.model.ReconciliationStatus
 import kotlinx.datetime.Instant
@@ -50,6 +51,7 @@ data class ReceivedPaymentEntity(
     @ColumnInfo(name = "reference") val reference: String,
     @ColumnInfo(name = "sender_name") val senderName: String?,
     @ColumnInfo(name = "sender_phone") val senderPhone: String?,
+    @ColumnInfo(name = "direction", defaultValue = "IN") val direction: PaymentDirection,
     @ColumnInfo(name = "status") val status: ReconciliationStatus,
     @ColumnInfo(name = "matched_transaction_id") val matchedTransactionId: String?,
     @ColumnInfo(name = "source") val source: PaymentSource,

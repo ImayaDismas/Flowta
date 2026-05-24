@@ -2,6 +2,7 @@ package com.flowgroup.flowta.domain.reconciliation.statement
 
 import com.flowgroup.flowta.domain.model.CurrencyCode
 import com.flowgroup.flowta.domain.model.MobileMoneyProvider
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.reconciliation.StatementParserEngine
 import kotlinx.datetime.Instant
 import org.junit.Assert.assertEquals
@@ -25,10 +26,17 @@ class MpesaStatementCsvParserTest {
     """.trimIndent()
 
     @Test
-    fun givenStatement_whenParsing_thenOnlyPaidInRowsReturned() {
+    fun givenStatement_whenParsing_thenPaidInAreInboundAndWithdrawnOutbound() {
         val payments = engine.parse(csv, CurrencyCode.KES)
-        // Withdrawal row (blank Paid In) is excluded.
-        assertEquals(2, payments.size)
+
+        // Two Paid In rows (IN) and one Withdrawn row (OUT); only charge/zero rows are dropped.
+        assertEquals(3, payments.size)
+        assertEquals(listOf(PaymentDirection.IN, PaymentDirection.IN, PaymentDirection.OUT), payments.map { it.direction })
+
+        val withdrawn = payments[2]
+        assertEquals("DEF456GHJ7", withdrawn.reference)
+        assertEquals(200L, withdrawn.amount.minorUnits)
+        assertEquals("KPLC PREPAID", withdrawn.senderName)
     }
 
     @Test
@@ -41,6 +49,7 @@ class MpesaStatementCsvParserTest {
         assertEquals(1_234L, first.amount.minorUnits)
         assertEquals("JOHN DOE", first.senderName)
         assertEquals("254712345678", first.senderPhone)
+        assertEquals(PaymentDirection.IN, first.direction)
         assertEquals(Instant.parse("2026-05-24T10:15:00Z"), first.occurredAt)
 
         val second = payments[1]

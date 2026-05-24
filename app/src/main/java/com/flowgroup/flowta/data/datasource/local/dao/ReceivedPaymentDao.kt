@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.Flow
 interface ReceivedPaymentDao {
     @Query(
         "SELECT received_payment_id, business_id, provider, amount_minor, currency_code, " +
-            "reference, sender_name, sender_phone, status, matched_transaction_id, source, " +
-            "occurred_at, created_at, updated_at " +
+            "reference, sender_name, sender_phone, direction, status, matched_transaction_id, " +
+            "source, occurred_at, created_at, updated_at " +
             "FROM received_payments WHERE business_id = :businessId " +
             "ORDER BY occurred_at DESC, created_at DESC"
     )
@@ -21,8 +21,8 @@ interface ReceivedPaymentDao {
 
     @Query(
         "SELECT received_payment_id, business_id, provider, amount_minor, currency_code, " +
-            "reference, sender_name, sender_phone, status, matched_transaction_id, source, " +
-            "occurred_at, created_at, updated_at " +
+            "reference, sender_name, sender_phone, direction, status, matched_transaction_id, " +
+            "source, occurred_at, created_at, updated_at " +
             "FROM received_payments WHERE received_payment_id = :id LIMIT 1"
     )
     suspend fun getById(id: String): ReceivedPaymentEntity?

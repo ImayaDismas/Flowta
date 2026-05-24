@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.CallMade
+import androidx.compose.material.icons.automirrored.outlined.CallReceived
 import androidx.compose.material.icons.outlined.ContentPaste
 import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.Inbox
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowgroup.flowta.R
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.model.ReceivedPayment
 import com.flowgroup.flowta.domain.model.ReconciliationSummary
 import com.flowgroup.flowta.ui.components.EmptyState
@@ -141,7 +144,7 @@ private fun ReconciliationHubContent(
                             SectionLabel(stringResource(R.string.reconciliation_section_unmatched))
                         }
                         items(summary.unmatched, key = { it.id }) { payment ->
-                            PaymentRow(payment = payment, matched = false) { onOpenPayment(payment.id) }
+                            PaymentRow(payment = payment) { onOpenPayment(payment.id) }
                         }
                     }
                     if (summary.matched.isNotEmpty()) {
@@ -149,7 +152,7 @@ private fun ReconciliationHubContent(
                             SectionLabel(stringResource(R.string.reconciliation_section_matched))
                         }
                         items(summary.matched, key = { it.id }) { payment ->
-                            PaymentRow(payment = payment, matched = true, onClick = null)
+                            PaymentRow(payment = payment, onClick = null)
                         }
                     }
                 }
@@ -258,7 +261,9 @@ private fun SectionLabel(text: String) {
 }
 
 @Composable
-private fun PaymentRow(payment: ReceivedPayment, matched: Boolean, onClick: (() -> Unit)?) {
+private fun PaymentRow(payment: ReceivedPayment, onClick: (() -> Unit)?) {
+    val outbound = payment.direction == PaymentDirection.OUT
+    val directionColor = if (outbound) MoneyOut else MoneyIn
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -270,16 +275,17 @@ private fun PaymentRow(payment: ReceivedPayment, matched: Boolean, onClick: (() 
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .background(
-                        (if (matched) MoneyIn else MoneyOut).copy(alpha = 0.15f),
-                        CircleShape,
-                    ),
+                    .background(directionColor.copy(alpha = 0.15f), CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = payment.provider.displayName().take(1),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (matched) MoneyIn else MoneyOut,
+                Icon(
+                    imageVector = if (outbound) {
+                        Icons.AutoMirrored.Outlined.CallMade
+                    } else {
+                        Icons.AutoMirrored.Outlined.CallReceived
+                    },
+                    contentDescription = null,
+                    tint = directionColor,
                 )
             }
             Column(modifier = Modifier.weight(1f).padding(horizontal = 12.dp)) {
@@ -289,15 +295,17 @@ private fun PaymentRow(payment: ReceivedPayment, matched: Boolean, onClick: (() 
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = "${formatWhen(payment.occurredAt)} • ${payment.reference}",
+                    text = "${payment.provider.displayName()} • " +
+                        "${formatWhen(payment.occurredAt)} • ${payment.reference}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Text(
-                text = formatMoney(payment.amount.minorUnits, payment.amount.currency),
+                text = (if (outbound) "-" else "+") +
+                    formatMoney(payment.amount.minorUnits, payment.amount.currency),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = directionColor,
             )
         }
     }

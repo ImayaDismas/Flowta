@@ -250,6 +250,8 @@
     <string name="reconciliation_action_import">Import</string>
     <string name="reconciliation_action_inbox">Inbox</string>
     <string name="reconciliation_match_cta">Match</string>
+    <string name="reconciliation_money_in">Money in</string>
+    <string name="reconciliation_money_out">Money out</string>
 
     <!-- Paste SMS -->
     <string name="paste_sms_title">Paste message</string>
@@ -268,8 +270,11 @@
     <string name="match_review_confirm">Confirm match</string>
     <string name="match_review_not_a_match">Not a match</string>
     <string name="match_review_record_sale">Record as new sale</string>
+    <string name="match_review_record_expense">Record as new expense</string>
     <string name="match_review_dismiss">Not a sale — dismiss</string>
+    <string name="match_review_dismiss_expense">Not an expense — dismiss</string>
     <string name="match_review_no_suggestion">No matching sale found. Record it as a new sale.</string>
+    <string name="match_review_no_suggestion_expense">No matching expense found. Record it as a new expense.</string>
     <string name="match_review_choose_wallet">Add to which account?</string>
     <string name="match_review_no_wallet">Add a wallet first to record this as a sale.</string>
     <string name="match_review_done">Done</string>

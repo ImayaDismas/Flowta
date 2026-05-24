@@ -9,6 +9,7 @@ import com.flowgroup.flowta.data.datasource.local.converter.CurrencyCodeConverte
 import com.flowgroup.flowta.data.datasource.local.converter.DeniEntryTypeConverter
 import com.flowgroup.flowta.data.datasource.local.converter.InstantConverter
 import com.flowgroup.flowta.data.datasource.local.converter.MobileMoneyProviderConverter
+import com.flowgroup.flowta.data.datasource.local.converter.PaymentDirectionConverter
 import com.flowgroup.flowta.data.datasource.local.converter.PaymentSourceConverter
 import com.flowgroup.flowta.data.datasource.local.converter.ReconciliationStatusConverter
 import com.flowgroup.flowta.data.datasource.local.converter.TransactionTypeConverter
@@ -35,7 +36,7 @@ import com.flowgroup.flowta.data.model.entity.WalletEntity
         DeniEntryEntity::class,
         ReceivedPaymentEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 @TypeConverters(
@@ -47,6 +48,7 @@ import com.flowgroup.flowta.data.model.entity.WalletEntity
     MobileMoneyProviderConverter::class,
     ReconciliationStatusConverter::class,
     PaymentSourceConverter::class,
+    PaymentDirectionConverter::class,
 )
 abstract class FlowtaDatabase : RoomDatabase() {
     abstract fun businessDao(): BusinessDao
@@ -206,6 +208,17 @@ abstract class FlowtaDatabase : RoomDatabase() {
                     "CREATE UNIQUE INDEX IF NOT EXISTS " +
                         "`index_received_payments_business_id_provider_reference` " +
                         "ON `received_payments` (`business_id`, `provider`, `reference`)"
+                )
+            }
+        }
+
+        // Adds money-flow direction to received payments. All pre-existing rows were inbound
+        // ("received") payments, so they default to IN.
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE `received_payments` " +
+                        "ADD COLUMN `direction` TEXT NOT NULL DEFAULT 'IN'"
                 )
             }
         }

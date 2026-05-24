@@ -4,6 +4,7 @@ import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.model.CurrencyCode
 import com.flowgroup.flowta.domain.model.MobileMoneyProvider
 import com.flowgroup.flowta.domain.model.Money
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.model.PaymentSource
 import com.flowgroup.flowta.domain.model.ReceivedPayment
 import com.flowgroup.flowta.domain.model.ReconciliationStatus
@@ -77,9 +78,25 @@ class SuggestMatchUseCaseTest {
         assertNull((result as Result.Success).data)
     }
 
-    private fun givenSales(vararg sales: Transaction) {
+    @Test
+    fun givenOutboundPayment_whenSuggesting_thenMatchesExpenseNotSale() = runTest {
+        val outbound = receivedPayment(250_000L, paidAt, direction = PaymentDirection.OUT)
+        givenTransactions(
+            sale("a-sale", 250_000L, paidAt + 1.minutes),
+            expense("an-expense", 250_000L, paidAt + 2.minutes),
+        )
+        givenMatchedTransactionIds()
+
+        val result = useCase(outbound)
+
+        assertEquals("an-expense", (result as Result.Success).data?.id)
+    }
+
+    private fun givenSales(vararg sales: Transaction) = givenTransactions(*sales)
+
+    private fun givenTransactions(vararg transactions: Transaction) {
         every { transactionRepository.observeHistoryForBusiness("biz-1") } returns
-            flowOf(Result.Success(sales.map { TransactionWithWallet(it, "M-Pesa Till", WalletType.MPESA) }))
+            flowOf(Result.Success(transactions.map { TransactionWithWallet(it, "M-Pesa Till", WalletType.MPESA) }))
     }
 
     private fun givenMatchedTransactionIds(vararg ids: String) {
@@ -88,11 +105,17 @@ class SuggestMatchUseCaseTest {
             flowOf(Result.Success(payments))
     }
 
-    private fun sale(id: String, amountMinor: Long, at: Instant) = Transaction(
+    private fun sale(id: String, amountMinor: Long, at: Instant) =
+        transaction(id, amountMinor, at, TransactionType.SALE)
+
+    private fun expense(id: String, amountMinor: Long, at: Instant) =
+        transaction(id, amountMinor, at, TransactionType.EXPENSE)
+
+    private fun transaction(id: String, amountMinor: Long, at: Instant, type: TransactionType) = Transaction(
         id = id,
         businessId = "biz-1",
         walletId = "w-1",
-        type = TransactionType.SALE,
+        type = type,
         amount = Money(amountMinor, CurrencyCode.KES),
         note = null,
         occurredAt = at,
@@ -100,7 +123,12 @@ class SuggestMatchUseCaseTest {
         updatedAt = at,
     )
 
-    private fun receivedPayment(amountMinor: Long, occurredAt: Instant, matchedTo: String? = null) =
+    private fun receivedPayment(
+        amountMinor: Long,
+        occurredAt: Instant,
+        matchedTo: String? = null,
+        direction: PaymentDirection = PaymentDirection.IN,
+    ) =
         ReceivedPayment(
             id = "p-1",
             businessId = "biz-1",
@@ -109,6 +137,7 @@ class SuggestMatchUseCaseTest {
             reference = "TIX4A2B9P",
             senderName = "MARY WANJIKU",
             senderPhone = "254712345678",
+            direction = direction,
             status = if (matchedTo != null) ReconciliationStatus.MATCHED else ReconciliationStatus.UNMATCHED,
             matchedTransactionId = matchedTo,
             source = PaymentSource.SMS_PASTE,

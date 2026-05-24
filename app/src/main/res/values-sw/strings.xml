@@ -250,6 +250,8 @@
     <string name="reconciliation_action_import">Leta</string>
     <string name="reconciliation_action_inbox">Kikasha</string>
     <string name="reconciliation_match_cta">Linganisha</string>
+    <string name="reconciliation_money_in">Pesa zimeingia</string>
+    <string name="reconciliation_money_out">Pesa zimetoka</string>
 
     <!-- Bandika SMS -->
     <string name="paste_sms_title">Bandika ujumbe</string>
@@ -268,8 +270,11 @@
     <string name="match_review_confirm">Thibitisha</string>
     <string name="match_review_not_a_match">Sio hili</string>
     <string name="match_review_record_sale">Andika kama mauzo mapya</string>
+    <string name="match_review_record_expense">Andika kama matumizi mapya</string>
     <string name="match_review_dismiss">Sio mauzo — ondoa</string>
+    <string name="match_review_dismiss_expense">Sio matumizi — ondoa</string>
     <string name="match_review_no_suggestion">Hakuna mauzo yanayolingana. Yaandike kama mauzo mapya.</string>
+    <string name="match_review_no_suggestion_expense">Hakuna matumizi yanayolingana. Yaandike kama matumizi mapya.</string>
     <string name="match_review_choose_wallet">Ongeza kwenye akaunti gani?</string>
     <string name="match_review_no_wallet">Ongeza akaunti kwanza ili kuandika haya kama mauzo.</string>
     <string name="match_review_done">Imekamilika</string>

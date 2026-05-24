@@ -33,11 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowgroup.flowta.R
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.model.ReceivedPayment
 import com.flowgroup.flowta.domain.model.Transaction
 import com.flowgroup.flowta.domain.model.WalletWithBalance
 import com.flowgroup.flowta.ui.state.reconciliation.MatchReviewUiState
 import com.flowgroup.flowta.ui.theme.MoneyIn
+import com.flowgroup.flowta.ui.theme.MoneyOut
 import com.flowgroup.flowta.ui.viewmodel.reconciliation.MatchReviewViewModel
 import androidx.compose.runtime.LaunchedEffect
 
@@ -59,7 +61,7 @@ fun MatchReviewScreen(
         onConfirm = viewModel::onConfirmMatch,
         onNotAMatch = viewModel::onNotAMatch,
         onSelectWallet = viewModel::onSelectWallet,
-        onRecordSale = viewModel::onRecordSale,
+        onRecordTransaction = viewModel::onRecordTransaction,
         onDismiss = viewModel::onDismiss,
     )
 }
@@ -72,7 +74,7 @@ private fun MatchReviewContent(
     onConfirm: () -> Unit,
     onNotAMatch: () -> Unit,
     onSelectWallet: (String) -> Unit,
-    onRecordSale: () -> Unit,
+    onRecordTransaction: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     Scaffold(
@@ -105,6 +107,7 @@ private fun MatchReviewContent(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                val outbound = uiState.payment.direction == PaymentDirection.OUT
                 PaymentCard(uiState.payment)
 
                 if (uiState.showSuggestion && uiState.suggestion != null) {
@@ -120,12 +123,13 @@ private fun MatchReviewContent(
                         modifier = Modifier.fillMaxWidth(),
                     ) { Text(stringResource(R.string.match_review_not_a_match)) }
                 } else {
-                    RecordAsSaleSection(
+                    RecordAsNewSection(
+                        outbound = outbound,
                         wallets = uiState.wallets,
                         selectedWalletId = uiState.selectedWalletId,
                         working = uiState.working,
                         onSelectWallet = onSelectWallet,
-                        onRecordSale = onRecordSale,
+                        onRecordTransaction = onRecordTransaction,
                     )
                 }
 
@@ -133,7 +137,14 @@ private fun MatchReviewContent(
                     onClick = onDismiss,
                     enabled = !uiState.working,
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text(stringResource(R.string.match_review_dismiss)) }
+                ) {
+                    Text(
+                        stringResource(
+                            if (outbound) R.string.match_review_dismiss_expense
+                            else R.string.match_review_dismiss,
+                        ),
+                    )
+                }
             }
         }
     }
@@ -147,10 +158,14 @@ private fun PaymentCard(payment: ReceivedPayment) {
         color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            val outbound = payment.direction == PaymentDirection.OUT
             Text(
-                text = payment.provider.displayName(),
+                text = "${payment.provider.displayName()} • " + stringResource(
+                    if (outbound) R.string.reconciliation_money_out
+                    else R.string.reconciliation_money_in,
+                ),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (outbound) MoneyOut else MoneyIn,
             )
             Text(
                 text = formatMoney(payment.amount.minorUnits, payment.amount.currency),
@@ -210,16 +225,20 @@ private fun SuggestionCard(suggestion: Transaction) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun RecordAsSaleSection(
+private fun RecordAsNewSection(
+    outbound: Boolean,
     wallets: List<WalletWithBalance>,
     selectedWalletId: String?,
     working: Boolean,
     onSelectWallet: (String) -> Unit,
-    onRecordSale: () -> Unit,
+    onRecordTransaction: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            text = stringResource(R.string.match_review_no_suggestion),
+            text = stringResource(
+                if (outbound) R.string.match_review_no_suggestion_expense
+                else R.string.match_review_no_suggestion,
+            ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -245,10 +264,17 @@ private fun RecordAsSaleSection(
                 }
             }
             Button(
-                onClick = onRecordSale,
+                onClick = onRecordTransaction,
                 enabled = !working && selectedWalletId != null,
                 modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.match_review_record_sale)) }
+            ) {
+                Text(
+                    stringResource(
+                        if (outbound) R.string.match_review_record_expense
+                        else R.string.match_review_record_sale,
+                    ),
+                )
+            }
         }
     }
 }

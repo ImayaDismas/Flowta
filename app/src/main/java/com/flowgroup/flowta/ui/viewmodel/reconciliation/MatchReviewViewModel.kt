@@ -9,7 +9,7 @@ import com.flowgroup.flowta.domain.model.WalletType
 import com.flowgroup.flowta.domain.usecase.reconciliation.ConfirmMatchUseCase
 import com.flowgroup.flowta.domain.usecase.reconciliation.GetReceivedPaymentUseCase
 import com.flowgroup.flowta.domain.usecase.reconciliation.IgnorePaymentUseCase
-import com.flowgroup.flowta.domain.usecase.reconciliation.RecordSaleFromPaymentUseCase
+import com.flowgroup.flowta.domain.usecase.reconciliation.RecordTransactionFromPaymentUseCase
 import com.flowgroup.flowta.domain.usecase.reconciliation.SuggestMatchUseCase
 import com.flowgroup.flowta.domain.usecase.wallet.ObserveWalletsWithBalanceForCurrentBusinessUseCase
 import com.flowgroup.flowta.ui.state.reconciliation.MatchReviewUiState
@@ -29,7 +29,7 @@ class MatchReviewViewModel @Inject constructor(
     private val suggestMatch: SuggestMatchUseCase,
     private val confirmMatch: ConfirmMatchUseCase,
     private val ignorePayment: IgnorePaymentUseCase,
-    private val recordSale: RecordSaleFromPaymentUseCase,
+    private val recordTransaction: RecordTransactionFromPaymentUseCase,
     private val observeWallets: ObserveWalletsWithBalanceForCurrentBusinessUseCase,
 ) : ViewModel() {
 
@@ -83,10 +83,10 @@ class MatchReviewViewModel @Inject constructor(
         runWorking { confirmMatch(paymentId, transactionId) }
     }
 
-    fun onRecordSale() {
+    fun onRecordTransaction() {
         val content = _uiState.value as? MatchReviewUiState.Content ?: return
         val walletId = content.selectedWalletId ?: return
-        runWorking { recordSale(paymentId, walletId) }
+        runWorking { recordTransaction(paymentId, walletId) }
     }
 
     fun onDismiss() {

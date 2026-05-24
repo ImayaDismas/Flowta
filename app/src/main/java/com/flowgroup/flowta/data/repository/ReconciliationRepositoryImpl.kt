@@ -52,6 +52,7 @@ class ReconciliationRepositoryImpl @Inject constructor(
                 reference = p.reference,
                 senderName = p.senderName,
                 senderPhone = p.senderPhone,
+                direction = p.direction,
                 status = ReconciliationStatus.UNMATCHED,
                 matchedTransactionId = null,
                 source = source,

@@ -4,6 +4,7 @@ import com.flowgroup.flowta.domain.model.CurrencyCode
 import com.flowgroup.flowta.domain.model.MobileMoneyProvider
 import com.flowgroup.flowta.domain.model.Money
 import com.flowgroup.flowta.domain.model.ParsedPayment
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.reconciliation.StatementParser
 import com.flowgroup.flowta.domain.reconciliation.parser.nairobiInstant
 import com.flowgroup.flowta.domain.reconciliation.parser.parseKesAmount
@@ -14,8 +15,9 @@ import javax.inject.Inject
  * Parses a Safaricom M-PESA statement exported to CSV. The table has columns like:
  * "Receipt No., Completion Time, Details, Transaction Status, Paid In, Withdrawn, Balance".
  *
- * Only rows with a positive "Paid In" are returned — those are money received (potential sales).
- * Withdrawals, charges and reversals (blank/zero Paid In) are ignored.
+ * A positive "Paid In" is money received ([PaymentDirection.IN], a potential sale); a positive
+ * "Withdrawn" is money leaving ([PaymentDirection.OUT], an expense). Rows with neither (charges,
+ * reversals) are ignored.
  */
 class MpesaStatementCsvParser @Inject constructor() : StatementParser {
 
@@ -34,34 +36,50 @@ class MpesaStatementCsvParser @Inject constructor() : StatementParser {
         val cols = header.map { it.lowercase() }
         val receiptIdx = cols.indexOfFirst { "receipt" in it }
         val paidInIdx = cols.indexOfFirst { "paid in" in it }
+        val withdrawnIdx = cols.indexOfFirst { "withdrawn" in it || "paid out" in it }
         val detailsIdx = cols.indexOfFirst { "details" in it }
         val dateIdx = cols.indexOfFirst { "completion" in it || "date" in it || "time" in it }
         if (receiptIdx < 0 || paidInIdx < 0) return emptyList()
 
         return dataRows.mapNotNull { row ->
-            val paidIn = row.getOrNull(paidInIdx).orEmpty()
-            val amountMinor = parseKesAmount(paidIn)?.takeIf { it > 0L } ?: return@mapNotNull null
+            val paidIn = parseKesAmount(row.getOrNull(paidInIdx).orEmpty())?.takeIf { it > 0L }
+            val withdrawn = withdrawnIdx.takeIf { it >= 0 }
+                ?.let { parseKesAmount(row.getOrNull(it).orEmpty()) }?.takeIf { it > 0L }
+            val (amountMinor, direction) = when {
+                paidIn != null -> paidIn to PaymentDirection.IN
+                withdrawn != null -> withdrawn to PaymentDirection.OUT
+                else -> return@mapNotNull null
+            }
             val reference = row.getOrNull(receiptIdx)?.trim()?.takeIf { it.isNotEmpty() }
                 ?: return@mapNotNull null
             val details = detailsIdx.takeIf { it >= 0 }?.let { row.getOrNull(it) }.orEmpty()
-            val sender = SENDER_REGEX.find(details)
+            val counterparty = when (direction) {
+                PaymentDirection.IN -> FROM_REGEX.find(details)
+                PaymentDirection.OUT -> TO_REGEX.find(details)
+            }
 
             ParsedPayment(
                 provider = provider,
                 amount = Money(amountMinor, currency),
                 reference = reference,
-                senderName = sender?.groupValues?.get(1)?.trim()?.takeIf { it.isNotEmpty() },
-                senderPhone = sender?.groupValues?.get(2)?.takeIf { it.isNotEmpty() },
+                senderName = counterparty?.groupValues?.get(1)?.trim()?.takeIf { it.isNotEmpty() },
+                senderPhone = counterparty?.groupValues?.getOrNull(2)?.takeIf { it.isNotEmpty() },
                 occurredAt = dateIdx.takeIf { it >= 0 }?.let { row.getOrNull(it) }?.let(::parseStatementDate),
                 rawMessage = details.ifBlank { row.joinToString(",") },
+                direction = direction,
             )
         }
     }
 
     private companion object {
         // "received from JOHN DOE 254712345678" / "Payment from JANE 0712345678"
-        val SENDER_REGEX = Regex(
+        val FROM_REGEX = Regex(
             """from\s+([A-Za-z .'-]+?)\s+(\d{9,12})""",
+            RegexOption.IGNORE_CASE,
+        )
+        // "Pay Bill to KPLC PREPAID" / "Customer Transfer to JANE DOE 0712345678"
+        val TO_REGEX = Regex(
+            """to\s+([A-Za-z .'-]+?)(?:\s+(\d{9,12}))?\s*$""",
             RegexOption.IGNORE_CASE,
         )
         // "2026-05-24 13:15:00" or "2026-05-24T13:15"

@@ -38,6 +38,7 @@ object DatabaseModule {
                 FlowtaDatabase.MIGRATION_3_4,
                 FlowtaDatabase.MIGRATION_4_5,
                 FlowtaDatabase.MIGRATION_5_6,
+                FlowtaDatabase.MIGRATION_6_7,
             )
             .build()
     }

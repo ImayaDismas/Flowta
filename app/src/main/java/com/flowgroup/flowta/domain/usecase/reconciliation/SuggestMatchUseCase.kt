@@ -1,6 +1,7 @@
 package com.flowgroup.flowta.domain.usecase.reconciliation
 
 import com.flowgroup.flowta.domain.common.Result
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.model.ReceivedPayment
 import com.flowgroup.flowta.domain.model.Transaction
 import com.flowgroup.flowta.domain.model.TransactionType
@@ -11,21 +12,26 @@ import kotlin.time.Duration.Companion.hours
 import javax.inject.Inject
 
 /**
- * Suggests the SALE most likely to correspond to a received payment.
+ * Suggests the transaction most likely to correspond to a payment: a SALE for an inbound payment,
+ * an EXPENSE for an outbound one.
  *
- * Signal: an exact amount match (same minor units and currency). Among exact-amount sales that
- * are not already matched to another payment, the one closest in time within [MATCH_WINDOW] wins.
- * Returns null when nothing qualifies — the UI then offers "record as new sale".
+ * Signal: an exact amount match (same minor units and currency). Among exact-amount candidates of
+ * the right type that are not already matched to another payment, the one closest in time within
+ * [MATCH_WINDOW] wins. Returns null when nothing qualifies — the UI then offers "record as new".
  */
 class SuggestMatchUseCase @Inject constructor(
     private val transactionRepository: TransactionRepository,
     private val reconciliationRepository: ReconciliationRepository,
 ) {
     suspend operator fun invoke(payment: ReceivedPayment): Result<Transaction?> {
-        val sales = when (
+        val wantType = when (payment.direction) {
+            PaymentDirection.IN -> TransactionType.SALE
+            PaymentDirection.OUT -> TransactionType.EXPENSE
+        }
+        val candidates = when (
             val r = transactionRepository.observeHistoryForBusiness(payment.businessId).first()
         ) {
-            is Result.Success -> r.data.map { it.transaction }.filter { it.type == TransactionType.SALE }
+            is Result.Success -> r.data.map { it.transaction }.filter { it.type == wantType }
             is Result.Error -> return r
         }
         val alreadyMatched = when (
@@ -35,7 +41,7 @@ class SuggestMatchUseCase @Inject constructor(
             is Result.Error -> return r
         }
 
-        val best = sales
+        val best = candidates
             .filter {
                 it.id !in alreadyMatched &&
                     it.amount.currency == payment.amount.currency &&

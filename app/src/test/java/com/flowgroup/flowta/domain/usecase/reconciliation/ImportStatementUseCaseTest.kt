@@ -3,6 +3,7 @@ package com.flowgroup.flowta.domain.usecase.reconciliation
 import com.flowgroup.flowta.domain.common.Result
 import com.flowgroup.flowta.domain.model.Business
 import com.flowgroup.flowta.domain.model.CurrencyCode
+import com.flowgroup.flowta.domain.model.PaymentDirection
 import com.flowgroup.flowta.domain.model.PaymentSource
 import com.flowgroup.flowta.domain.reconciliation.StatementParserEngine
 import com.flowgroup.flowta.domain.reconciliation.statement.MpesaStatementCsvParser
@@ -45,23 +46,29 @@ class ImportStatementUseCaseTest {
     """.trimIndent()
 
     @Test
-    fun givenStatement_whenImported_thenStoresReceivedRowsOnly() = runTest {
+    fun givenStatement_whenImported_thenStoresInflowsAndOutflows() = runTest {
         every { preferencesRepository.currentBusinessId } returns flowOf("biz-1")
         coEvery { businessRepository.getById("biz-1") } returns Result.Success(business)
         coEvery {
             reconciliationRepository.storeParsed("biz-1", any(), PaymentSource.STATEMENT_IMPORT)
-        } returns Result.Success(1)
+        } returns Result.Success(2)
 
         val result = useCase(csv)
 
         assertTrue(result is Result.Success)
         val outcome = (result as Result.Success).data
-        assertEquals(1, outcome.recognized) // only the Paid-In row
-        assertEquals(1, outcome.stored)
+        assertEquals(2, outcome.recognized) // Paid-In row (IN) + Withdrawn row (OUT)
+        assertEquals(2, outcome.stored)
         coVerify {
             reconciliationRepository.storeParsed(
                 "biz-1",
-                match { it.size == 1 && it[0].reference == "SGR45TXKLP" },
+                match { parsed ->
+                    parsed.size == 2 &&
+                        parsed[0].reference == "SGR45TXKLP" &&
+                        parsed[0].direction == PaymentDirection.IN &&
+                        parsed[1].reference == "DEF456GHJ7" &&
+                        parsed[1].direction == PaymentDirection.OUT
+                },
                 PaymentSource.STATEMENT_IMPORT,
             )
         }
