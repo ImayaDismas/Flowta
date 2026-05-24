@@ -267,7 +267,13 @@
     <string name="scan_receipt_title">Skani</string>
     <string name="scan_receipt_message">Elekeza kamera kwenye ujumbe wa malipo au risiti. Usomaji hufanyika kwenye simu yako — hakuna kinachotoka kwenye kifaa chako.</string>
     <string name="import_statement_title">Leta taarifa</string>
-    <string name="import_statement_message">Leta taarifa ya M-Pesa au benki (PDF au CSV) ili kulinganisha malipo mengi kwa pamoja.</string>
+    <string name="import_statement_message">Leta taarifa ya M-Pesa (CSV) ili kulinganisha malipo mengi kwa pamoja.</string>
+    <string name="import_statement_choose_file">Chagua faili la CSV</string>
+    <string name="import_statement_hint">Hamisha taarifa yako ya M-Pesa kama CSV, kisha chagua faili hapa. Hufanya kazi nje ya mtandao.</string>
+    <string name="import_statement_reading">Inasoma taarifa…</string>
+    <string name="import_statement_result">Imeleta malipo %1$d ya kulinganisha.</string>
+    <string name="import_statement_duplicates">Tayari yameletwa — hakuna malipo mapya.</string>
+    <string name="import_statement_view">Tazama malipo</string>
     <string name="scan_inbox_title">Changanua kikasha</string>
     <string name="scan_inbox_message">Kwa ruhusa yako, Flowta husoma ujumbe wa malipo pekee kutoka kikasha chako, kwenye simu yako. Ujumbe wako hautoki kwenye kifaa chako.</string>
     <string name="reconciliation_coming_soon">Inakuja hivi karibuni</string>

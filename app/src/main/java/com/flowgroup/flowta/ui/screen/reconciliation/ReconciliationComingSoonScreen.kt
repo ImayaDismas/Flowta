@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -71,14 +70,6 @@ fun ScanReceiptScreen(onBack: () -> Unit) = ComingSoonScaffold(
     title = stringResource(R.string.scan_receipt_title),
     icon = Icons.Outlined.PhotoCamera,
     message = stringResource(R.string.scan_receipt_message),
-    onBack = onBack,
-)
-
-@Composable
-fun ImportStatementScreen(onBack: () -> Unit) = ComingSoonScaffold(
-    title = stringResource(R.string.import_statement_title),
-    icon = Icons.Outlined.FileUpload,
-    message = stringResource(R.string.import_statement_message),
     onBack = onBack,
 )
 

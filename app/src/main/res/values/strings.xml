@@ -267,7 +267,13 @@
     <string name="scan_receipt_title">Scan</string>
     <string name="scan_receipt_message">Point your camera at a payment message or receipt. Reading happens on your phone — nothing leaves your device.</string>
     <string name="import_statement_title">Import statement</string>
-    <string name="import_statement_message">Import an M-Pesa or bank statement (PDF or CSV) to match many payments at once.</string>
+    <string name="import_statement_message">Import an M-Pesa statement (CSV) to match many payments at once.</string>
+    <string name="import_statement_choose_file">Choose CSV file</string>
+    <string name="import_statement_hint">Export your M-Pesa statement as CSV, then choose the file here. Works offline.</string>
+    <string name="import_statement_reading">Reading statement…</string>
+    <string name="import_statement_result">Imported %1$d payment(s) to reconcile.</string>
+    <string name="import_statement_duplicates">Already imported — no new payments.</string>
+    <string name="import_statement_view">View payments</string>
     <string name="scan_inbox_title">Scan inbox</string>
     <string name="scan_inbox_message">With your permission, Flowta reads only payment messages from your inbox, on your phone. Your messages never leave your device.</string>
     <string name="reconciliation_coming_soon">Coming soon</string>

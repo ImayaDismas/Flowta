@@ -219,7 +219,10 @@ fun FlowtaNavHost(
         }
 
         composable<Destination.ImportStatement> {
-            ImportStatementScreen(onBack = { navController.popBackStack() })
+            ImportStatementScreen(
+                onBack = { navController.popBackStack() },
+                onImported = { navController.popBackStack() },
+            )
         }
 
         composable<Destination.ScanInbox> {
