@@ -10,12 +10,12 @@
 
 <!-- Claude sets exactly one task here at a time -->
 
-_None — Customer credit (deni) slice landed in `fcc7f2f` (2026-05-23). Pick next from Next Session._
+_None — Client rename (`1323c2e`) + wallet-linked deni (`0b5f666`) landed (2026-05-24). Pick next from Next Session._
 
-> Verification status (emulator API 36, 2026-05-23):
-> - **Deni** flows verified on-device: v3→v4 migration on existing data, notification-permission prompt, dashboard "owed to you" card updating reactively (0 → 5,000 → 3,000), add-customer (+initial credit), customer detail, and partial payment. **Still unconfirmed:** the reminder notification actually rendering — the `DeniReminderWorker` is scheduled (verified in jobscheduler) but couldn't be force-run via CLI; it fires on the daily cadence.
-> - **Still pending on-device:** wallet-detail/edit/delete, insights dashboard, and transaction-detail/edit/delete flows (build/test-verified only).
-> - Test data left on the emulator: customer "Mama Achieng" (KES 3,000); no delete-customer flow in v1.
+> Verification status:
+> - **NOT yet verified on-device (2026-05-24):** the wallet-linked deni slice (`0b5f666`) is build/test-verified only. Needs on-device checks: **Room v4→v5 migration on existing data** (the emulator has prior deni rows — "Mama Achieng" KES 3,000), the account picker in the add-client form + credit/payment dialogs, and that picking a wallet actually moves its balance (credit deducts, payment adds) while the "Owed to you (Deni)" card and revenue/expense insights stay unchanged.
+> - **Design note (intentional):** deni cash-movements adjust the selected wallet's *balance* but do NOT appear as line items in that wallet's transaction history (they're not sales/expenses, and excluded from the P&L). Surfacing them in wallet history is a possible follow-up.
+> - **From 2026-05-23 (still standing):** earlier deni flows verified on-device (migration, permission prompt, reactive owed-card, add-client, detail, partial payment); reminder notification render still unconfirmed; wallet-detail/insights/transaction-detail flows still pending on-device.
 
 ---
 
@@ -37,8 +37,9 @@ _None — Customer credit (deni) slice landed in `fcc7f2f` (2026-05-23). Pick ne
 - [ ] (3) Statement import (PDF / CSV).
 - [ ] (4) SMS inbox scan — lowest priority (Play Store risk).
 
-**Credit (deni)** — core shipped in `fcc7f2f` (built in Compose, no Stitch).
-- [ ] Fast-follow: integrate credit into the Record-Sale flow (mark a sale fully/partly on credit → auto-create a deni credit entry). Currently deni uses a standalone "record credit / add customer" path.
+**Credit (deni)** — core shipped in `fcc7f2f`; wallet-linked in `0b5f666` (built in Compose, no Stitch).
+- [ ] Fast-follow: integrate credit into the Record-Sale flow (mark a sale fully/partly on credit → auto-create a deni credit entry). Currently deni uses a standalone "record credit / add client" path.
+- [ ] Optional: surface deni cash-movements as line items in the linked wallet's transaction history (today they move the balance only).
 
 **Export**
 - [ ] Design Stitch screen (MISSING).
@@ -87,6 +88,8 @@ _None._
 - [x] Summary — Insights dashboard: this-week revenue/expenses vs prior week, en+sw (`616c4f8`).
 - [x] Ledger — Transaction Detail (receipt) + Edit + Delete; Share placeholder (`f991449`).
 - [x] Credit (deni) — customer accounts, credit/partial-payment ledger, dashboard owed-card, WorkManager reminders, Room v4 (`fcc7f2f`).
+- [x] Naming — renamed Customer → Client across the deni feature (code/UI); physical SQLite table kept, no migration (`1323c2e`).
+- [x] Credit (deni) — optional business-wallet link on credit/payment + add-client; wallet balance reflects cash moved; Room v4→v5 (`0b5f666`).
 
 ---
 
