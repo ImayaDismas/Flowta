@@ -310,4 +310,19 @@
     <string name="export_empty">Bado hakuna miamala ya kuhamisha.</string>
     <string name="export_saved">Imehifadhi miamala %1$d kwa CSV.</string>
     <string name="export_save_failed">Haikuweza kuhifadhi faili.</string>
+
+    <!-- Ukuta wa malipo (paywall) -->
+    <string name="paywall_title">Kipindi chako cha majaribio kimeisha</string>
+    <string name="paywall_subtitle">Lipa kupitia M-Pesa ili kuendelea kutumia Flowta. Data yako iko salama.</string>
+    <string name="paywall_how_to_pay">Jinsi ya kulipa</string>
+    <string name="paywall_paybill_label">Paybill</string>
+    <string name="paywall_paybill_number">000000</string>
+    <string name="paywall_account_label">Akaunti</string>
+    <string name="paywall_account_value">FLOWTA</string>
+    <string name="paywall_amount_label">Kiasi</string>
+    <string name="paywall_amount_value">KES 999 / mwaka</string>
+    <string name="paywall_enter_code_hint">Malipo yako yakithibitishwa, utapokea nambari ya uanzishaji kwa SMS.</string>
+    <string name="paywall_code_label">Nambari ya uanzishaji</string>
+    <string name="paywall_code_placeholder">mfano. AB12CD34EF</string>
+    <string name="paywall_activate_cta">Amilisha</string>
 </resources>

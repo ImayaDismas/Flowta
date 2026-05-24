@@ -310,4 +310,20 @@
     <string name="export_empty">No transactions to export yet.</string>
     <string name="export_saved">Saved %1$d transactions to CSV.</string>
     <string name="export_save_failed">Could not save the file.</string>
+
+    <!-- Paywall / license -->
+    <!-- Update paywall_paybill_number with your real Paybill number before release -->
+    <string name="paywall_title">Your free trial has ended</string>
+    <string name="paywall_subtitle">Pay via M-Pesa to keep using Flowta. Your data is safe.</string>
+    <string name="paywall_how_to_pay">How to pay</string>
+    <string name="paywall_paybill_label">Paybill</string>
+    <string name="paywall_paybill_number">000000</string>
+    <string name="paywall_account_label">Account</string>
+    <string name="paywall_account_value">FLOWTA</string>
+    <string name="paywall_amount_label">Amount</string>
+    <string name="paywall_amount_value">KES 999 / year</string>
+    <string name="paywall_enter_code_hint">Once your payment is confirmed, you will receive an activation code by SMS.</string>
+    <string name="paywall_code_label">Activation code</string>
+    <string name="paywall_code_placeholder">e.g. AB12CD34EF</string>
+    <string name="paywall_activate_cta">Activate</string>
 </resources>

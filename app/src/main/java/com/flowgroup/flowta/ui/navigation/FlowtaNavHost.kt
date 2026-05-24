@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.flowgroup.flowta.ui.screen.SplashRoute
 import com.flowgroup.flowta.ui.screen.export.ExportScreen
+import com.flowgroup.flowta.ui.screen.paywall.PaywallScreen
 import com.flowgroup.flowta.ui.screen.deni.AddClientScreen
 import com.flowgroup.flowta.ui.screen.deni.ClientDeniDetailScreen
 import com.flowgroup.flowta.ui.screen.deni.DeniListScreen
@@ -51,6 +52,11 @@ fun FlowtaNavHost(
                 },
                 onToUnlock = {
                     navController.navigate(Destination.PinUnlock) {
+                        popUpTo(Destination.Splash) { inclusive = true }
+                    }
+                },
+                onToPaywall = {
+                    navController.navigate(Destination.Paywall) {
                         popUpTo(Destination.Splash) { inclusive = true }
                     }
                 },
@@ -236,6 +242,16 @@ fun FlowtaNavHost(
 
         composable<Destination.Export> {
             ExportScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable<Destination.Paywall> {
+            PaywallScreen(
+                onActivated = {
+                    navController.navigate(Destination.Splash) {
+                        popUpTo(Destination.Paywall) { inclusive = true }
+                    }
+                },
+            )
         }
     }
 }

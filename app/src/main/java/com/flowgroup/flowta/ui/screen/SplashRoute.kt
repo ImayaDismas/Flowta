@@ -22,6 +22,7 @@ fun SplashRoute(
     onToOnboarding: () -> Unit,
     onToSetPin: () -> Unit,
     onToUnlock: () -> Unit,
+    onToPaywall: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(viewModel) {
@@ -30,6 +31,7 @@ fun SplashRoute(
                 SplashViewModel.SplashDestination.Onboarding -> onToOnboarding()
                 SplashViewModel.SplashDestination.SetPin -> onToSetPin()
                 SplashViewModel.SplashDestination.Unlock -> onToUnlock()
+                SplashViewModel.SplashDestination.Paywall -> onToPaywall()
             }
         }
     }
