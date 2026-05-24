@@ -33,9 +33,9 @@ Verification status:
 
 <!-- Claude writes the next task to pick up here before closing -->
 
-**Pick up next:** Polish / pre-release — set real Paybill number in `strings.xml`, add a trial-remaining banner on Home (optional), or tackle reconciliation follow-ups (Airtel/T-Kash outbound parsing; "Match to different sale" picker). All Phase 1 hard requirements are now done.
+**Pick up next:** Pre-release polish — set real Paybill number in `strings.xml`, or tackle reconciliation follow-ups (Airtel/T-Kash outbound parsing; "Match to different sale" picker). All Phase 1 hard requirements are now done.
 
-> **Pushed:** `develop` is in sync with `origin/develop` at **`a25565d`** (paywall `feat`). Nothing outstanding to push.
+> **Pushed:** `develop` is in sync with `origin/develop` at **`7b68bdb`** (trial banner). Nothing outstanding to push.
 
 ### Phase 1 remaining — by feature area
 
@@ -108,6 +108,7 @@ _None._
 - [x] Reconciliation Camera OCR (method 2) — ML Kit on-device OCR + `OcrTextNormalizer` (digit/letter repair) + real `ScanReceiptScreen` (camera/gallery) → `ParseAndStorePaymentsUseCase` (CAMERA_OCR). Verified on-device (gallery path); committed + pushed (`5eb2dad`).
 - [x] Reconciliation money-flow direction — `PaymentDirection` (IN/OUT) through parser/model/UI; outbound (sent/paybill/buygoods/withdraw + bank moves) → EXPENSE, inbound → SALE; Room v6→v7. M-Pesa only. Verified on-device; committed + pushed (`9d19e36`).
 - [x] Phase 1 paywall — 30-day trial + M-Pesa Paybill SMS activation code; HMAC on-device verification; hard gate on expiry. Verified on-device; committed + pushed (`a25565d`).
+- [x] Trial-remaining banner on Home — `TrialBanner` above tab content; amber >7 days, red ≤7 days; "Activate" CTA to PaywallScreen. Verified on-device (31-day trial showed banner); committed + pushed (`7b68bdb`).
 
 ---
 
