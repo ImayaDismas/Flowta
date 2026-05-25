@@ -147,6 +147,8 @@
     <string name="wallet_detail_record">Record transaction</string>
     <string name="wallet_detail_not_found_title">Wallet not found</string>
     <string name="wallet_detail_not_found_message">It may have been removed.</string>
+    <string name="wallet_detail_deni_credit">Deni credit · %1$s</string>
+    <string name="wallet_detail_deni_payment">Deni payment · %1$s</string>
 
     <!-- Edit Wallet -->
     <string name="edit_wallet_title">Edit Wallet</string>

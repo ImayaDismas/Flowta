@@ -57,7 +57,7 @@ class WalletDetailViewModelTest {
         val detail = WalletDetail(
             wallet = wallet,
             currentBalanceMinor = 12_000L,
-            recentTransactions = emptyList(),
+            recentLineItems = emptyList(),
             weekTotals = TransactionTotals.ZERO,
         )
         every { observeWalletDetail("w-1") } returns flowOf(Result.Success(detail))

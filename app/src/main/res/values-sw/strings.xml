@@ -147,6 +147,8 @@
     <string name="wallet_detail_record">Rekodi muamala</string>
     <string name="wallet_detail_not_found_title">Pochi haikupatikana</string>
     <string name="wallet_detail_not_found_message">Huenda iliondolewa.</string>
+    <string name="wallet_detail_deni_credit">Deni (mkopo) · %1$s</string>
+    <string name="wallet_detail_deni_payment">Malipo ya deni · %1$s</string>
 
     <!-- Edit Wallet -->
     <string name="edit_wallet_title">Hariri Pochi</string>

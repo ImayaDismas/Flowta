@@ -47,8 +47,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowgroup.flowta.R
 import com.flowgroup.flowta.domain.model.CurrencyCode
+import com.flowgroup.flowta.domain.model.DeniEntryType
 import com.flowgroup.flowta.domain.model.TransactionTotals
 import com.flowgroup.flowta.domain.model.WalletDetail
+import com.flowgroup.flowta.domain.model.WalletLineItem
 import com.flowgroup.flowta.domain.model.WalletType
 import com.flowgroup.flowta.ui.components.EmptyState
 import com.flowgroup.flowta.ui.components.TransactionListItem
@@ -175,14 +177,14 @@ private fun WalletDetailBody(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                if (detail.recentTransactions.isNotEmpty()) {
+                if (detail.recentLineItems.isNotEmpty()) {
                     TextButton(onClick = onViewAllHistory) {
                         Text(stringResource(R.string.wallet_detail_view_all))
                     }
                 }
             }
         }
-        if (detail.recentTransactions.isEmpty()) {
+        if (detail.recentLineItems.isEmpty()) {
             item {
                 Text(
                     text = stringResource(R.string.wallet_detail_recent_empty),
@@ -191,14 +193,84 @@ private fun WalletDetailBody(
                 )
             }
         } else {
-            items(detail.recentTransactions, key = { it.transaction.id }) { item ->
-                TransactionListItem(
-                    item = item,
-                    onClick = { onOpenTransaction(item.transaction.id) },
-                )
+            items(
+                detail.recentLineItems,
+                key = { item ->
+                    when (item) {
+                        is WalletLineItem.LedgerTransaction -> item.item.transaction.id
+                        is WalletLineItem.DeniMovement -> item.entry.id
+                    }
+                },
+            ) { item ->
+                when (item) {
+                    is WalletLineItem.LedgerTransaction -> TransactionListItem(
+                        item = item.item,
+                        onClick = { onOpenTransaction(item.item.transaction.id) },
+                    )
+                    is WalletLineItem.DeniMovement -> DeniMovementListItem(lineItem = item)
+                }
             }
         }
         item { Spacer(modifier = Modifier.height(72.dp)) }
+    }
+}
+
+@Composable
+private fun DeniMovementListItem(lineItem: WalletLineItem.DeniMovement) {
+    val isPayment = lineItem.entry.type == DeniEntryType.PAYMENT
+    val accent = if (isPayment) MoneyIn else MoneyOut
+    val label = stringResource(
+        if (isPayment) R.string.wallet_detail_deni_payment else R.string.wallet_detail_deni_credit,
+        lineItem.clientName,
+    )
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = if (isPayment) Icons.AutoMirrored.Outlined.TrendingUp
+                    else Icons.AutoMirrored.Outlined.TrendingDown,
+                    contentDescription = null,
+                    tint = accent,
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f),
+            ) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                lineItem.entry.note?.takeIf { it.isNotBlank() }?.let { note ->
+                    Text(
+                        text = note,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            val sign = if (isPayment) "+" else "-"
+            Text(
+                text = "$sign${lineItem.entry.amount.minorUnits} ${lineItem.entry.amount.currency.iso4217}",
+                style = MaterialTheme.typography.titleMedium,
+                color = accent,
+            )
+        }
     }
 }
 

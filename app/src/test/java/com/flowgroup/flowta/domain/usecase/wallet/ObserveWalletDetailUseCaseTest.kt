@@ -9,6 +9,7 @@ import com.flowgroup.flowta.domain.model.TransactionTotals
 import com.flowgroup.flowta.domain.model.Wallet
 import com.flowgroup.flowta.domain.model.WalletType
 import com.flowgroup.flowta.domain.model.WalletWithBalance
+import com.flowgroup.flowta.domain.repository.DeniRepository
 import com.flowgroup.flowta.domain.repository.TransactionRepository
 import com.flowgroup.flowta.domain.repository.WalletRepository
 import io.mockk.every
@@ -27,9 +28,10 @@ class ObserveWalletDetailUseCaseTest {
 
     private val walletRepository: WalletRepository = mockk()
     private val transactionRepository: TransactionRepository = mockk()
+    private val deniRepository: DeniRepository = mockk()
     private val fixedNow: Instant = Instant.parse("2026-05-13T10:00:00Z")
     private val clock: Clock = mockk<Clock>().also { every { it.now() } returns fixedNow }
-    private val useCase = ObserveWalletDetailUseCase(walletRepository, transactionRepository, clock)
+    private val useCase = ObserveWalletDetailUseCase(walletRepository, transactionRepository, deniRepository, clock)
 
     private val wallet = Wallet(
         id = "w-1",
@@ -47,6 +49,8 @@ class ObserveWalletDetailUseCaseTest {
             Result.Success(WalletWithBalance(wallet = wallet, currentBalanceMinor = 8_500L))
         )
         every { transactionRepository.observeRecentForWallet("w-1", any()) } returns
+            flowOf(Result.Success(emptyList()))
+        every { deniRepository.observeMovementsForWallet("w-1") } returns
             flowOf(Result.Success(emptyList()))
         every {
             transactionRepository.observeWalletTotalsBetween("w-1", any(), any())
@@ -73,6 +77,8 @@ class ObserveWalletDetailUseCaseTest {
             flowOf(Result.Success(null))
         every { transactionRepository.observeRecentForWallet("w-1", any()) } returns
             flowOf(Result.Success(emptyList()))
+        every { deniRepository.observeMovementsForWallet("w-1") } returns
+            flowOf(Result.Success(emptyList()))
         every {
             transactionRepository.observeWalletTotalsBetween("w-1", any(), any())
         } returns flowOf(Result.Success(TransactionTotals.ZERO))
@@ -90,6 +96,8 @@ class ObserveWalletDetailUseCaseTest {
         every { walletRepository.observeWithBalanceById("w-1") } returns
             flowOf(Result.Error(AppException.LocalException("read failed")))
         every { transactionRepository.observeRecentForWallet("w-1", any()) } returns
+            flowOf(Result.Success(emptyList()))
+        every { deniRepository.observeMovementsForWallet("w-1") } returns
             flowOf(Result.Success(emptyList()))
         every {
             transactionRepository.observeWalletTotalsBetween("w-1", any(), any())

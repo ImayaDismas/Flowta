@@ -4,6 +4,7 @@ import com.flowgroup.flowta.data.datasource.local.ClientLocalDataSource
 import com.flowgroup.flowta.data.datasource.local.DeniEntryLocalDataSource
 import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
 import com.flowgroup.flowta.data.model.entity.projection.ClientWithBalanceProjection
+import com.flowgroup.flowta.data.model.entity.projection.DeniEntryWithClientProjection
 import com.flowgroup.flowta.data.model.mapper.toDomain
 import com.flowgroup.flowta.data.model.mapper.toEntity
 import com.flowgroup.flowta.domain.common.AppException
@@ -15,6 +16,7 @@ import com.flowgroup.flowta.domain.model.ClientDeni
 import com.flowgroup.flowta.domain.model.DeniEntry
 import com.flowgroup.flowta.domain.model.DeniEntryType
 import com.flowgroup.flowta.domain.model.Money
+import com.flowgroup.flowta.domain.model.WalletLineItem
 import com.flowgroup.flowta.domain.repository.DeniRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -53,6 +55,13 @@ class DeniRepositoryImpl @Inject constructor(
     override fun observeEntriesForClient(clientId: String): Flow<Result<List<DeniEntry>>> =
         deniEntryLocal.observeForClient(clientId)
             .map<List<DeniEntryEntity>, Result<List<DeniEntry>>> { rows ->
+                Result.Success(rows.map { it.toDomain() })
+            }
+            .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }
+
+    override fun observeMovementsForWallet(walletId: String): Flow<Result<List<WalletLineItem.DeniMovement>>> =
+        deniEntryLocal.observeForWallet(walletId)
+            .map<List<DeniEntryWithClientProjection>, Result<List<WalletLineItem.DeniMovement>>> { rows ->
                 Result.Success(rows.map { it.toDomain() })
             }
             .catch { e -> emit(Result.Error(AppException.LocalException(e.message.orEmpty()))) }

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
+import com.flowgroup.flowta.data.model.entity.projection.DeniEntryWithClientProjection
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,6 +17,15 @@ interface DeniEntryDao {
             "ORDER BY occurred_at DESC, created_at DESC"
     )
     fun observeForClient(clientId: String): Flow<List<DeniEntryEntity>>
+
+    @Query(
+        "SELECT de.*, c.name AS client_name " +
+            "FROM deni_entries de " +
+            "INNER JOIN customers c ON de.customer_id = c.customer_id " +
+            "WHERE de.wallet_id = :walletId " +
+            "ORDER BY de.occurred_at DESC, de.created_at DESC"
+    )
+    fun observeForWallet(walletId: String): Flow<List<DeniEntryWithClientProjection>>
 
     @Query(
         "SELECT COALESCE(SUM(CASE WHEN type = 'CREDIT' THEN amount_minor " +

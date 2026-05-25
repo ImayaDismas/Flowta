@@ -7,6 +7,7 @@ import com.flowgroup.flowta.domain.model.ClientDeni
 import com.flowgroup.flowta.domain.model.DeniEntry
 import com.flowgroup.flowta.domain.model.DeniEntryType
 import com.flowgroup.flowta.domain.model.Money
+import com.flowgroup.flowta.domain.model.WalletLineItem
 import kotlinx.coroutines.flow.Flow
 
 interface DeniRepository {
@@ -14,6 +15,7 @@ interface DeniRepository {
     fun observeTotalOutstanding(businessId: String): Flow<Result<Long>>
     fun observeClientWithBalance(clientId: String): Flow<Result<ClientDeni?>>
     fun observeEntriesForClient(clientId: String): Flow<Result<List<DeniEntry>>>
+    fun observeMovementsForWallet(walletId: String): Flow<Result<List<WalletLineItem.DeniMovement>>>
     suspend fun getClient(clientId: String): Result<Client?>
     suspend fun addClient(
         businessId: String,

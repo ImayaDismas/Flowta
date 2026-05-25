@@ -3,10 +3,12 @@ package com.flowgroup.flowta.data.model.mapper
 import com.flowgroup.flowta.data.model.entity.ClientEntity
 import com.flowgroup.flowta.data.model.entity.DeniEntryEntity
 import com.flowgroup.flowta.data.model.entity.projection.ClientWithBalanceProjection
+import com.flowgroup.flowta.data.model.entity.projection.DeniEntryWithClientProjection
 import com.flowgroup.flowta.domain.model.Client
 import com.flowgroup.flowta.domain.model.ClientDeni
 import com.flowgroup.flowta.domain.model.DeniEntry
 import com.flowgroup.flowta.domain.model.Money
+import com.flowgroup.flowta.domain.model.WalletLineItem
 
 fun ClientEntity.toDomain(): Client = Client(
     id = clientId,
@@ -44,6 +46,11 @@ fun DeniEntryEntity.toDomain(): DeniEntry = DeniEntry(
     occurredAt = occurredAt,
     createdAt = createdAt,
     updatedAt = updatedAt,
+)
+
+fun DeniEntryWithClientProjection.toDomain(): WalletLineItem.DeniMovement = WalletLineItem.DeniMovement(
+    entry = entry.toDomain(),
+    clientName = clientName,
 )
 
 fun DeniEntry.toEntity(): DeniEntryEntity = DeniEntryEntity(
